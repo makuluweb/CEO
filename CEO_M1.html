@@ -2,838 +2,930 @@
 
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CEO Engagement Studio — KPMG</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
-<!-- React + Babel CDN (no build step) -->
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEO Engagement Studio — AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
-body { background: #0f0e0c; color: #f0ece4; font-family: 'DM Sans', sans-serif; }
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #111; }
-::-webkit-scrollbar-thumb { background: #c8a96e; border-radius: 2px; }
-@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-@keyframes spin { to { transform: rotate(360deg); } }
-.fade-up { animation: fadeUp .35s ease both; }
-textarea { resize: vertical; font-family: 'DM Sans', sans-serif; }
-input, textarea, button { font-family: 'DM Sans', sans-serif; }
-
-```
-/* API key modal */
-.modal-overlay {
-position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-display: flex; align-items: center; justify-content: center; z-index: 9999;
+/* ── Reset ──────────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#c8a96e;
+  --gold-dark:#a8883e;
+  --dark:#0f0e0c;
+  --card:#141210;
+  --border:rgba(200,169,110,0.2);
+  --text:#f0ece4;
+  --muted:#888;
+  --input-bg:#0d0c0a;
 }
-.modal {
-background: #1a1814; border: 1px solid rgba(200,169,110,0.3);
-border-radius: 14px; padding: 36px; max-width: 480px; width: 90%;
-}
-```
+html,body{height:100%;-webkit-text-size-adjust:100%}
+body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6}
+input,textarea,button{font-family:'DM Sans',sans-serif;font-size:14px}
+textarea{resize:vertical}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#111}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
 
+/* ── Modal ──────────────────────────────────────────────────────────────── */
+#modal-overlay{
+position:fixed;inset:0;background:rgba(0,0,0,0.88);
+display:flex;align-items:center;justify-content:center;z-index:9999;
+}
+#modal-overlay.hidden{display:none}
+.modal-box{
+background:#1a1814;border:1px solid rgba(200,169,110,0.3);
+border-radius:14px;padding:32px;max-width:460px;width:92%;
+}
+.modal-kpmg{font-family:‘Bebas Neue’,sans-serif;font-size:10px;letter-spacing:0.2em;color:var(–gold);margin-bottom:8px}
+.modal-title{font-family:‘DM Serif Display’,serif;font-size:20px;color:var(–text);margin-bottom:14px;font-weight:normal}
+.modal-desc{font-size:13px;color:#888;line-height:1.7;margin-bottom:18px}
+.modal-desc a{color:var(–gold)}
+.modal-warn{font-size:11px;color:#555;margin-top:12px}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+#app-header{
+background:#09080a;border-bottom:1px solid var(–border);
+padding:14px 16px 0;position:sticky;top:0;z-index:100;
+}
+.header-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px}
+.kpmg-label{font-family:‘Bebas Neue’,sans-serif;font-size:10px;letter-spacing:0.2em;color:var(–gold);margin-bottom:2px}
+.app-title{font-family:‘DM Serif Display’,serif;font-size:18px;color:var(–text);font-weight:normal}
+#header-right{display:flex;align-items:center;gap:12px}
+#header-name{font-family:‘DM Serif Display’,serif;font-size:13px;color:var(–gold);font-style:italic;text-align:right;line-height:1.3}
+#api-key-btn{
+background:none;border:1px solid #333;border-radius:4px;
+color:#555;font-size:10px;padding:4px 8px;cursor:pointer;
+letter-spacing:0.06em;text-transform:uppercase;
+}
+
+/* ── Tabs ───────────────────────────────────────────────────────────────── */
+.tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab-btn{
+background:none;border:none;border-bottom:2px solid transparent;
+color:#555;cursor:pointer;padding:7px 12px;
+font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;
+white-space:nowrap;flex-shrink:0;line-height:1.5;
+transition:color .15s,border-color .15s;
+}
+.tab-btn.active{color:var(–gold);border-bottom-color:var(–gold)}
+.tab-sub{font-size:8px;font-weight:400;opacity:0.6;margin-top:1px}
+
+/* ── Main ───────────────────────────────────────────────────────────────── */
+#main{max-width:860px;margin:0 auto;padding:18px 14px 60px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── Cards ──────────────────────────────────────────────────────────────── */
+.card{background:var(–card);border:1px solid var(–border);border-radius:12px;padding:18px;margin-bottom:18px}
+
+/* ── Labels / text ──────────────────────────────────────────────────────── */
+.label{font-family:‘Bebas Neue’,sans-serif;font-size:11px;letter-spacing:0.15em;color:var(–gold);margin-bottom:6px;text-transform:uppercase;display:block}
+.sublabel{font-size:12px;color:#666;margin-bottom:12px;line-height:1.6}
+
+/* ── Fields ─────────────────────────────────────────────────────────────── */
+.field{
+width:100%;background:var(–input-bg);border:1px solid var(–border);
+border-radius:8px;color:var(–text);font-size:14px;
+padding:10px 14px;outline:none;display:block;
+}
+.field::placeholder{color:#555}
+textarea.field{line-height:1.6}
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+.btn{
+display:inline-flex;align-items:center;gap:6px;
+border-radius:6px;padding:10px 18px;font-size:12px;font-weight:600;
+letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;border:none;
+white-space:nowrap;background:linear-gradient(135deg,var(–gold),var(–gold-dark));
+color:#0a0a0a;transition:opacity .15s;
+}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+.btn-outline{background:transparent;border:1px solid var(–gold);color:var(–gold)}
+.btn-sm{padding:5px 12px;font-size:10px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+
+/* ── Spinner ────────────────────────────────────────────────────────────── */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{
+width:13px;height:13px;flex-shrink:0;display:inline-block;
+border:2px solid rgba(200,169,110,0.3);border-top-color:var(–gold);
+border-radius:50%;animation:spin .7s linear infinite;
+}
+
+/* ── AI result block ────────────────────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-block{
+margin-top:12px;background:rgba(200,169,110,0.06);
+border:1px solid rgba(200,169,110,0.28);border-radius:8px;padding:14px 16px;
+animation:fadeUp .35s ease both;
+}
+.ai-block-label{font-family:‘Bebas Neue’,sans-serif;font-size:10px;letter-spacing:0.14em;color:var(–gold);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.ai-thinking{display:flex;align-items:center;gap:8px;opacity:0.6;font-size:12px;color:#777;font-style:italic}
+.ai-text{font-size:13.5px;line-height:1.75;color:#e8dfc8;white-space:pre-wrap}
+
+/* ── Question blocks ────────────────────────────────────────────────────── */
+.q-block{background:var(–input-bg);border:1px solid var(–border);border-radius:10px;padding:12px;margin-bottom:12px;transition:border-color .2s}
+.q-block.selected{border-color:var(–gold)}
+.q-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.tick{width:20px;height:20px;flex-shrink:0;margin-top:2px;background:transparent;border:2px solid #444;border-radius:4px;cursor:pointer;color:#0a0a0a;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.tick.on{background:var(–gold);border-color:var(–gold)}
+.q-text{font-size:13.5px;line-height:1.6;color:#e8dfc8;font-style:italic;flex:1}
+.sublabel-small{font-size:10px;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin:8px 0 4px;display:block}
+
+/* ── Export toggles ─────────────────────────────────────────────────────── */
+.toggle-row{display:flex;align-items:center;gap:10px;cursor:pointer;padding:5px 0}
+.toggle-box{width:18px;height:18px;flex-shrink:0;background:transparent;border:2px solid #444;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#0a0a0a;font-size:11px;font-weight:700;transition:all .15s}
+.toggle-box.on{background:var(–gold);border-color:var(–gold)}
+.toggle-label{font-size:13.5px;color:#666;transition:color .15s}
+.toggle-row.on .toggle-label{color:#e8dfc8}
+
+/* ── Note box ───────────────────────────────────────────────────────────── */
+.note-box{padding:12px 14px;background:rgba(200,169,110,0.06);border-radius:8px;border:1px solid var(–border);margin-top:12px}
+.note-title{font-size:11px;color:var(–gold);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px}
+.note-box p{font-size:12px;color:#777;line-height:1.7}
+
+/* ── Action blocks ──────────────────────────────────────────────────────── */
+.action-block{background:var(–input-bg);border:1px solid var(–border);border-radius:10px;padding:14px;margin-bottom:12px}
+.tf-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tf-btn{padding:4px 10px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;background:transparent;color:#666;border:1px solid #444;transition:all .15s}
+.tf-btn.active{background:var(–gold);color:#0a0a0a;border-color:var(–gold)}
+.two-col{display:flex;gap:12px}
+.two-col>div{flex:1;min-width:0}
+.action-remove{margin-left:auto;background:none;border:none;color:#555;cursor:pointer;font-size:20px;line-height:1;padding:0 4px}
+
+/* ── Restore label ──────────────────────────────────────────────────────── */
+.restore-label{cursor:pointer;background:transparent;color:#777;border:1px solid #333;border-radius:6px;padding:10px 16px;font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;display:inline-flex;align-items:center}
+
+/* ── Utility ────────────────────────────────────────────────────────────── */
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}
+.flex-between{display:flex;justify-content:space-between;align-items:center}
 </style>
+
 </head>
 <body>
-<div id="root"></div>
 
-<script type="text/babel">
-const { useState, useCallback } = React;
+<!-- API Key Modal -->
 
-// ── Constants ────────────────────────────────────────────────────────────
-const GOLD = "#c8a96e";
-const DARK = "#0f0e0c";
-const CARD = "#141210";
-const BORDER = "rgba(200,169,110,0.2)";
-
-const QUESTIONS = [
-"What does success actually mean to you right now — not the LinkedIn version?",
-"When did you last feel genuinely out of your depth, and what did that teach you?",
-"What belief are you holding that most people around you would disagree with?",
-"If you stripped away the title tomorrow, who are you?",
-"What's the decision you made that looked wrong to everyone else but you were certain about?",
-"What's the gap between who you present to your board and who you actually are?",
-"Where is the energy in your industry right now — and where is it dying?",
-"What are you most afraid people will discover about how you're running this organisation?",
-"What does the next generation of leaders in your sector fundamentally misunderstand?",
-"If AI, quantum and automation reshape your sector completely in 10 years, what's your honest assessment of whether your organisation will survive?",
-"What would you do differently if you had no obligation to the current stakeholders?",
-"What's the conversation your board needs to have but nobody's willing to start?",
-"When you look at the energy transition — are you leading it, managing it, or hoping it resolves itself?",
-"What do you need to unlearn to lead effectively through the next decade?",
-];
-
-const SYSTEM = "You are a strategic advisor to a senior KPMG partner who leads Mining, Energy & Utilities. Be direct, insightful, and provocative in the style of Steve Bartlett from Diary of a CEO. Avoid corporate jargon. Be concise and human.";
-
-// ── API Call ─────────────────────────────────────────────────────────────
-async function callClaude(prompt, systemPrompt, apiKey, onResult) {
-const res = await fetch("https://api.anthropic.com/v1/messages", {
-method: "POST",
-headers: {
-"Content-Type": "application/json",
-"x-api-key": apiKey,
-"anthropic-version": "2023-06-01",
-"anthropic-dangerous-direct-browser-access": "true",
-},
-body: JSON.stringify({
-model: "claude-sonnet-4-5",
-max_tokens: 1000,
-system: systemPrompt || SYSTEM,
-messages: [{ role: "user", content: prompt }],
-}),
-});
-
-if (!res.ok) {
-const errText = await res.text().catch(() => "no body");
-throw new Error(`API ${res.status}: ${errText}`);
-}
-const data = await res.json();
-if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
-const text = data.content?.map(b => b.text || "").join("") || "";
-if (!text) throw new Error("Empty response from API");
-onResult(text);
-return text;
-}
-
-// ── Shared UI ─────────────────────────────────────────────────────────────
-function Spinner() {
-return React.createElement("div", { style: {
-width: 13, height: 13, flexShrink: 0,
-border: "2px solid rgba(200,169,110,0.3)",
-borderTopColor: GOLD, borderRadius: "50%",
-animation: "spin .7s linear infinite", display: "inline-block",
-}});
-}
-
-function GoldBtn({ onClick, disabled, children, small, outline }) {
-return React.createElement("button", {
-onClick, disabled,
-style: {
-background: outline ? "transparent" : disabled ? "#1c1a16" : `linear-gradient(135deg, ${GOLD}, #a8883e)`,
-color: outline ? GOLD : disabled ? "#444" : "#0a0a0a",
-border: outline ? `1px solid ${GOLD}` : "none",
-borderRadius: 6, padding: small ? "6px 14px" : "10px 22px",
-fontSize: small ? 11 : 12, fontWeight: 600,
-cursor: disabled ? "not-allowed" : "pointer", letterSpacing: "0.06em",
-textTransform: "uppercase", opacity: disabled ? 0.4 : 1,
-whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6,
-transition: "opacity .15s",
-}
-}, children);
-}
-
-function Card({ children, style }) {
-return React.createElement("div", {
-style: { background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 24, ...style }
-}, children);
-}
-
-function Label({ children }) {
-return React.createElement("div", {
-style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 11, letterSpacing: "0.15em", color: GOLD, marginBottom: 6, textTransform: "uppercase" }
-}, children);
-}
-
-function TA({ value, onChange, placeholder, rows = 3 }) {
-return React.createElement("textarea", {
-value, placeholder, rows,
-onChange: e => onChange(e.target.value),
-style: {
-width: "100%", background: "#0d0c0a", border: `1px solid ${BORDER}`, borderRadius: 8,
-color: "#f0ece4", fontSize: 14, lineHeight: 1.6,
-padding: "10px 14px", outline: "none", marginTop: 2,
-}
-});
-}
-
-function TextInput({ value, onChange, placeholder, style }) {
-return React.createElement("input", {
-type: "text", value, placeholder,
-onChange: e => onChange(e.target.value),
-style: {
-background: "#0d0c0a", border: `1px solid ${BORDER}`, borderRadius: 8,
-color: "#f0ece4", fontSize: 14, padding: "9px 14px", outline: "none",
-...style,
-}
-});
-}
-
-function AIBlock({ content, loading, label = "AI INSIGHT" }) {
-if (!content && !loading) return null;
-return React.createElement("div", {
-className: content ? "fade-up" : "",
-style: {
-marginTop: 12, background: "rgba(200,169,110,0.06)",
-border: "1px solid rgba(200,169,110,0.28)", borderRadius: 8, padding: "14px 16px",
-}
-},
-React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 10 } },
-React.createElement("span", { style: { fontFamily: "'Bebas Neue'", fontSize: 10, letterSpacing: "0.14em", color: GOLD } }, `✦ ${label}`),
-loading && React.createElement("span", { style: { fontSize: 10, color: "#666", fontStyle: "italic" } }, "Working…"),
-),
-loading && !content
-? React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "center", opacity: 0.6 } },
-React.createElement(Spinner),
-React.createElement("span", { style: { fontSize: 12, color: "#777", fontStyle: "italic" } }, "Calling Claude API…"),
-)
-: React.createElement("div", {
-style: { fontSize: 13.5, lineHeight: 1.75, color: "#e8dfc8", whiteSpace: "pre-wrap" }
-}, content)
-);
-}
-
-// ── API Key Modal ─────────────────────────────────────────────────────────
-function ApiKeyModal({ onSave }) {
-const [key, setKey] = useState("");
-return React.createElement("div", { className: "modal-overlay" },
-React.createElement("div", { className: "modal" },
-React.createElement("div", { style: { fontFamily: "'Bebas Neue'", fontSize: 10, letterSpacing: "0.2em", color: GOLD, marginBottom: 8 } }, "KPMG — CEO ENGAGEMENT STUDIO"),
-React.createElement("div", { style: { fontFamily: "'DM Serif Display', serif", fontSize: 22, color: "#f0ece4", marginBottom: 16 } }, "Enter your Anthropic API Key"),
-React.createElement("p", { style: { fontSize: 13, color: "#888", lineHeight: 1.7, marginBottom: 20 } },
-"Your key is stored only in your browser session — never sent anywhere except directly to the Anthropic API. Get your key at ",
-React.createElement("a", { href: "https://console.anthropic.com", target: "_blank", style: { color: GOLD } }, "console.anthropic.com"),
-"."
-),
-React.createElement("input", {
-type: "password",
-value: key,
-onChange: e => setKey(e.target.value),
-placeholder: "sk-ant-...",
-onKeyDown: e => e.key === "Enter" && key.startsWith("sk-") && onSave(key),
-style: {
-width: "100%", background: "#0d0c0a", border: `1px solid ${BORDER}`,
-borderRadius: 8, color: "#f0ece4", fontSize: 14,
-padding: "12px 14px", outline: "none", marginBottom: 16,
-}
-}),
-React.createElement(GoldBtn, {
-onClick: () => key.startsWith("sk-") && onSave(key),
-disabled: !key.startsWith("sk-"),
-}, "Start Session"),
-React.createElement("p", { style: { fontSize: 11, color: "#555", marginTop: 12 } },
-"⚠ This app calls the Anthropic API directly from your browser. Standard API costs apply."
-),
-)
-);
-}
-
-// ── Tab 1 ─────────────────────────────────────────────────────────────────
-function Tab1({ state, setState, apiKey }) {
-const [profileLoading, setProfileLoading] = useState(false);
-const [insightLoading, setInsightLoading] = useState({});
-
-const fetchProfile = async () => {
-if (!state.ceoName) return;
-setProfileLoading(true);
-setState(p => ({ ...p, profile: "" }));
-try {
-await callClaude(
-`Give me a concise but rich briefing on ${state.ceoName} — background, known leadership style, major decisions, public positions on energy/mining/AI, notable controversies or achievements. 4-5 punchy paragraphs. Include what drives them as a person if known. Be frank.`,
-"You are a world-class executive research analyst. Be direct, factual, insightful. No platitudes.",
-apiKey,
-t => setState(p => ({ ...p, profile: t }))
-);
-} catch (e) { setState(p => ({ ...p, profile: `⚠ Error: ${e.message}` })); }
-setProfileLoading(false);
-};
-
-const genInsight = async (i) => {
-const ans = state.answers?.[i] || "";
-if (!ans.trim()) return;
-setInsightLoading(p => ({ ...p, [i]: true }));
-setState(p => ({ ...p, insights: { ...p.insights, [i]: "" } }));
-try {
-await callClaude(
-`Context: KPMG Mining, Energy & Utilities lead partner meeting with ${state.ceoName || "a CEO"}.\nQuestion: "${QUESTIONS[i]}"\nResponse: "${ans}"\n\nGive 3 sharp insights from this answer, what it reveals about them as a leader, and 1-2 follow-up probes. Direct, no fluff.`,
-SYSTEM, apiKey,
-t => setState(p => ({ ...p, insights: { ...p.insights, [i]: t } }))
-);
-} catch (e) { setState(p => ({ ...p, insights: { ...p.insights, [i]: `⚠ Error: ${e.message}` } })); }
-setInsightLoading(p => ({ ...p, [i]: false }));
-};
-
-const sel = state.selectedQuestions || [];
-const toggle = i => setState(p => ({
-...p,
-selectedQuestions: sel.includes(i) ? sel.filter(x => x !== i) : [...sel, i]
-}));
-
-return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 24 } },
-// Profile card
-React.createElement(Card, {},
-React.createElement(Label, {}, "Leader Profile"),
-React.createElement("div", { style: { display: "flex", gap: 12, marginBottom: 14, flexWrap: "wrap", alignItems: "center" } },
-React.createElement("input", {
-type: "text",
-value: state.ceoName || "",
-onChange: e => setState(p => ({ ...p, ceoName: e.target.value })),
-placeholder: "CEO / Board Chair full name…",
-style: {
-flex: 1, minWidth: 200, background: "#0d0c0a", border: `1px solid ${BORDER}`,
-borderRadius: 8, color: "#f0ece4", fontSize: 16,
-padding: "10px 14px", outline: "none", fontWeight: 500,
-}
-}),
-React.createElement(GoldBtn, {
-onClick: fetchProfile,
-disabled: !state.ceoName || profileLoading,
-}, profileLoading ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Researching…") : "✦ AI Research"),
-),
-React.createElement(AIBlock, { content: state.profile, loading: profileLoading, label: "RESEARCH BRIEFING" }),
-React.createElement("div", { style: { marginTop: 16 } },
-React.createElement(Label, {}, "Pre-meeting notes"),
-React.createElement(TA, {
-value: state.preNotes || "",
-onChange: v => setState(p => ({ ...p, preNotes: v })),
-placeholder: "Context, relationship history, agenda priorities…",
-rows: 3,
-}),
-),
-),
-// Questions card
-React.createElement(Card, {},
-React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 } },
-React.createElement(Label, {}, "Question Bank — Steve Bartlett Style"),
-React.createElement("span", { style: { fontSize: 11, color: "#555", fontStyle: "italic" } }, "✓ to include in report"),
-),
-React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 14 } },
-...QUESTIONS.map((q, i) =>
-React.createElement("div", {
-key: i,
-style: {
-background: "#0d0c0a",
-border: `1px solid ${sel.includes(i) ? GOLD : BORDER}`,
-borderRadius: 10, padding: "14px 16px", transition: "border-color .2s",
-}
-},
-React.createElement("div", { style: { display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 10 } },
-React.createElement("button", {
-onClick: () => toggle(i),
-style: {
-width: 20, height: 20, flexShrink: 0, marginTop: 2,
-background: sel.includes(i) ? GOLD : "transparent",
-border: `2px solid ${sel.includes(i) ? GOLD : "#444"}`,
-borderRadius: 4, cursor: "pointer", color: "#0a0a0a",
-fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center",
-}
-}, sel.includes(i) ? "✓" : ""),
-React.createElement("div", { style: { fontSize: 14, lineHeight: 1.6, color: "#e8dfc8", fontStyle: "italic", flex: 1 } }, `"${q}"`),
-),
-React.createElement(TA, {
-value: state.answers?.[i] || "",
-onChange: v => setState(p => ({ ...p, answers: { ...p.answers, [i]: v } })),
-placeholder: "Capture their response…",
-rows: 2,
-}),
-React.createElement("div", { style: { display: "flex", justifyContent: "flex-end", marginTop: 8 } },
-React.createElement(GoldBtn, {
-small: true, outline: true,
-onClick: () => genInsight(i),
-disabled: insightLoading[i] || !state.answers?.[i]?.trim(),
-}, insightLoading[i] ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Analysing…") : "✦ Get Insight"),
-),
-React.createElement(AIBlock, { content: state.insights?.[i], loading: insightLoading[i] }),
-)
-),
-),
-React.createElement("div", { style: { marginTop: 20 } },
-React.createElement(Label, {}, "Custom Questions / Notes"),
-React.createElement(TA, {
-value: state.customQuestions || "",
-onChange: v => setState(p => ({ ...p, customQuestions: v })),
-placeholder: "Your own questions or additional notes…",
-rows: 4,
-}),
-),
-),
-);
-}
-
-// ── Tab 2 ─────────────────────────────────────────────────────────────────
-function Tab2({ state, setState, apiKey }) {
-const [povLoading, setPovLoading] = useState([false, false, false]);
-const [trendLoading, setTrendLoading] = useState(false);
-
-const fetchPOV = async (idx) => {
-if (!state.keyInterests?.[idx]) return;
-setPovLoading(p => { const n = [...p]; n[idx] = true; return n; });
-setState(p => ({ ...p, povs: { ...p.povs, [idx]: "" } }));
-const ans = Object.entries(state.answers || {}).filter(([, v]) => v?.trim())
-.map(([k, v]) => `Q: "${QUESTIONS[k]}"\nA: "${v}"`).join("\n\n");
-try {
-await callClaude(
-`KPMG Mining, Energy & Utilities lead partner. Just spoke with ${state.ceoName || "a CEO"}.\n\nConversation:\n${ans || "No answers yet."}\n\nKey interest: "${state.keyInterests[idx]}"\n\nGive:\n1. A sharp KPMG point of view (2-3 bold sentences)\n2. What this means specifically for their sector\n3. Three incisive follow-up questions\n4. A contrarian perspective they haven't considered\n\nBe provocative, not safe.`,
-SYSTEM, apiKey,
-t => setState(p => ({ ...p, povs: { ...p.povs, [idx]: t } }))
-);
-} catch (e) { setState(p => ({ ...p, povs: { ...p.povs, [idx]: `⚠ Error: ${e.message}` } })); }
-setPovLoading(p => { const n = [...p]; n[idx] = false; return n; });
-};
-
-const fetchTrends = async () => {
-setTrendLoading(true);
-setState(p => ({ ...p, futureTrends: "" }));
-try {
-await callClaude(
-`Meeting with ${state.ceoName || "a CEO"} in mining/energy/utilities. Their interests: ${(state.keyInterests || []).filter(Boolean).join(", ")}.\n\n5-point briefing on critical emerging tech and macro trends — AI, quantum, automation, energy transition. For each: what it means for their sector, the timeline, and the key question it raises. KPMG-sharp, not generic.`,
-SYSTEM, apiKey,
-t => setState(p => ({ ...p, futureTrends: t }))
-);
-} catch (e) { setState(p => ({ ...p, futureTrends: `⚠ Error: ${e.message}` })); }
-setTrendLoading(false);
-};
-
-const placeholders = ["e.g. AI adoption roadmap", "e.g. Capital allocation in energy transition", "e.g. Workforce & automation anxiety"];
-
-return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 24 } },
-React.createElement(Card, {},
-React.createElement(Label, {}, "3 Key Interest Areas"),
-React.createElement("p", { style: { fontSize: 13, color: "#777", marginBottom: 16, lineHeight: 1.6 } },
-"Define areas that emerged — then use AI to generate bold POVs and follow-up probes."
-),
-...[0, 1, 2].map(idx =>
-React.createElement("div", { key: idx, style: { marginBottom: 20 } },
-React.createElement(Label, {}, `Area ${idx + 1}`),
-React.createElement("div", { style: { display: "flex", gap: 10, marginBottom: 8 } },
-React.createElement("input", {
-type: "text",
-value: state.keyInterests?.[idx] || "",
-onChange: e => {
-const arr = [...(state.keyInterests || ["", "", ""])];
-arr[idx] = e.target.value;
-setState(p => ({ ...p, keyInterests: arr }));
-},
-placeholder: placeholders[idx],
-style: {
-flex: 1, background: "#0d0c0a", border: `1px solid ${BORDER}`,
-borderRadius: 8, color: "#f0ece4", fontSize: 14, padding: "9px 14px", outline: "none",
-}
-}),
-React.createElement(GoldBtn, {
-onClick: () => fetchPOV(idx),
-disabled: povLoading[idx] || !state.keyInterests?.[idx],
-}, povLoading[idx] ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Thinking…") : "✦ AI POV"),
-),
-React.createElement(AIBlock, { content: state.povs?.[idx], loading: povLoading[idx], label: `POV — AREA ${idx + 1}` }),
-)
-),
-),
-React.createElement(Card, {},
-React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 } },
-React.createElement(Label, {}, "Future Trends Briefing"),
-React.createElement(GoldBtn, { onClick: fetchTrends, disabled: trendLoading },
-trendLoading ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Generating…") : "✦ AI Trends Brief"
-),
-),
-React.createElement("p", { style: { fontSize: 13, color: "#777", marginBottom: 12 } },
-"AI, quantum, automation & energy transition — lead this conversation with authority."
-),
-React.createElement(AIBlock, { content: state.futureTrends, loading: trendLoading, label: "TRENDS BRIEFING" }),
-React.createElement("div", { style: { marginTop: 16 } },
-React.createElement(Label, {}, "Your observations"),
-React.createElement(TA, {
-value: state.tab2Notes || "",
-onChange: v => setState(p => ({ ...p, tab2Notes: v })),
-placeholder: "Themes, tensions, opportunities you're seeing…",
-rows: 4,
-}),
-),
-),
-);
-}
-
-// ── Tab 3 ─────────────────────────────────────────────────────────────────
-function Tab3({ state, setState, apiKey }) {
-const [loading, setLoading] = useState(false);
-
-const fetchActions = async () => {
-setLoading(true);
-setState(p => ({ ...p, suggestedActions: "" }));
-const summary = [
-state.profile ? `Background: ${state.profile.substring(0, 400)}` : "",
-Object.entries(state.answers || {}).filter(([, v]) => v?.trim())
-.map(([k, v]) => `Q: ${QUESTIONS[k].substring(0, 60)}… A: ${v}`).join("\n"),
-(state.keyInterests || []).filter(Boolean).map(x => `Interest: ${x}`).join("\n"),
-state.tab2Notes || "",
-].filter(Boolean).join("\n\n");
-try {
-await callClaude(
-`KPMG Mining, Energy & Utilities lead partner. Based on my conversation with ${state.ceoName || "this CEO"}, suggest 6 high-impact strategic actions across 90 days.\n\nContext:\n${summary || "General mining/energy/utilities executive engagement"}\n\nFormat each:\n[0-30d / 30-60d / 60-90d] ACTION TITLE\nWhy it matters: (1 sentence)\nKPMG angle: (1 sentence)\n\nSpecific, actionable, commercially grounded. No consulting fluff.`,
-SYSTEM, apiKey,
-t => setState(p => ({ ...p, suggestedActions: t }))
-);
-} catch (e) { setState(p => ({ ...p, suggestedActions: `⚠ Error: ${e.message}` })); }
-setLoading(false);
-};
-
-return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 24 } },
-React.createElement(Card, {},
-React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 } },
-React.createElement(Label, {}, "90-Day Strategic Actions"),
-React.createElement(GoldBtn, { onClick: fetchActions, disabled: loading },
-loading ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Generating…") : "✦ AI Suggest Actions"
-),
-),
-React.createElement(AIBlock, { content: state.suggestedActions, loading, label: "SUGGESTED ACTIONS" }),
-React.createElement("div", { style: { marginTop: 22 } },
-React.createElement(Label, {}, "Actions Agreed in the Meeting"),
-React.createElement("p", { style: { fontSize: 12, color: "#555", marginBottom: 10 } },
-"Record what you actually committed to in the room."
-),
-...(state.agreedActions || [""]).map((action, i) =>
-React.createElement("div", { key: i, style: { display: "flex", gap: 8, marginBottom: 8, alignItems: "center" } },
-React.createElement("input", {
-type: "text",
-value: action,
-onChange: e => {
-const arr = [...(state.agreedActions || [""])];
-arr[i] = e.target.value;
-setState(p => ({ ...p, agreedActions: arr }));
-},
-placeholder: `Action ${i + 1}…`,
-style: {
-flex: 1, background: "#0d0c0a", border: `1px solid ${BORDER}`, borderRadius: 8,
-color: "#f0ece4", fontSize: 14, padding: "9px 14px", outline: "none",
-}
-}),
-React.createElement("div", { style: { display: "flex", gap: 4 } },
-i === (state.agreedActions || [""]).length - 1 && (state.agreedActions || [""]).length < 12 &&
-React.createElement(GoldBtn, {
-small: true,
-onClick: () => setState(p => ({ ...p, agreedActions: [...(p.agreedActions || [""]), ""] }))
-}, "+ Add"),
-(state.agreedActions || [""]).length > 1 &&
-React.createElement(GoldBtn, {
-small: true, outline: true,
-onClick: () => setState(p => ({ ...p, agreedActions: (p.agreedActions || [""]).filter((_, j) => j !== i) }))
-}, "✕"),
-),
-)
-),
-),
-),
-React.createElement(Card, {},
-React.createElement(Label, {}, "Owner / Timeline / Dependencies"),
-React.createElement(TA, {
-value: state.actionOwners || "",
-onChange: v => setState(p => ({ ...p, actionOwners: v })),
-placeholder: "Assign owners and dates, note blockers or dependencies…",
-rows: 4,
-}),
-),
-);
-}
-
-// ── Tab 4 ─────────────────────────────────────────────────────────────────
-function Tab4({ state, setState, apiKey }) {
-const [loading, setLoading] = useState(false);
-const [exp, setExp] = useState({ profile: true, questions: true, povs: true, actions: true, followup: true });
-
-const fetchFollowUp = async () => {
-setLoading(true);
-setState(p => ({ ...p, followUp: "" }));
-const summary = [
-`CEO: ${state.ceoName || "Unknown"}`,
-state.profile ? `Profile: ${state.profile.substring(0, 300)}` : "",
-Object.entries(state.answers || {}).filter(([, v]) => v?.trim())
-.map(([k, v]) => `- ${QUESTIONS[k].substring(0, 50)}… → ${v.substring(0, 100)}`).join("\n"),
-(state.keyInterests || []).filter(Boolean).map(x => `Interest: ${x}`).join(", "),
-].filter(Boolean).join("\n\n");
-try {
-await callClaude(
-`Senior KPMG partner. Based on this CEO engagement:\n\n${summary}\n\nWrite:\n1. Warm direct personal note to send within 24hr (3-4 sentences, human not corporate)\n2. Three specific follow-up meeting topics with clear value for THEM\n3. Two resources or provocations to send within 2 weeks\n4. One long-term relationship action showing genuine interest in their personal journey\n5. A headline for thought leadership you could co-develop together\n\nTone: warm respected peer, not vendor.`,
-SYSTEM, apiKey,
-t => setState(p => ({ ...p, followUp: t }))
-);
-} catch (e) { setState(p => ({ ...p, followUp: `⚠ Error: ${e.message}` })); }
-setLoading(false);
-};
-
-const buildHTML = () => {
-const ceo = state.ceoName || "CEO / Board Chair";
-const date = new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
-const sec = (h, b) => `<div class="section"><h2>${h}</h2><div class="content">${b || "<em>Not captured</em>"}</div></div>`;
-const qAndA = QUESTIONS.map((q, i) => {
-if (!state.answers?.[i] && !state.selectedQuestions?.includes(i)) return "";
-return `<div class="qa"><div class="q">"${q}"</div>
-${state.answers?.[i] ? `<div class="a"><strong>Response:</strong> ${state.answers[i]}</div>` : ""}
-${state.insights?.[i] ? `<div class="insight"><span class="tag">✦ Insight</span>${state.insights[i]}</div>` : ""}
-</div>`;
-}).filter(Boolean).join("");
-const povsHTML = (state.keyInterests || []).map((area, i) =>
-area ? `<div class="pov"><h3>${area}</h3>${state.povs?.[i] ? `<div class="content">${state.povs[i]}</div>` : ""}</div>` : ""
-).join("");
-const actHTML = [
-state.suggestedActions ? `<div class="content">${state.suggestedActions}</div>` : "",
-(state.agreedActions || []).filter(Boolean).length
-? `<h3>Agreed in Meeting</h3><ul>${(state.agreedActions || []).filter(Boolean).map(a => `<li>${a}</li>`).join("")}</ul>` : "",
-state.actionOwners ? `<h3>Owners & Timeline</h3><div class="content">${state.actionOwners}</div>` : "",
-].join("");
-
-return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<title>KPMG CEO Engagement — ${ceo}</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-<style>
-:root{--gold:#b8960e;--dark:#1a1814;--txt:#2c2820}
-*,*::before,*::after{box-sizing:border-box}
-body{font-family:'DM Sans',sans-serif;color:var(--txt);background:#fff;max-width:860px;margin:0 auto;padding:40px 32px;font-size:14px;line-height:1.75}
-.hdr{border-bottom:3px solid var(--gold);padding-bottom:22px;margin-bottom:32px}
-.kpmg{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px}
-h1{font-family:'DM Serif Display',serif;font-size:30px;font-weight:normal;color:var(--dark)}
-.sub{font-family:'DM Serif Display',serif;font-size:20px;color:var(--gold);font-style:italic}
-.meta{font-size:11px;color:#999;margin-top:8px}
-.section{margin-bottom:34px;page-break-inside:avoid}
-h2{font-family:'DM Serif Display',serif;font-size:17px;font-weight:normal;color:var(--dark);border-left:3px solid var(--gold);padding-left:12px;margin-bottom:14px}
-h3{font-size:12px;font-weight:600;color:var(--dark);text-transform:uppercase;letter-spacing:.07em;margin:14px 0 6px}
-.content{white-space:pre-wrap;color:#3c3830;font-size:13.5px}
-.qa{background:#f9f8f5;border-radius:8px;padding:16px 18px;margin-bottom:14px}
-.q{font-family:'DM Serif Display',serif;font-style:italic;font-size:14.5px;color:var(--dark);margin-bottom:8px}
-.a{font-size:13.5px;color:#3c3830;margin-bottom:8px}
-.insight{background:rgba(184,150,14,.08);border-left:2px solid var(--gold);padding:10px 14px;border-radius:0 6px 6px 0;font-size:13px;white-space:pre-wrap}
-.tag{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:5px}
-.pov{background:#f9f8f5;border-radius:8px;padding:16px 18px;margin-bottom:12px}
-.followup{background:#fffdf5;border:1px solid #e8d88a;border-radius:8px;padding:20px;white-space:pre-wrap;font-size:13.5px}
-.entry{background:#f9f8f5;border-radius:6px;padding:14px 18px;margin-bottom:10px}
-.elabel{font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
-.line{border-bottom:1px solid #d8d0c0;min-height:26px;margin-bottom:5px}
-ul{padding-left:18px} li{margin-bottom:5px}
-@media print{body{padding:20px}.section{page-break-inside:avoid}}
-</style></head><body>
-
-<div class="hdr">
-<div class="kpmg">KPMG Australia — Mining, Energy & Utilities</div>
-<h1>CEO Engagement Brief</h1>
-<div class="sub">${ceo}</div>
-<div class="meta">Prepared: ${date} &nbsp;|&nbsp; STRICTLY CONFIDENTIAL</div>
+<div id="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-kpmg">KPMG — CEO Engagement Studio</div>
+    <div class="modal-title">Enter your Anthropic API Key</div>
+    <p class="modal-desc">
+      Your key is stored only in this browser session — never sent anywhere except directly to the Anthropic API.
+      Get yours at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+    </p>
+    <input id="api-key-input" class="field mb12" type="password" placeholder="sk-ant-…" style="margin-bottom:12px">
+    <button class="btn" id="api-key-save">Start Session</button>
+    <p class="modal-warn">⚠ This app calls the Anthropic API directly from your browser. Standard API costs apply.</p>
+  </div>
 </div>
-${exp.profile && state.profile ? sec("Leader Profile", state.profile) : ""}
-${exp.profile && state.preNotes ? sec("Pre-Meeting Context", state.preNotes) : ""}
-${exp.questions && qAndA ? `<div class="section"><h2>Conversation — Questions & Responses</h2>${qAndA}</div>` : ""}
-${exp.povs && povsHTML ? `<div class="section"><h2>Strategic Points of View & Probes</h2>${povsHTML}</div>` : ""}
-${exp.povs && state.futureTrends ? sec("Future Trends Briefing", state.futureTrends) : ""}
-${exp.actions ? `<div class="section"><h2>90-Day Strategic Actions</h2>${actHTML}</div>` : ""}
-${exp.followup && state.followUp ? `<div class="section"><h2>Follow-Up Strategy</h2><div class="followup">${state.followUp}</div></div>` : ""}
-<div class="section">
-<h2>Post-Meeting Commitments — For Completion</h2>
-<p style="font-size:12px;color:#888;margin-bottom:14px">Complete within 24 hours. This page may be shared with ${ceo} as a record of commitments.</p>
-${[1,2,3,4].map(n => `<div class="entry"><div class="elabel">Commitment ${n}</div><div class="line"></div>
-<div style="display:flex;gap:16px;margin-top:6px">
-<div style="flex:1"><div class="elabel">Owner</div><div class="line"></div></div>
-<div style="flex:1"><div class="elabel">Due Date</div><div class="line"></div></div>
-</div></div>`).join("")}
+
+<!-- Header -->
+
+<div id="app-header">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="header-top">
+      <div>
+        <div class="kpmg-label">KPMG — Mining, Energy & Utilities</div>
+        <div class="app-title">CEO Engagement Studio ✦ AI</div>
+      </div>
+      <div id="header-right">
+        <div id="header-name"></div>
+        <button id="api-key-btn" onclick="showModal()">API Key</button>
+      </div>
+    </div>
+    <div class="tabs" id="tabs"></div>
+  </div>
 </div>
-<div style="margin-top:40px;padding-top:16px;border-top:1px solid #ddd;font-size:11px;color:#bbb;text-align:center">
-KPMG Australia — Confidential &nbsp;|&nbsp; Mining, Energy & Utilities &nbsp;|&nbsp; ${date}
-</div></body></html>`;
-};
+
+<!-- Main -->
+
+<div id="main">
+
+  <!-- TAB 0: Leader & Questions -->
+
+  <div class="tab-panel active" id="panel-0">
+    <div class="card">
+      <span class="label">Leader Profile</span>
+      <input class="field mb12" type="text" id="ceoName" placeholder="CEO / Board Chair full name…">
+      <span class="label">Organisation</span>
+      <input class="field mb12" type="text" id="org" placeholder="Company / Organisation…">
+      <span class="label">Meeting Date</span>
+      <input class="field" type="date" id="meetingDate" style="max-width:220px;margin-bottom:14px">
+      <div class="flex-between mb8">
+        <span class="label" style="margin-bottom:0">Background & Research</span>
+        <button class="btn btn-sm" id="btn-research" onclick="doResearch()">✦ AI Research</button>
+      </div>
+      <div id="ai-profile"></div>
+      <textarea class="field mt8" id="profile" rows="4" placeholder="Add your own notes — leadership style, background, what drives them…"></textarea>
+      <span class="label mt12">Pre-Meeting Context & Agenda</span>
+      <textarea class="field" id="preNotes" rows="3" placeholder="Relationship history, agenda priorities, what you want to achieve…"></textarea>
+    </div>
 
 ```
-const dl = (content, name, type) => {
-const blob = new Blob([content], { type });
-const url = URL.createObjectURL(blob);
-const a = document.createElement("a");
-a.href = url; a.download = name; a.click();
+<div class="card">
+  <div class="flex-between mb8">
+    <span class="label" style="margin-bottom:0">Question Bank — Steve Bartlett Style</span>
+    <span style="font-size:10px;color:#555;font-style:italic">✓ = include in report</span>
+  </div>
+  <p class="sublabel">Select questions to use. Capture responses and tap ✦ Get Insight for AI analysis.</p>
+  <div id="questions-list"></div>
+  <span class="label mt16">Additional Questions / Custom Notes</span>
+  <textarea class="field" id="customQuestions" rows="4" placeholder="Your own questions or notes from the conversation…"></textarea>
+</div>
+```
+
+  </div>
+
+  <!-- TAB 1: Explore -->
+
+  <div class="tab-panel" id="panel-1">
+    <div class="card">
+      <span class="label">3 Key Interest Areas</span>
+      <p class="sublabel">Define areas that emerged — then use AI to generate bold POVs and follow-up probes.</p>
+      <div id="interests-list"></div>
+    </div>
+    <div class="card">
+      <div class="flex-between mb8">
+        <span class="label" style="margin-bottom:0">Future Trends Briefing</span>
+        <button class="btn btn-sm" id="btn-trends" onclick="doTrends()">✦ AI Trends Brief</button>
+      </div>
+      <p class="sublabel">AI, quantum, automation & energy transition — lead this conversation with authority.</p>
+      <div id="ai-trends"></div>
+      <span class="label mt16">Your Observations</span>
+      <textarea class="field" id="tab2Notes" rows="4" placeholder="Themes, tensions, opportunities you're seeing…"></textarea>
+    </div>
+  </div>
+
+  <!-- TAB 2: Actions -->
+
+  <div class="tab-panel" id="panel-2">
+    <div class="card">
+      <div class="flex-between mb8">
+        <span class="label" style="margin-bottom:0">90-Day Strategic Actions</span>
+        <button class="btn btn-sm" id="btn-actions" onclick="doActions()">✦ AI Suggest Actions</button>
+      </div>
+      <div id="ai-actions"></div>
+      <div class="mt20">
+        <span class="label">Actions Agreed in the Meeting</span>
+        <p class="sublabel">Record commitments made in the room.</p>
+        <div id="agreed-list"></div>
+        <button class="btn btn-sm btn-outline mt8" onclick="addAgreed()">+ Add</button>
+      </div>
+      <span class="label mt16">Owner / Timeline / Dependencies</span>
+      <textarea class="field" id="actionOwners" rows="3" placeholder="Assign owners and dates, note blockers…"></textarea>
+    </div>
+  </div>
+
+  <!-- TAB 3: Output -->
+
+  <div class="tab-panel" id="panel-3">
+    <div class="card">
+      <div class="flex-between mb8">
+        <span class="label" style="margin-bottom:0">AI Follow-Up Strategy</span>
+        <button class="btn btn-sm" id="btn-followup" onclick="doFollowUp()">✦ Generate Follow-Up</button>
+      </div>
+      <p class="sublabel">Personalised to their goals, business context and trends discussed. Peer-level, warm, not vendor.</p>
+      <div id="ai-followup"></div>
+      <span class="label mt16">Your Additional Notes</span>
+      <textarea class="field" id="followUpNotes" rows="4" placeholder="Personal commitments, details to remember, next touchpoints…"></textarea>
+    </div>
+
+```
+<div class="card">
+  <span class="label">Export — Select Sections</span>
+  <p class="sublabel">HTML exports open in any browser. Use Preview → Print → Save as PDF to share with the CEO.</p>
+  <div id="export-toggles" class="mb12"></div>
+  <div class="btn-row">
+    <button class="btn" onclick="downloadReport()">↓ Download Report</button>
+    <button class="btn btn-outline" onclick="previewReport()">↗ Preview / Print to PDF</button>
+  </div>
+  <div class="note-box">
+    <div class="note-title">✦ PDF on iPhone</div>
+    <p>Tap Preview → Share icon → Print. On desktop: File → Print → Save as PDF.</p>
+  </div>
+</div>
+
+<div class="card">
+  <span class="label">Session Backup</span>
+  <p class="sublabel">Nothing stored on any server — save and restore locally.</p>
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="saveBackup()">↓ Save Backup</button>
+    <label class="restore-label">
+      ↑ Restore Backup
+      <input type="file" accept=".json" onchange="loadBackup(event)" style="display:none">
+    </label>
+  </div>
+</div>
+```
+
+  </div>
+
+</div><!-- /main -->
+
+<script>
+'use strict';
+
+// ── State ────────────────────────────────────────────────────────────────────
+var S = {
+  ceoName:'', org:'', meetingDate:'', profile:'', preNotes:'',
+  answers:{}, insights:{}, aiInsights:{}, selectedQ:[],
+  customQuestions:'',
+  keyInterests:['','',''], povs:{}, aiPovs:{},
+  tab2Notes:'',
+  aiActions:'', agreed:[''], actionOwners:'',
+  aiFollowUp:'', followUpNotes:'',
+  exp:{profile:true,questions:true,povs:true,actions:true,followup:true},
+};
+
+var API_KEY = sessionStorage.getItem('anthro_key') || '';
+
+// ── Constants ────────────────────────────────────────────────────────────────
+var QUESTIONS = [
+  "What does success actually mean to you right now — not the LinkedIn version?",
+  "When did you last feel genuinely out of your depth, and what did that teach you?",
+  "What belief are you holding that most people around you would disagree with?",
+  "If you stripped away the title tomorrow, who are you?",
+  "What's the decision you made that looked wrong to everyone else but you were certain about?",
+  "What's the gap between who you present to your board and who you actually are?",
+  "Where is the energy in your industry right now — and where is it dying?",
+  "What are you most afraid people will discover about how you're running this organisation?",
+  "What does the next generation of leaders in your sector fundamentally misunderstand?",
+  "If AI, quantum and automation reshape your sector completely in 10 years, what's your honest assessment of whether your organisation will survive?",
+  "What would you do differently if you had no obligation to the current stakeholders?",
+  "What's the conversation your board needs to have but nobody's willing to start?",
+  "When you look at the energy transition — are you leading it, managing it, or hoping it resolves itself?",
+  "What do you need to unlearn to lead effectively through the next decade?",
+];
+
+var TABS = [
+  {label:'01 — Leader',  sub:'Profile & Questions'},
+  {label:'02 — Explore', sub:'POVs & Trends'},
+  {label:'03 — Actions', sub:'90-Day Strategy'},
+  {label:'04 — Output',  sub:'Follow-Up & Export'},
+];
+
+var EXP_LABELS = [
+  {k:'profile',   label:'Leader Background & Pre-Meeting Context'},
+  {k:'questions', label:'Questions, Responses & AI Insights'},
+  {k:'povs',      label:'Key Interest Areas, POVs & Trends'},
+  {k:'actions',   label:'90-Day Actions & Agreed Commitments'},
+  {k:'followup',  label:'Follow-Up Strategy'},
+];
+
+var SYSTEM = "You are a strategic advisor to a senior KPMG partner who leads Mining, Energy & Utilities. Be direct, insightful, and provocative in the style of Steve Bartlett from Diary of a CEO. Avoid corporate jargon. Be concise and human.";
+var TF = ['0-30 days','30-60 days','60-90 days'];
+
+// ── Modal ────────────────────────────────────────────────────────────────────
+function showModal() {
+  document.getElementById('modal-overlay').classList.remove('hidden');
+  document.getElementById('api-key-input').value = API_KEY;
+}
+function hideModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+}
+document.getElementById('api-key-save').onclick = function() {
+  var k = document.getElementById('api-key-input').value.trim();
+  if (!k.startsWith('sk-')) { alert('Key must start with sk-'); return; }
+  API_KEY = k;
+  sessionStorage.setItem('anthro_key', k);
+  hideModal();
+};
+document.getElementById('api-key-input').onkeydown = function(e) {
+  if (e.key === 'Enter') document.getElementById('api-key-save').click();
+};
+if (API_KEY) hideModal();
+
+// ── API call ─────────────────────────────────────────────────────────────────
+async function callClaude(prompt, systemPrompt) {
+  if (!API_KEY) { showModal(); throw new Error('No API key set'); }
+  var res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 1000,
+      system: systemPrompt || SYSTEM,
+      messages: [{role:'user', content:prompt}],
+    }),
+  });
+  if (!res.ok) {
+    var errText = await res.text().catch(function(){ return 'no body'; });
+    throw new Error('API ' + res.status + ': ' + errText);
+  }
+  var data = await res.json();
+  if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+  var text = (data.content || []).map(function(b){ return b.text || ''; }).join('');
+  if (!text) throw new Error('Empty response from API');
+  return text;
+}
+
+// ── AI block helpers ─────────────────────────────────────────────────────────
+function showThinking(containerId, label) {
+  var el = document.getElementById(containerId);
+  el.innerHTML = '<div class="ai-block"><div class="ai-block-label">✦ ' + label +
+    ' <div class="spinner"></div></div><div class="ai-thinking"><div class="spinner"></div> Calling Claude API…</div></div>';
+}
+function showAIResult(containerId, label, text) {
+  var el = document.getElementById(containerId);
+  if (!text) { el.innerHTML = ''; return; }
+  var safe = esc(text);
+  el.innerHTML = '<div class="ai-block"><div class="ai-block-label">✦ ' + label + '</div>' +
+    '<div class="ai-text">' + safe + '</div></div>';
+}
+function showAIError(containerId, label, msg) {
+  var el = document.getElementById(containerId);
+  el.innerHTML = '<div class="ai-block"><div class="ai-block-label">✦ ' + label + '</div>' +
+    '<div class="ai-text" style="color:#c06060">⚠ Error: ' + esc(msg) + '</div></div>';
+}
+function setBtn(id, loading, loadingText, defaultText) {
+  var btn = document.getElementById(id);
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.innerHTML = loading ? '<div class="spinner"></div> ' + loadingText : defaultText;
+}
+
+// ── Tab 0: Research & Insights ───────────────────────────────────────────────
+async function doResearch() {
+  var name = S.ceoName;
+  if (!name) { alert('Enter a name first'); return; }
+  setBtn('btn-research', true, 'Researching…', '✦ AI Research');
+  showThinking('ai-profile', 'RESEARCH BRIEFING');
+  try {
+    var text = await callClaude(
+      'Give me a concise but rich briefing on ' + name + ' — background, known leadership style, major decisions, public positions on energy/mining/AI, notable controversies or achievements. 4-5 punchy paragraphs. Include what drives them as a person if known. Be frank.',
+      'You are a world-class executive research analyst. Be direct, factual, insightful. No platitudes.'
+    );
+    S.aiResearch = text;
+    showAIResult('ai-profile', 'RESEARCH BRIEFING', text);
+  } catch(e) { showAIError('ai-profile', 'RESEARCH BRIEFING', e.message); }
+  setBtn('btn-research', false, '', '✦ AI Research');
+}
+
+async function doInsight(i) {
+  var ans = S.answers[i] || '';
+  if (!ans.trim()) { alert('Capture a response first'); return; }
+  var btnId = 'btn-insight-' + i;
+  var aiId  = 'ai-insight-' + i;
+  setBtn(btnId, true, 'Analysing…', '✦ Get Insight');
+  showThinking(aiId, 'INSIGHT');
+  try {
+    var text = await callClaude(
+      'Context: KPMG Mining, Energy & Utilities lead partner meeting with ' + (S.ceoName || 'a CEO') + '.\n' +
+      'Question: "' + QUESTIONS[i] + '"\nResponse: "' + ans + '"\n\n' +
+      'Give 3 sharp insights from this answer, what it reveals about them as a leader, and 1-2 follow-up probes. Direct, no fluff.'
+    );
+    S.aiInsights[i] = text;
+    showAIResult(aiId, 'INSIGHT', text);
+  } catch(e) { showAIError(aiId, 'INSIGHT', e.message); }
+  setBtn(btnId, false, '', '✦ Get Insight');
+}
+
+// ── Tab 1: POVs & Trends ─────────────────────────────────────────────────────
+async function doPOV(idx) {
+  var area = S.keyInterests[idx];
+  if (!area) { alert('Enter an interest area first'); return; }
+  var btnId = 'btn-pov-' + idx;
+  var aiId  = 'ai-pov-' + idx;
+  setBtn(btnId, true, 'Thinking…', '✦ AI POV');
+  showThinking(aiId, 'POV — AREA ' + (idx+1));
+  var ansText = Object.keys(S.answers).filter(function(k){ return S.answers[k] && S.answers[k].trim(); })
+    .map(function(k){ return 'Q: "' + QUESTIONS[k] + '"\nA: "' + S.answers[k] + '"'; }).join('\n\n');
+  try {
+    var text = await callClaude(
+      'KPMG Mining, Energy & Utilities lead partner. Just spoke with ' + (S.ceoName || 'a CEO') + '.\n\n' +
+      'Conversation:\n' + (ansText || 'No answers yet.') + '\n\n' +
+      'Key interest: "' + area + '"\n\n' +
+      'Give:\n1. A sharp KPMG point of view (2-3 bold sentences)\n2. What this means specifically for their sector\n3. Three incisive follow-up questions\n4. A contrarian perspective they haven\'t considered\n\nBe provocative, not safe.'
+    );
+    S.aiPovs[idx] = text;
+    showAIResult(aiId, 'POV — AREA ' + (idx+1), text);
+  } catch(e) { showAIError(aiId, 'POV — AREA ' + (idx+1), e.message); }
+  setBtn(btnId, false, '', '✦ AI POV');
+}
+
+async function doTrends() {
+  setBtn('btn-trends', true, 'Generating…', '✦ AI Trends Brief');
+  showThinking('ai-trends', 'TRENDS BRIEFING');
+  var interests = S.keyInterests.filter(function(x){ return x; }).join(', ');
+  try {
+    var text = await callClaude(
+      'Meeting with ' + (S.ceoName || 'a CEO') + ' in mining/energy/utilities. Their interests: ' + (interests || 'general') + '.\n\n' +
+      '5-point briefing on critical emerging tech and macro trends — AI, quantum, automation, energy transition. For each: what it means for their sector, the timeline, and the key question it raises. KPMG-sharp, not generic.'
+    );
+    S.aiTrends = text;
+    showAIResult('ai-trends', 'TRENDS BRIEFING', text);
+  } catch(e) { showAIError('ai-trends', 'TRENDS BRIEFING', e.message); }
+  setBtn('btn-trends', false, '', '✦ AI Trends Brief');
+}
+
+// ── Tab 2: Actions ───────────────────────────────────────────────────────────
+async function doActions() {
+  setBtn('btn-actions', true, 'Generating…', '✦ AI Suggest Actions');
+  showThinking('ai-actions', 'SUGGESTED ACTIONS');
+  var summary = [
+    S.aiResearch ? 'Background: ' + S.aiResearch.substring(0, 400) : '',
+    Object.keys(S.answers).filter(function(k){ return S.answers[k] && S.answers[k].trim(); })
+      .map(function(k){ return 'Q: ' + QUESTIONS[k].substring(0,60) + '… A: ' + S.answers[k]; }).join('\n'),
+    S.keyInterests.filter(function(x){ return x; }).map(function(x){ return 'Interest: '+x; }).join('\n'),
+    S.tab2Notes || '',
+  ].filter(function(x){ return x; }).join('\n\n');
+  try {
+    var text = await callClaude(
+      'KPMG Mining, Energy & Utilities lead partner. Based on my conversation with ' + (S.ceoName || 'this CEO') + ', suggest 6 high-impact strategic actions across 90 days.\n\n' +
+      'Context:\n' + (summary || 'General mining/energy/utilities executive engagement') + '\n\n' +
+      'Format each:\n[0-30d / 30-60d / 60-90d] ACTION TITLE\nWhy it matters: (1 sentence)\nKPMG angle: (1 sentence)\n\nSpecific, actionable, commercially grounded. No consulting fluff.'
+    );
+    S.aiActions = text;
+    showAIResult('ai-actions', 'SUGGESTED ACTIONS', text);
+  } catch(e) { showAIError('ai-actions', 'SUGGESTED ACTIONS', e.message); }
+  setBtn('btn-actions', false, '', '✦ AI Suggest Actions');
+}
+
+// ── Tab 3: Follow-up ─────────────────────────────────────────────────────────
+async function doFollowUp() {
+  setBtn('btn-followup', true, 'Crafting…', '✦ Generate Follow-Up');
+  showThinking('ai-followup', 'FOLLOW-UP STRATEGY');
+  var summary = [
+    'CEO: ' + (S.ceoName || 'Unknown'),
+    S.aiResearch ? 'Profile: ' + S.aiResearch.substring(0, 300) : '',
+    Object.keys(S.answers).filter(function(k){ return S.answers[k] && S.answers[k].trim(); })
+      .map(function(k){ return '- ' + QUESTIONS[k].substring(0,50) + '… → ' + S.answers[k].substring(0,100); }).join('\n'),
+    S.keyInterests.filter(function(x){ return x; }).map(function(x){ return 'Interest: '+x; }).join(', '),
+  ].filter(function(x){ return x; }).join('\n\n');
+  try {
+    var text = await callClaude(
+      'Senior KPMG partner. Based on this CEO engagement:\n\n' + summary + '\n\n' +
+      'Write:\n1. Warm direct personal note to send within 24hr (3-4 sentences, human not corporate)\n' +
+      '2. Three specific follow-up meeting topics with clear value for THEM\n' +
+      '3. Two resources or provocations to send within 2 weeks\n' +
+      '4. One long-term relationship action showing genuine interest in their personal journey\n' +
+      '5. A headline for thought leadership you could co-develop together\n\nTone: warm respected peer, not vendor.'
+    );
+    S.aiFollowUp = text;
+    showAIResult('ai-followup', 'FOLLOW-UP STRATEGY', text);
+  } catch(e) { showAIError('ai-followup', 'FOLLOW-UP STRATEGY', e.message); }
+  setBtn('btn-followup', false, '', '✦ Generate Follow-Up');
+}
+
+// ── Build Questions list ─────────────────────────────────────────────────────
+function buildQuestions() {
+  var list = document.getElementById('questions-list');
+  list.innerHTML = '';
+  QUESTIONS.forEach(function(q, i) {
+    var sel = S.selectedQ.indexOf(i) !== -1;
+    var div = document.createElement('div');
+    div.className = 'q-block' + (sel ? ' selected' : '');
+    div.id = 'qblock-' + i;
+    div.innerHTML =
+      '<div class="q-header">' +
+        '<div class="tick' + (sel?' on':'') + '" id="tick-' + i + '" onclick="toggleQ(' + i + ')">' + (sel?'✓':'') + '</div>' +
+        '<div class="q-text">"' + q + '"</div>' +
+      '</div>' +
+      '<textarea class="field" rows="2" placeholder="Capture their response…" id="ans-' + i + '">' + esc(S.answers[i]||'') + '</textarea>' +
+
+```
+  '<span class="sublabel-small">Your notes</span>' +
+  '<textarea class="field" rows="2" placeholder="Your own insight or follow-up probe…" id="note-' + i + '">' + esc(S.insights[i]||'') + '</textarea>' +
+  '<div style="display:flex;justify-content:flex-end;margin-top:8px">' +
+    '<button class="btn btn-sm btn-outline" id="btn-insight-' + i + '" onclick="doInsight(' + i + ')">✦ Get Insight</button>' +
+  '</div>' +
+  '<div id="ai-insight-' + i + '"></div>';
+list.appendChild(div);
+
+// Bind answer textarea
+(function(idx) {
+  document.getElementById('ans-' + idx).addEventListener('input', function() {
+    S.answers[idx] = this.value;
+  });
+  document.getElementById('note-' + idx).addEventListener('input', function() {
+    S.insights[idx] = this.value;
+  });
+})(i);
+
+// Restore existing AI insight if any
+if (S.aiInsights[i]) {
+  showAIResult('ai-insight-' + i, 'INSIGHT', S.aiInsights[i]);
+}
+```
+
+});
+}
+
+function toggleQ(i) {
+var idx = S.selectedQ.indexOf(i);
+if (idx === -1) S.selectedQ.push(i); else S.selectedQ.splice(idx, 1);
+var sel = S.selectedQ.indexOf(i) !== -1;
+document.getElementById(‘qblock-’ + i).classList.toggle(‘selected’, sel);
+var tick = document.getElementById(‘tick-’ + i);
+tick.className = ‘tick’ + (sel ? ’ on’ : ‘’);
+tick.textContent = sel ? ‘✓’ : ‘’;
+}
+
+// ── Build Interests list ─────────────────────────────────────────────────────
+function buildInterests() {
+var list = document.getElementById(‘interests-list’);
+list.innerHTML = ‘’;
+[0,1,2].forEach(function(idx) {
+var div = document.createElement(‘div’);
+div.style.marginBottom = ‘20px’;
+div.innerHTML =
+‘<span class="label">Area ’ + (idx+1) + ‘</span>’ +
+‘<div style="display:flex;gap:10px;margin-bottom:8px">’ +
+‘<input class="field" type="text" id="interest-' + idx + '" placeholder="' +
+['e.g. AI adoption roadmap','e.g. Capital allocation in energy transition','e.g. Workforce & automation anxiety'][idx] +
+'" value="' + esc(S.keyInterests[idx]) + '" style="flex:1;margin-bottom:0">’ +
+‘<button class="btn btn-sm" id="btn-pov-' + idx + '" onclick="doPOV(' + idx + ')">✦ AI POV</button>’ +
+‘</div>’ +
+‘<div id="ai-pov-' + idx + '"></div>’ +
+‘<span class="sublabel-small mt8">Your notes on this area</span>’ +
+‘<textarea class="field" id="pov-note-' + idx + '" rows="2" placeholder="Your own POV or questions…">’ + esc(S.povs[idx]||’’) + ‘</textarea>’;
+list.appendChild(div);
+
+```
+(function(i) {
+  document.getElementById('interest-' + i).addEventListener('input', function() {
+    S.keyInterests[i] = this.value;
+  });
+  document.getElementById('pov-note-' + i).addEventListener('input', function() {
+    S.povs[i] = this.value;
+  });
+})(idx);
+
+if (S.aiPovs[idx]) {
+  showAIResult('ai-pov-' + idx, 'POV — AREA ' + (idx+1), S.aiPovs[idx]);
+}
+```
+
+});
+}
+
+// ── Build Agreed list ────────────────────────────────────────────────────────
+function buildAgreed() {
+var list = document.getElementById(‘agreed-list’);
+list.innerHTML = ‘’;
+S.agreed.forEach(function(v, i) {
+var row = document.createElement(‘div’);
+row.style.cssText = ‘display:flex;gap:8px;margin-bottom:8px;align-items:center’;
+row.innerHTML =
+‘<input class="field" type="text" id="agreed-' + i + '" placeholder="Agreed action ' + (i+1) + '…" value="' + esc(v) + '" style="flex:1;margin-bottom:0">’ +
+(S.agreed.length > 1 ? ‘<button class="btn btn-sm btn-outline" onclick="removeAgreed(' + i + ')">✕</button>’ : ‘’);
+list.appendChild(row);
+(function(idx) {
+document.getElementById(‘agreed-’ + idx).addEventListener(‘input’, function() {
+S.agreed[idx] = this.value;
+});
+})(i);
+});
+}
+
+function addAgreed() { S.agreed.push(’’); buildAgreed(); }
+function removeAgreed(i) { S.agreed.splice(i,1); buildAgreed(); }
+
+// ── Build Export Toggles ─────────────────────────────────────────────────────
+function buildExportToggles() {
+var container = document.getElementById(‘export-toggles’);
+container.innerHTML = ‘’;
+EXP_LABELS.forEach(function(item) {
+var row = document.createElement(‘div’);
+row.className = ‘toggle-row’ + (S.exp[item.k] ? ’ on’ : ‘’);
+row.id = ‘toggle-’ + item.k;
+row.innerHTML =
+‘<div class="toggle-box' + (S.exp[item.k]?' on':'') + '">’ + (S.exp[item.k]?‘✓’:’’) + ‘</div>’ +
+‘<span class="toggle-label">’ + item.label + ‘</span>’;
+row.onclick = function() {
+S.exp[item.k] = !S.exp[item.k];
+row.classList.toggle(‘on’, S.exp[item.k]);
+var box = row.querySelector(’.toggle-box’);
+box.classList.toggle(‘on’, S.exp[item.k]);
+box.textContent = S.exp[item.k] ? ‘✓’ : ‘’;
+};
+container.appendChild(row);
+});
+}
+
+// ── Build Tabs ───────────────────────────────────────────────────────────────
+function buildTabs() {
+var container = document.getElementById(‘tabs’);
+TABS.forEach(function(t, i) {
+var btn = document.createElement(‘button’);
+btn.className = ‘tab-btn’ + (i === 0 ? ’ active’ : ‘’);
+btn.innerHTML = ‘<div>’ + t.label + ‘</div><div class="tab-sub">’ + t.sub + ‘</div>’;
+btn.onclick = function() { switchTab(i); };
+container.appendChild(btn);
+});
+}
+
+function switchTab(i) {
+document.querySelectorAll(’.tab-btn’).forEach(function(b,j){ b.classList.toggle(‘active’, j===i); });
+document.querySelectorAll(’.tab-panel’).forEach(function(p,j){ p.classList.toggle(‘active’, j===i); });
+}
+
+// ── Bind simple fields ───────────────────────────────────────────────────────
+function bindFields() {
+function bind(id, key, cb) {
+var el = document.getElementById(id);
+if (!el) return;
+el.value = S[key] || ‘’;
+el.addEventListener(‘input’, function() {
+S[key] = el.value;
+if (cb) cb();
+});
+}
+bind(‘ceoName’,‘ceoName’, updateHeader);
+bind(‘org’,‘org’, updateHeader);
+bind(‘meetingDate’,‘meetingDate’);
+bind(‘profile’,‘profile’);
+bind(‘preNotes’,‘preNotes’);
+bind(‘customQuestions’,‘customQuestions’);
+bind(‘tab2Notes’,‘tab2Notes’);
+bind(‘actionOwners’,‘actionOwners’);
+bind(‘followUpNotes’,‘followUpNotes’);
+}
+
+function updateHeader() {
+var el = document.getElementById(‘header-name’);
+var name = S.ceoName.trim();
+var org  = S.org.trim();
+el.innerHTML = name ? (name + (org ? ‘<br><span style="font-size:11px;color:#888;font-style:normal">’ + esc(org) + ‘</span>’ : ‘’)) : ‘’;
+}
+
+// ── Report HTML ──────────────────────────────────────────────────────────────
+function buildReportHTML() {
+var ceo  = S.ceoName || ‘CEO / Board Chair’;
+var org  = S.org || ‘’;
+var date = S.meetingDate
+? new Date(S.meetingDate + ‘T12:00:00’).toLocaleDateString(‘en-AU’,{day:‘numeric’,month:‘long’,year:‘numeric’})
+: new Date().toLocaleDateString(‘en-AU’,{day:‘numeric’,month:‘long’,year:‘numeric’});
+
+var e2 = function(s){ return (s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’); };
+var sec = function(h,b){ return b ? ‘<div class="section"><h2>’+h+’</h2><div class="content">’+b+’</div></div>’ : ‘’; };
+
+var qAndA = QUESTIONS.map(function(q,i) {
+if (!S.answers[i] && S.selectedQ.indexOf(i) === -1) return ‘’;
+return ‘<div class="qa"><div class="q">”’ + e2(q) + ‘”</div>’ +
+(S.answers[i] ? ‘<div class="a"><strong>Response:</strong> ’ + e2(S.answers[i]) + ‘</div>’ : ‘’) +
+(S.aiInsights[i] ? ‘<div class="insight"><span class="tag">✦ AI Insight</span>’ + e2(S.aiInsights[i]) + ‘</div>’ : ‘’) +
+(S.insights[i] ? ‘<div class="insight" style="margin-top:4px"><span class="tag">Your notes</span>’ + e2(S.insights[i]) + ‘</div>’ : ‘’) +
+‘</div>’;
+}).filter(Boolean).join(’’);
+
+var povsHTML = [0,1,2].map(function(i) {
+if (!S.keyInterests[i]) return ‘’;
+return ‘<div class="pov"><h3>’ + e2(S.keyInterests[i]) + ‘</h3>’ +
+(S.aiPovs[i] ? ‘<div class="content">’ + e2(S.aiPovs[i]) + ‘</div>’ : ‘’) +
+(S.povs[i] ? ‘<div class="insight" style="margin-top:8px"><span class="tag">Your notes</span>’ + e2(S.povs[i]) + ‘</div>’ : ‘’) +
+‘</div>’;
+}).filter(Boolean).join(’’);
+
+var actHTML = (S.aiActions ? ‘<div class="content">’ + e2(S.aiActions) + ‘</div>’ : ‘’) +
+(S.agreed.filter(Boolean).length ? ‘<h3>Agreed in Meeting</h3><ul>’ + S.agreed.filter(Boolean).map(function(a){ return ‘<li>’ + e2(a) + ‘</li>’; }).join(’’) + ‘</ul>’ : ‘’) +
+(S.actionOwners ? ‘<h3>Owners & Timeline</h3><div class="content">’ + e2(S.actionOwners) + ‘</div>’ : ‘’);
+
+var followupContent = [
+S.aiFollowUp ? e2(S.aiFollowUp) : ‘’,
+S.followUpNotes ? ‘\n\nYour notes:\n’ + e2(S.followUpNotes) : ‘’,
+].filter(Boolean).join(’’);
+
+return ‘<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">’ +
+‘<title>KPMG CEO Engagement — ’ + e2(ceo) + ‘</title>’ +
+‘<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">’ +
+‘<style>’ +
+‘:root{–gold:#b8960e;–dark:#1a1814;–txt:#2c2820}’ +
+‘*,*::before,*::after{box-sizing:border-box}’ +
+‘body{font-family:'DM Sans',sans-serif;color:var(–txt);background:#fff;max-width:860px;margin:0 auto;padding:36px 28px;font-size:14px;line-height:1.75}’ +
+‘.hdr{border-bottom:3px solid var(–gold);padding-bottom:20px;margin-bottom:30px}’ +
+‘.kpmg{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(–gold);font-weight:600;margin-bottom:6px}’ +
+‘h1{font-family:'DM Serif Display',serif;font-size:28px;font-weight:normal;color:var(–dark);margin-bottom:2px}’ +
+‘.sub{font-family:'DM Serif Display',serif;font-size:18px;color:var(–gold);font-style:italic}’ +
+‘.meta{font-size:11px;color:#999;margin-top:6px}’ +
+‘.section{margin-bottom:32px;page-break-inside:avoid}’ +
+‘h2{font-family:'DM Serif Display',serif;font-size:16px;font-weight:normal;color:var(–dark);border-left:3px solid var(–gold);padding-left:12px;margin-bottom:12px}’ +
+‘h3{font-size:12px;font-weight:600;color:var(–dark);text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px}’ +
+‘.content{white-space:pre-wrap;color:#3c3830;font-size:13.5px;line-height:1.75}’ +
+‘.qa{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:12px}’ +
+‘.q{font-family:'DM Serif Display',serif;font-style:italic;font-size:14px;color:var(–dark);margin-bottom:8px}’ +
+‘.a{font-size:13px;color:#3c3830;margin-bottom:6px;white-space:pre-wrap}’ +
+‘.insight{background:rgba(184,150,14,.08);border-left:2px solid var(–gold);padding:8px 12px;border-radius:0 5px 5px 0;font-size:12.5px;white-space:pre-wrap;margin-top:6px}’ +
+‘.tag{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(–gold);font-weight:600;margin-bottom:4px}’ +
+‘.pov{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:10px}’ +
+‘.followup-box{background:#fffdf5;border:1px solid #e8d88a;border-radius:8px;padding:18px;white-space:pre-wrap;font-size:13.5px;line-height:1.75}’ +
+‘.commit{background:#f9f8f5;border-radius:6px;padding:12px 16px;margin-bottom:8px}’ +
+‘.el{font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}’ +
+‘.line{border-bottom:1px solid #d8d0c0;min-height:24px;margin-bottom:5px}’ +
+‘ul{padding-left:16px} li{margin-bottom:4px}’ +
+‘@media print{body{padding:16px}.section,.qa,.pov{page-break-inside:avoid}}’ +
+‘</style></head><body>’ +
+‘<div class="hdr">’ +
+‘<div class="kpmg">KPMG Australia — Mining, Energy & Utilities</div>’ +
+‘<h1>CEO Engagement Brief</h1>’ +
+‘<div class="sub">’ + e2(ceo) + (org ? ’ — ’ + e2(org) : ‘’) + ‘</div>’ +
+‘<div class="meta">Meeting: ’ + date + ’  |  STRICTLY CONFIDENTIAL</div>’ +
+‘</div>’ +
+(S.exp.profile && S.aiResearch ? sec(‘Leader Background & Research’, e2(S.aiResearch)) : ‘’) +
+(S.exp.profile && S.profile ? sec(‘Additional Research Notes’, e2(S.profile)) : ‘’) +
+(S.exp.profile && S.preNotes ? sec(‘Pre-Meeting Context & Agenda’, e2(S.preNotes)) : ‘’) +
+(S.exp.questions && qAndA ? ‘<div class="section"><h2>Conversation — Questions & Responses</h2>’ + qAndA + ‘</div>’ : ‘’) +
+(S.exp.povs && povsHTML ? ‘<div class="section"><h2>Key Interest Areas — POVs & Probes</h2>’ + povsHTML + ‘</div>’ : ‘’) +
+(S.exp.povs && S.aiTrends ? sec(‘Future Trends Briefing’, e2(S.aiTrends)) : ‘’) +
+(S.exp.actions && actHTML ? ‘<div class="section"><h2>90-Day Strategic Actions</h2>’ + actHTML + ‘</div>’ : ‘’) +
+(S.exp.followup && followupContent ? ‘<div class="section"><h2>Follow-Up Strategy</h2><div class="followup-box">’ + followupContent + ‘</div></div>’ : ‘’) +
+‘<div class="section"><h2>Post-Meeting Commitments — For Completion</h2>’ +
+‘<p style="font-size:12px;color:#888;margin-bottom:14px">Complete within 24 hours of the meeting.</p>’ +
+[1,2,3,4].map(function(n){
+return ‘<div class="commit"><div class="el">Commitment ’ + n + ‘</div><div class="line"></div>’ +
+‘<div style="display:flex;gap:14px;margin-top:7px">’ +
+‘<div style="flex:1"><div class="el">Owner</div><div class="line"></div></div>’ +
+‘<div style="flex:1"><div class="el">Due Date</div><div class="line"></div></div>’ +
+‘</div></div>’;
+}).join(’’) +
+‘</div>’ +
+‘<div style="margin-top:36px;padding-top:14px;border-top:1px solid #ddd;font-size:11px;color:#bbb;text-align:center">’ +
+’KPMG Australia — Confidential  |  Mining, Energy & Utilities  |  ’ + date +
+‘</div></body></html>’;
+}
+
+// ── Export / Backup ──────────────────────────────────────────────────────────
+function downloadReport() {
+var html = buildReportHTML();
+var blob = new Blob([html], {type:‘text/html’});
+var url  = URL.createObjectURL(blob);
+var a    = document.createElement(‘a’);
+a.href   = url;
+a.download = ‘KPMG_CEO_’ + (S.ceoName||‘Brief’).replace(/\s+/g,’_’) + ‘.html’;
+a.click();
 URL.revokeObjectURL(url);
-};
-
-const loadJSON = e => {
-const file = e.target.files[0]; if (!file) return;
-const r = new FileReader();
-r.onload = ev => { try { setState(JSON.parse(ev.target.result)); } catch { alert("Invalid backup file."); } };
-r.readAsText(file);
-};
-
-const Toggle = ({ k, label }) =>
-React.createElement("div", {
-onClick: () => setExp(p => ({ ...p, [k]: !p[k] })),
-style: { display: "flex", alignItems: "center", gap: 10, cursor: "pointer", padding: "4px 0" }
-},
-React.createElement("div", { style: {
-width: 18, height: 18, flexShrink: 0,
-background: exp[k] ? GOLD : "transparent",
-border: `2px solid ${exp[k] ? GOLD : "#444"}`, borderRadius: 4,
-display: "flex", alignItems: "center", justifyContent: "center",
-color: "#0a0a0a", fontSize: 11, fontWeight: 700,
-}}, exp[k] ? "✓" : ""),
-React.createElement("span", { style: { fontSize: 13.5, color: exp[k] ? "#e8dfc8" : "#666" } }, label),
-);
-
-return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 24 } },
-React.createElement(Card, {},
-React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 } },
-React.createElement(Label, {}, "AI Follow-Up Strategy"),
-React.createElement(GoldBtn, { onClick: fetchFollowUp, disabled: loading },
-loading ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Crafting…") : "✦ Generate Follow-Up"
-),
-),
-React.createElement("p", { style: { fontSize: 13, color: "#777", marginBottom: 12 } },
-"Personalised to their goals, business context and trends discussed. Peer-level, warm, not vendor."
-),
-React.createElement(AIBlock, { content: state.followUp, loading, label: "FOLLOW-UP STRATEGY" }),
-React.createElement("div", { style: { marginTop: 16 } },
-React.createElement(Label, {}, "Your additional notes"),
-React.createElement(TA, {
-value: state.followUpNotes || "",
-onChange: v => setState(p => ({ ...p, followUpNotes: v })),
-placeholder: "Personal commitments, details to remember, next touchpoints…",
-rows: 4,
-}),
-),
-),
-
-React.createElement(Card, {},
-React.createElement(Label, {}, "Export — Select Sections"),
-React.createElement("p", { style: { fontSize: 12, color: "#666", marginBottom: 14, lineHeight: 1.65 } },
-"HTML exports open in any browser and print cleanly to PDF via File → Print → Save as PDF."
-),
-React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 } },
-React.createElement(Toggle, { k: "profile", label: "Leader Profile & Pre-Meeting Context" }),
-React.createElement(Toggle, { k: "questions", label: "Questions, Responses & AI Insights" }),
-React.createElement(Toggle, { k: "povs", label: "Strategic POVs, Probes & Trends Briefing" }),
-React.createElement(Toggle, { k: "actions", label: "90-Day Actions & Agreed Commitments" }),
-React.createElement(Toggle, { k: "followup", label: "Follow-Up Strategy" }),
-),
-React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } },
-React.createElement(GoldBtn, {
-onClick: () => dl(buildHTML(), `KPMG_CEO_${(state.ceoName || "Brief").replace(/\s+/g, "_")}.html`, "text/html")
-}, "↓ Download Report HTML"),
-React.createElement(GoldBtn, {
-outline: true,
-onClick: () => { const w = window.open(); w.document.write(buildHTML()); w.document.close(); }
-}, "↗ Preview / Print to PDF"),
-),
-React.createElement("div", { style: { marginTop: 14, padding: "12px 14px", background: "rgba(200,169,110,0.06)", borderRadius: 8, border: `1px solid ${BORDER}` } },
-React.createElement("div", { style: { fontSize: 11, color: GOLD, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 5 } }, "✦ Recommended workflow"),
-React.createElement("p", { style: { fontSize: 12, color: "#777", lineHeight: 1.7 } },
-"Use Preview → Print → Save as PDF to share with the CEO. Download HTML for your archive. JSON backup saves everything locally."
-),
-),
-),
-
-React.createElement(Card, {},
-React.createElement(Label, {}, "Session Backup"),
-React.createElement("p", { style: { fontSize: 13, color: "#777", marginBottom: 14 } },
-"Nothing stored on any server — save and restore locally."
-),
-React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" } },
-React.createElement(GoldBtn, {
-outline: true,
-onClick: () => dl(JSON.stringify(state, null, 2), `KPMG_Session_${(state.ceoName || "session").replace(/\s+/g, "_")}.json`, "application/json")
-}, "↓ Save JSON Backup"),
-React.createElement("label", {
-style: {
-cursor: "pointer", background: "transparent", color: "#777",
-border: "1px solid #333", borderRadius: 6, padding: "10px 16px",
-fontSize: 12, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase",
-}
-},
-"↑ Restore Backup",
-React.createElement("input", { type: "file", accept: ".json", onChange: loadJSON, style: { display: "none" } }),
-),
-),
-),
-);
 }
 
-// ── Root App ──────────────────────────────────────────────────────────────
-const TABS = [
-{ id: 0, label: "01 — Leader", sub: "Profile & Questions" },
-{ id: 1, label: "02 — Explore", sub: "POVs & Trends" },
-{ id: 2, label: "03 — Actions", sub: "90-Day Strategy" },
-{ id: 3, label: "04 — Output", sub: "Follow-Up & Export" },
-];
+function previewReport() {
+var w = window.open(’’,’_blank’);
+w.document.write(buildReportHTML());
+w.document.close();
+}
 
-function App() {
-const [apiKey, setApiKey] = useState(() => sessionStorage.getItem("anthro_key") || "");
-const [tab, setTab] = useState(0);
-const [state, setState] = useState({
-ceoName: "", profile: "", preNotes: "",
-answers: {}, insights: {}, selectedQuestions: [],
-keyInterests: ["", "", ""], povs: {}, futureTrends: "", tab2Notes: "",
-suggestedActions: "", agreedActions: [""], actionOwners: "",
-followUp: "", followUpNotes: "",
+function saveBackup() {
+syncAll();
+var blob = new Blob([JSON.stringify(S, null, 2)], {type:‘application/json’});
+var url  = URL.createObjectURL(blob);
+var a    = document.createElement(‘a’);
+a.href   = url;
+a.download = ‘KPMG_AI_Session_’ + (S.ceoName||‘session’).replace(/\s+/g,’_’) + ‘.json’;
+a.click();
+URL.revokeObjectURL(url);
+}
+
+function loadBackup(event) {
+var file = event.target.files[0];
+if (!file) return;
+var reader = new FileReader();
+reader.onload = function(ev) {
+try {
+var data = JSON.parse(ev.target.result);
+Object.assign(S, data);
+init();
+} catch(e) { alert(‘Invalid backup file.’); }
+};
+reader.readAsText(file);
+}
+
+function syncAll() {
+[‘ceoName’,‘org’,‘meetingDate’,‘profile’,‘preNotes’,‘customQuestions’,‘tab2Notes’,‘actionOwners’,‘followUpNotes’].forEach(function(id) {
+var el = document.getElementById(id);
+if (el) S[id] = el.value;
 });
-
-const saveKey = (k) => { sessionStorage.setItem("anthro_key", k); setApiKey(k); };
-
-if (!apiKey) {
-return React.createElement(ApiKeyModal, { onSave: saveKey });
 }
 
-return React.createElement("div", { style: { minHeight: "100vh", background: DARK } },
-// Header
-React.createElement("div", {
-style: {
-background: "#09080a", borderBottom: `1px solid ${BORDER}`,
-padding: "18px 28px 0", position: "sticky", top: 0, zIndex: 100,
-}
-},
-React.createElement("div", { style: { maxWidth: 880, margin: "0 auto" } },
-React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 18 } },
-React.createElement("div", {},
-React.createElement("div", { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 10, letterSpacing: "0.22em", color: GOLD, marginBottom: 3 } },
-"KPMG — MINING, ENERGY & UTILITIES"
-),
-React.createElement("div", { style: { fontFamily: "'DM Serif Display', serif", fontSize: 20, color: "#f0ece4", fontWeight: "normal" } },
-"CEO Engagement Studio"
-),
-),
-React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 16 } },
-state.ceoName && React.createElement("div", {
-style: { fontFamily: "'DM Serif Display'", fontSize: 14, color: GOLD, fontStyle: "italic" }
-}, state.ceoName),
-React.createElement("button", {
-onClick: () => { sessionStorage.removeItem("anthro_key"); setApiKey(""); },
-title: "Change API key",
-style: {
-background: "none", border: "1px solid #333", borderRadius: 4,
-color: "#555", fontSize: 10, padding: "4px 8px", cursor: "pointer",
-letterSpacing: "0.06em", textTransform: "uppercase",
-}
-}, "API Key"),
-),
-),
-// Tabs
-React.createElement("div", { style: { display: "flex" } },
-...TABS.map(t =>
-React.createElement("button", {
-key: t.id,
-onClick: () => setTab(t.id),
-style: {
-background: "none", border: "none",
-borderBottom: tab === t.id ? `2px solid ${GOLD}` : "2px solid transparent",
-color: tab === t.id ? GOLD : "#555",
-cursor: "pointer", padding: "8px 18px",
-fontSize: 11, fontWeight: 600,
-letterSpacing: "0.07em", textTransform: "uppercase",
-transition: "color .15s, border-color .15s", lineHeight: 1.5,
-}
-},
-React.createElement("div", {}, t.label),
-React.createElement("div", { style: { fontSize: 9, fontWeight: 400, opacity: 0.65, marginTop: 1 } }, t.sub),
-)
-),
-),
-),
-),
-// Content
-React.createElement("div", { style: { maxWidth: 880, margin: "0 auto", padding: "26px 20px 60px" } },
-tab === 0 && React.createElement(Tab1, { state, setState, apiKey }),
-tab === 1 && React.createElement(Tab2, { state, setState, apiKey }),
-tab === 2 && React.createElement(Tab3, { state, setState, apiKey }),
-tab === 3 && React.createElement(Tab4, { state, setState, apiKey }),
-),
-);
+// ── Utility ──────────────────────────────────────────────────────────────────
+function esc(s) {
+return (s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(App));
-```
+// ── Init ─────────────────────────────────────────────────────────────────────
+function init() {
+document.getElementById(‘tabs’).innerHTML = ‘’;
+buildTabs();
+buildQuestions();
+buildInterests();
+buildAgreed();
+buildExportToggles();
+bindFields();
+updateHeader();
+// Restore AI blocks
+if (S.aiResearch)   showAIResult(‘ai-profile’,  ‘RESEARCH BRIEFING’, S.aiResearch);
+if (S.aiTrends)     showAIResult(‘ai-trends’,   ‘TRENDS BRIEFING’,   S.aiTrends);
+if (S.aiActions)    showAIResult(‘ai-actions’,   ‘SUGGESTED ACTIONS’, S.aiActions);
+if (S.aiFollowUp)   showAIResult(‘ai-followup’,  ‘FOLLOW-UP STRATEGY’,S.aiFollowUp);
+}
 
+init();
 </script>
+
 </body>
 </html>
