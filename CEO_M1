@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CEO Engagement Studio — KPMG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+<!-- React + Babel CDN (no build step) -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { background: #0f0e0c; color: #f0ece4; font-family: 'DM Sans', sans-serif; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #c8a96e; border-radius: 2px; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.fade-up { animation: fadeUp .35s ease both; }
+textarea { resize: vertical; font-family: 'DM Sans', sans-serif; }
+input, textarea, button { font-family: 'DM Sans', sans-serif; }
+
+```
+/* API key modal */
+.modal-overlay {
+position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+display: flex; align-items: center; justify-content: center; z-index: 9999;
+}
+.modal {
+background: #1a1814; border: 1px solid rgba(200,169,110,0.3);
+border-radius: 14px; padding: 36px; max-width: 480px; width: 90%;
+}
+```
+
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useCallback } = React;
+
+// ── Constants ────────────────────────────────────────────────────────────
+const GOLD = "#c8a96e";
+const DARK = "#0f0e0c";
+const CARD = "#141210";
+const BORDER = "rgba(200,169,110,0.2)";
+
+const QUESTIONS = [
+"What does success actually mean to you right now — not the LinkedIn version?",
+"When did you last feel genuinely out of your depth, and what did that teach you?",
+"What belief are you holding that most people around you would disagree with?",
+"If you stripped away the title tomorrow, who are you?",
+"What's the decision you made that looked wrong to everyone else but you were certain about?",
+"What's the gap between who you present to your board and who you actually are?",
+"Where is the energy in your industry right now — and where is it dying?",
+"What are you most afraid people will discover about how you're running this organisation?",
+"What does the next generation of leaders in your sector fundamentally misunderstand?",
+"If AI, quantum and automation reshape your sector completely in 10 years, what's your honest assessment of whether your organisation will survive?",
+"What would you do differently if you had no obligation to the current stakeholders?",
+"What's the conversation your board needs to have but nobody's willing to start?",
+"When you look at the energy transition — are you leading it, managing it, or hoping it resolves itself?",
+"What do you need to unlearn to lead effectively through the next decade?",
+];
+
+const SYSTEM = "You are a strategic advisor to a senior KPMG partner who leads Mining, Energy & Utilities. Be direct, insightful, and provocative in the style of Steve Bartlett from Diary of a CEO. Avoid corporate jargon. Be concise and human.";
+
+// ── API Call ─────────────────────────────────────────────────────────────
+async function callClaude(prompt, systemPrompt, apiKey, onResult) {
+const res = await fetch("https://api.anthropic.com/v1/messages", {
+method: "POST",
+headers: {
+"Content-Type": "application/json",
+"x-api-key": apiKey,
+"anthropic-version": "2023-06-01",
+"anthropic-dangerous-direct-browser-access": "true",
+},
+body: JSON.stringify({
+model: "claude-sonnet-4-5",
+max_tokens: 1000,
+system: systemPrompt || SYSTEM,
+messages: [{ role: "user", content: prompt }],
+}),
+});
+
+if (!res.ok) {
+const errText = await res.text().catch(() => "no body");
+throw new Error(`API ${res.status}: ${errText}`);
+}
+const data = await res.json();
+if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+const text = data.content?.map(b => b.text || "").join("") || "";
+if (!text) throw new Error("Empty response from API");
+onResult(text);
+return text;
+}
+
+// ── Shared UI ─────────────────────────────────────────────────────────────
+function Spinner() {
+return React.createElement("div", { style: {
+width: 13, height: 13, flexShrink: 0,
+border: "2px solid rgba(200,169,110,0.3)",
+borderTopColor: GOLD, borderRadius: "50%",
+animation: "spin .7s linear infinite", display: "inline-block",
+}});
+}
+
+function GoldBtn({ onClick, disabled, children, small, outline }) {
+return React.createElement("button", {
+onClick, disabled,
+style: {
+background: outline ? "transparent" : disabled ? "#1c1a16" : `linear-gradient(135deg, ${GOLD}, #a8883e)`,
+color: outline ? GOLD : disabled ? "#444" : "#0a0a0a",
+border: outline ? `1px solid ${GOLD}` : "none",
+borderRadius: 6, padding: small ? "6px 14px" : "10px 22px",
+fontSize: small ? 11 : 12, fontWeight: 600,
+cursor: disabled ? "not-allowed" : "pointer", letterSpacing: "0.06em",
+textTransform: "uppercase", opacity: disabled ? 0.4 : 1,
+whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6,
+transition: "opacity .15s",
+}
+}, children);
+}
+
+function Card({ children, style }) {
+return React.createElement("div", {
+style: { background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 24, ...style }
+}, children);
+}
+
+function Label({ children }) {
+return React.createElement("div", {
+style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 11, letterSpacing: "0.15em", color: GOLD, marginBottom: 6, textTransform: "uppercase" }
+}, children);
+}
+
+function TA({ value, onChange, placeholder, rows = 3 }) {
+return React.createElement("textarea", {
+value, placeholder, rows,
+onChange: e => onChange(e.target.value),
+style: {
+width: "100%", background: "#0d0c0a", border: `1px solid ${BORDER}`, borderRadius: 8,
+color: "#f0ece4", fontSize: 14, lineHeight: 1.6,
+padding: "10px 14px", outline: "none", marginTop: 2,
+}
+});
+}
+
+function TextInput({ value, onChange, placeholder, style }) {
+return React.createElement("input", {
+type: "text", value, placeholder,
+onChange: e => onChange(e.target.value),
+style: {
+background: "#0d0c0a", border: `1px solid ${BORDER}`, borderRadius: 8,
+color: "#f0ece4", fontSize: 14, padding: "9px 14px", outline: "none",
+...style,
+}
+});
+}
+
+function AIBlock({ content, loading, label = "AI INSIGHT" }) {
+if (!content && !loading) return null;
+return React.createElement("div", {
+className: content ? "fade-up" : "",
+style: {
+marginTop: 12, background: "rgba(200,169,110,0.06)",
+border: "1px solid rgba(200,169,110,0.28)", borderRadius: 8, padding: "14px 16px",
+}
+},
+React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 10 } },
+React.createElement("span", { style: { fontFamily: "'Bebas Neue'", fontSize: 10, letterSpacing: "0.14em", color: GOLD } }, `✦ ${label}`),
+loading && React.createElement("span", { style: { fontSize: 10, color: "#666", fontStyle: "italic" } }, "Working…"),
+),
+loading && !content
+? React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "center", opacity: 0.6 } },
+React.createElement(Spinner),
+React.createElement("span", { style: { fontSize: 12, color: "#777", fontStyle: "italic" } }, "Calling Claude API…"),
+)
+: React.createElement("div", {
+style: { fontSize: 13.5, lineHeight: 1.75, color: "#e8dfc8", whiteSpace: "pre-wrap" }
+}, content)
+);
+}
+
+// ── API Key Modal ─────────────────────────────────────────────────────────
+function ApiKeyModal({ onSave }) {
+const [key, setKey] = useState("");
+return React.createElement("div", { className: "modal-overlay" },
+React.createElement("div", { className: "modal" },
+React.createElement("div", { style: { fontFamily: "'Bebas Neue'", fontSize: 10, letterSpacing: "0.2em", color: GOLD, marginBottom: 8 } }, "KPMG — CEO ENGAGEMENT STUDIO"),
+React.createElement("div", { style: { fontFamily: "'DM Serif Display', serif", fontSize: 22, color: "#f0ece4", marginBottom: 16 } }, "Enter your Anthropic API Key"),
+React.createElement("p", { style: { fontSize: 13, color: "#888", lineHeight: 1.7, marginBottom: 20 } },
+"Your key is stored only in your browser session — never sent anywhere except directly to the Anthropic API. Get your key at ",
+React.createElement("a", { href: "https://console.anthropic.com", target: "_blank", style: { color: GOLD } }, "console.anthropic.com"),
+"."
+),
+React.createElement("input", {
+type: "password",
+value: key,
+onChange: e => setKey(e.target.value),
+placeholder: "sk-ant-...",
+onKeyDown: e => e.key === "Enter" && key.startsWith("sk-") && onSave(key),
+style: {
+width: "100%", background: "#0d0c0a", border: `1px solid ${BORDER}`,
+borderRadius: 8, color: "#f0ece4", fontSize: 14,
+padding: "12px 14px", outline: "none", marginBottom: 16,
+}
+}),
+React.createElement(GoldBtn, {
+onClick: () => key.startsWith("sk-") && onSave(key),
+disabled: !key.startsWith("sk-"),
+}, "Start Session"),
+React.createElement("p", { style: { fontSize: 11, color: "#555", marginTop: 12 } },
+"⚠ This app calls the Anthropic API directly from your browser. Standard API costs apply."
+),
+)
+);
+}
+
+// ── Tab 1 ─────────────────────────────────────────────────────────────────
+function Tab1({ state, setState, apiKey }) {
+const [profileLoading, setProfileLoading] = useState(false);
+const [insightLoading, setInsightLoading] = useState({});
+
+const fetchProfile = async () => {
+if (!state.ceoName) return;
+setProfileLoading(true);
+setState(p => ({ ...p, profile: "" }));
+try {
+await callClaude(
+`Give me a concise but rich briefing on ${state.ceoName} — background, known leadership style, major decisions, public positions on energy/mining/AI, notable controversies or achievements. 4-5 punchy paragraphs. Include what drives them as a person if known. Be frank.`,
+"You are a world-class executive research analyst. Be direct, factual, insightful. No platitudes.",
+apiKey,
+t => setState(p => ({ ...p, profile: t }))
+);
+} catch (e) { setState(p => ({ ...p, profile: `⚠ Error: ${e.message}` })); }
+setProfileLoading(false);
+};
+
+const genInsight = async (i) => {
+const ans = state.answers?.[i] || "";
+if (!ans.trim()) return;
+setInsightLoading(p => ({ ...p, [i]: true }));
+setState(p => ({ ...p, insights: { ...p.insights, [i]: "" } }));
+try {
+await callClaude(
+`Context: KPMG Mining, Energy & Utilities lead partner meeting with ${state.ceoName || "a CEO"}.\nQuestion: "${QUESTIONS[i]}"\nResponse: "${ans}"\n\nGive 3 sharp insights from this answer, what it reveals about them as a leader, and 1-2 follow-up probes. Direct, no fluff.`,
+SYSTEM, apiKey,
+t => setState(p => ({ ...p, insights: { ...p.insights, [i]: t } }))
+);
+} catch (e) { setState(p => ({ ...p, insights: { ...p.insights, [i]: `⚠ Error: ${e.message}` } })); }
+setInsightLoading(p => ({ ...p, [i]: false }));
+};
+
+const sel = state.selectedQuestions || [];
+const toggle = i => setState(p => ({
+...p,
+selectedQuestions: sel.includes(i) ? sel.filter(x => x !== i) : [...sel, i]
+}));
+
+return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 24 } },
+// Profile card
+React.createElement(Card, {},
+React.createElement(Label, {}, "Leader Profile"),
+React.createElement("div", { style: { display: "flex", gap: 12, marginBottom: 14, flexWrap: "wrap", alignItems: "center" } },
+React.createElement("input", {
+type: "text",
+value: state.ceoName || "",
+onChange: e => setState(p => ({ ...p, ceoName: e.target.value })),
+placeholder: "CEO / Board Chair full name…",
+style: {
+flex: 1, minWidth: 200, background: "#0d0c0a", border: `1px solid ${BORDER}`,
+borderRadius: 8, color: "#f0ece4", fontSize: 16,
+padding: "10px 14px", outline: "none", fontWeight: 500,
+}
+}),
+React.createElement(GoldBtn, {
+onClick: fetchProfile,
+disabled: !state.ceoName || profileLoading,
+}, profileLoading ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Researching…") : "✦ AI Research"),
+),
+React.createElement(AIBlock, { content: state.profile, loading: profileLoading, label: "RESEARCH BRIEFING" }),
+React.createElement("div", { style: { marginTop: 16 } },
+React.createElement(Label, {}, "Pre-meeting notes"),
+React.createElement(TA, {
+value: state.preNotes || "",
+onChange: v => setState(p => ({ ...p, preNotes: v })),
+placeholder: "Context, relationship history, agenda priorities…",
+rows: 3,
+}),
+),
+),
+// Questions card
+React.createElement(Card, {},
+React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 } },
+React.createElement(Label, {}, "Question Bank — Steve Bartlett Style"),
+React.createElement("span", { style: { fontSize: 11, color: "#555", fontStyle: "italic" } }, "✓ to include in report"),
+),
+React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 14 } },
+...QUESTIONS.map((q, i) =>
+React.createElement("div", {
+key: i,
+style: {
+background: "#0d0c0a",
+border: `1px solid ${sel.includes(i) ? GOLD : BORDER}`,
+borderRadius: 10, padding: "14px 16px", transition: "border-color .2s",
+}
+},
+React.createElement("div", { style: { display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 10 } },
+React.createElement("button", {
+onClick: () => toggle(i),
+style: {
+width: 20, height: 20, flexShrink: 0, marginTop: 2,
+background: sel.includes(i) ? GOLD : "transparent",
+border: `2px solid ${sel.includes(i) ? GOLD : "#444"}`,
+borderRadius: 4, cursor: "pointer", color: "#0a0a0a",
+fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center",
+}
+}, sel.includes(i) ? "✓" : ""),
+React.createElement("div", { style: { fontSize: 14, lineHeight: 1.6, color: "#e8dfc8", fontStyle: "italic", flex: 1 } }, `"${q}"`),
+),
+React.createElement(TA, {
+value: state.answers?.[i] || "",
+onChange: v => setState(p => ({ ...p, answers: { ...p.answers, [i]: v } })),
+placeholder: "Capture their response…",
+rows: 2,
+}),
+React.createElement("div", { style: { display: "flex", justifyContent: "flex-end", marginTop: 8 } },
+React.createElement(GoldBtn, {
+small: true, outline: true,
+onClick: () => genInsight(i),
+disabled: insightLoading[i] || !state.answers?.[i]?.trim(),
+}, insightLoading[i] ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Analysing…") : "✦ Get Insight"),
+),
+React.createElement(AIBlock, { content: state.insights?.[i], loading: insightLoading[i] }),
+)
+),
+),
+React.createElement("div", { style: { marginTop: 20 } },
+React.createElement(Label, {}, "Custom Questions / Notes"),
+React.createElement(TA, {
+value: state.customQuestions || "",
+onChange: v => setState(p => ({ ...p, customQuestions: v })),
+placeholder: "Your own questions or additional notes…",
+rows: 4,
+}),
+),
+),
+);
+}
+
+// ── Tab 2 ─────────────────────────────────────────────────────────────────
+function Tab2({ state, setState, apiKey }) {
+const [povLoading, setPovLoading] = useState([false, false, false]);
+const [trendLoading, setTrendLoading] = useState(false);
+
+const fetchPOV = async (idx) => {
+if (!state.keyInterests?.[idx]) return;
+setPovLoading(p => { const n = [...p]; n[idx] = true; return n; });
+setState(p => ({ ...p, povs: { ...p.povs, [idx]: "" } }));
+const ans = Object.entries(state.answers || {}).filter(([, v]) => v?.trim())
+.map(([k, v]) => `Q: "${QUESTIONS[k]}"\nA: "${v}"`).join("\n\n");
+try {
+await callClaude(
+`KPMG Mining, Energy & Utilities lead partner. Just spoke with ${state.ceoName || "a CEO"}.\n\nConversation:\n${ans || "No answers yet."}\n\nKey interest: "${state.keyInterests[idx]}"\n\nGive:\n1. A sharp KPMG point of view (2-3 bold sentences)\n2. What this means specifically for their sector\n3. Three incisive follow-up questions\n4. A contrarian perspective they haven't considered\n\nBe provocative, not safe.`,
+SYSTEM, apiKey,
+t => setState(p => ({ ...p, povs: { ...p.povs, [idx]: t } }))
+);
+} catch (e) { setState(p => ({ ...p, povs: { ...p.povs, [idx]: `⚠ Error: ${e.message}` } })); }
+setPovLoading(p => { const n = [...p]; n[idx] = false; return n; });
+};
+
+const fetchTrends = async () => {
+setTrendLoading(true);
+setState(p => ({ ...p, futureTrends: "" }));
+try {
+await callClaude(
+`Meeting with ${state.ceoName || "a CEO"} in mining/energy/utilities. Their interests: ${(state.keyInterests || []).filter(Boolean).join(", ")}.\n\n5-point briefing on critical emerging tech and macro trends — AI, quantum, automation, energy transition. For each: what it means for their sector, the timeline, and the key question it raises. KPMG-sharp, not generic.`,
+SYSTEM, apiKey,
+t => setState(p => ({ ...p, futureTrends: t }))
+);
+} catch (e) { setState(p => ({ ...p, futureTrends: `⚠ Error: ${e.message}` })); }
+setTrendLoading(false);
+};
+
+const placeholders = ["e.g. AI adoption roadmap", "e.g. Capital allocation in energy transition", "e.g. Workforce & automation anxiety"];
+
+return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 24 } },
+React.createElement(Card, {},
+React.createElement(Label, {}, "3 Key Interest Areas"),
+React.createElement("p", { style: { fontSize: 13, color: "#777", marginBottom: 16, lineHeight: 1.6 } },
+"Define areas that emerged — then use AI to generate bold POVs and follow-up probes."
+),
+...[0, 1, 2].map(idx =>
+React.createElement("div", { key: idx, style: { marginBottom: 20 } },
+React.createElement(Label, {}, `Area ${idx + 1}`),
+React.createElement("div", { style: { display: "flex", gap: 10, marginBottom: 8 } },
+React.createElement("input", {
+type: "text",
+value: state.keyInterests?.[idx] || "",
+onChange: e => {
+const arr = [...(state.keyInterests || ["", "", ""])];
+arr[idx] = e.target.value;
+setState(p => ({ ...p, keyInterests: arr }));
+},
+placeholder: placeholders[idx],
+style: {
+flex: 1, background: "#0d0c0a", border: `1px solid ${BORDER}`,
+borderRadius: 8, color: "#f0ece4", fontSize: 14, padding: "9px 14px", outline: "none",
+}
+}),
+React.createElement(GoldBtn, {
+onClick: () => fetchPOV(idx),
+disabled: povLoading[idx] || !state.keyInterests?.[idx],
+}, povLoading[idx] ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Thinking…") : "✦ AI POV"),
+),
+React.createElement(AIBlock, { content: state.povs?.[idx], loading: povLoading[idx], label: `POV — AREA ${idx + 1}` }),
+)
+),
+),
+React.createElement(Card, {},
+React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 } },
+React.createElement(Label, {}, "Future Trends Briefing"),
+React.createElement(GoldBtn, { onClick: fetchTrends, disabled: trendLoading },
+trendLoading ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Generating…") : "✦ AI Trends Brief"
+),
+),
+React.createElement("p", { style: { fontSize: 13, color: "#777", marginBottom: 12 } },
+"AI, quantum, automation & energy transition — lead this conversation with authority."
+),
+React.createElement(AIBlock, { content: state.futureTrends, loading: trendLoading, label: "TRENDS BRIEFING" }),
+React.createElement("div", { style: { marginTop: 16 } },
+React.createElement(Label, {}, "Your observations"),
+React.createElement(TA, {
+value: state.tab2Notes || "",
+onChange: v => setState(p => ({ ...p, tab2Notes: v })),
+placeholder: "Themes, tensions, opportunities you're seeing…",
+rows: 4,
+}),
+),
+),
+);
+}
+
+// ── Tab 3 ─────────────────────────────────────────────────────────────────
+function Tab3({ state, setState, apiKey }) {
+const [loading, setLoading] = useState(false);
+
+const fetchActions = async () => {
+setLoading(true);
+setState(p => ({ ...p, suggestedActions: "" }));
+const summary = [
+state.profile ? `Background: ${state.profile.substring(0, 400)}` : "",
+Object.entries(state.answers || {}).filter(([, v]) => v?.trim())
+.map(([k, v]) => `Q: ${QUESTIONS[k].substring(0, 60)}… A: ${v}`).join("\n"),
+(state.keyInterests || []).filter(Boolean).map(x => `Interest: ${x}`).join("\n"),
+state.tab2Notes || "",
+].filter(Boolean).join("\n\n");
+try {
+await callClaude(
+`KPMG Mining, Energy & Utilities lead partner. Based on my conversation with ${state.ceoName || "this CEO"}, suggest 6 high-impact strategic actions across 90 days.\n\nContext:\n${summary || "General mining/energy/utilities executive engagement"}\n\nFormat each:\n[0-30d / 30-60d / 60-90d] ACTION TITLE\nWhy it matters: (1 sentence)\nKPMG angle: (1 sentence)\n\nSpecific, actionable, commercially grounded. No consulting fluff.`,
+SYSTEM, apiKey,
+t => setState(p => ({ ...p, suggestedActions: t }))
+);
+} catch (e) { setState(p => ({ ...p, suggestedActions: `⚠ Error: ${e.message}` })); }
+setLoading(false);
+};
+
+return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 24 } },
+React.createElement(Card, {},
+React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 } },
+React.createElement(Label, {}, "90-Day Strategic Actions"),
+React.createElement(GoldBtn, { onClick: fetchActions, disabled: loading },
+loading ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Generating…") : "✦ AI Suggest Actions"
+),
+),
+React.createElement(AIBlock, { content: state.suggestedActions, loading, label: "SUGGESTED ACTIONS" }),
+React.createElement("div", { style: { marginTop: 22 } },
+React.createElement(Label, {}, "Actions Agreed in the Meeting"),
+React.createElement("p", { style: { fontSize: 12, color: "#555", marginBottom: 10 } },
+"Record what you actually committed to in the room."
+),
+...(state.agreedActions || [""]).map((action, i) =>
+React.createElement("div", { key: i, style: { display: "flex", gap: 8, marginBottom: 8, alignItems: "center" } },
+React.createElement("input", {
+type: "text",
+value: action,
+onChange: e => {
+const arr = [...(state.agreedActions || [""])];
+arr[i] = e.target.value;
+setState(p => ({ ...p, agreedActions: arr }));
+},
+placeholder: `Action ${i + 1}…`,
+style: {
+flex: 1, background: "#0d0c0a", border: `1px solid ${BORDER}`, borderRadius: 8,
+color: "#f0ece4", fontSize: 14, padding: "9px 14px", outline: "none",
+}
+}),
+React.createElement("div", { style: { display: "flex", gap: 4 } },
+i === (state.agreedActions || [""]).length - 1 && (state.agreedActions || [""]).length < 12 &&
+React.createElement(GoldBtn, {
+small: true,
+onClick: () => setState(p => ({ ...p, agreedActions: [...(p.agreedActions || [""]), ""] }))
+}, "+ Add"),
+(state.agreedActions || [""]).length > 1 &&
+React.createElement(GoldBtn, {
+small: true, outline: true,
+onClick: () => setState(p => ({ ...p, agreedActions: (p.agreedActions || [""]).filter((_, j) => j !== i) }))
+}, "✕"),
+),
+)
+),
+),
+),
+React.createElement(Card, {},
+React.createElement(Label, {}, "Owner / Timeline / Dependencies"),
+React.createElement(TA, {
+value: state.actionOwners || "",
+onChange: v => setState(p => ({ ...p, actionOwners: v })),
+placeholder: "Assign owners and dates, note blockers or dependencies…",
+rows: 4,
+}),
+),
+);
+}
+
+// ── Tab 4 ─────────────────────────────────────────────────────────────────
+function Tab4({ state, setState, apiKey }) {
+const [loading, setLoading] = useState(false);
+const [exp, setExp] = useState({ profile: true, questions: true, povs: true, actions: true, followup: true });
+
+const fetchFollowUp = async () => {
+setLoading(true);
+setState(p => ({ ...p, followUp: "" }));
+const summary = [
+`CEO: ${state.ceoName || "Unknown"}`,
+state.profile ? `Profile: ${state.profile.substring(0, 300)}` : "",
+Object.entries(state.answers || {}).filter(([, v]) => v?.trim())
+.map(([k, v]) => `- ${QUESTIONS[k].substring(0, 50)}… → ${v.substring(0, 100)}`).join("\n"),
+(state.keyInterests || []).filter(Boolean).map(x => `Interest: ${x}`).join(", "),
+].filter(Boolean).join("\n\n");
+try {
+await callClaude(
+`Senior KPMG partner. Based on this CEO engagement:\n\n${summary}\n\nWrite:\n1. Warm direct personal note to send within 24hr (3-4 sentences, human not corporate)\n2. Three specific follow-up meeting topics with clear value for THEM\n3. Two resources or provocations to send within 2 weeks\n4. One long-term relationship action showing genuine interest in their personal journey\n5. A headline for thought leadership you could co-develop together\n\nTone: warm respected peer, not vendor.`,
+SYSTEM, apiKey,
+t => setState(p => ({ ...p, followUp: t }))
+);
+} catch (e) { setState(p => ({ ...p, followUp: `⚠ Error: ${e.message}` })); }
+setLoading(false);
+};
+
+const buildHTML = () => {
+const ceo = state.ceoName || "CEO / Board Chair";
+const date = new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
+const sec = (h, b) => `<div class="section"><h2>${h}</h2><div class="content">${b || "<em>Not captured</em>"}</div></div>`;
+const qAndA = QUESTIONS.map((q, i) => {
+if (!state.answers?.[i] && !state.selectedQuestions?.includes(i)) return "";
+return `<div class="qa"><div class="q">"${q}"</div>
+${state.answers?.[i] ? `<div class="a"><strong>Response:</strong> ${state.answers[i]}</div>` : ""}
+${state.insights?.[i] ? `<div class="insight"><span class="tag">✦ Insight</span>${state.insights[i]}</div>` : ""}
+</div>`;
+}).filter(Boolean).join("");
+const povsHTML = (state.keyInterests || []).map((area, i) =>
+area ? `<div class="pov"><h3>${area}</h3>${state.povs?.[i] ? `<div class="content">${state.povs[i]}</div>` : ""}</div>` : ""
+).join("");
+const actHTML = [
+state.suggestedActions ? `<div class="content">${state.suggestedActions}</div>` : "",
+(state.agreedActions || []).filter(Boolean).length
+? `<h3>Agreed in Meeting</h3><ul>${(state.agreedActions || []).filter(Boolean).map(a => `<li>${a}</li>`).join("")}</ul>` : "",
+state.actionOwners ? `<h3>Owners & Timeline</h3><div class="content">${state.actionOwners}</div>` : "",
+].join("");
+
+return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>KPMG CEO Engagement — ${ceo}</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#b8960e;--dark:#1a1814;--txt:#2c2820}
+*,*::before,*::after{box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;color:var(--txt);background:#fff;max-width:860px;margin:0 auto;padding:40px 32px;font-size:14px;line-height:1.75}
+.hdr{border-bottom:3px solid var(--gold);padding-bottom:22px;margin-bottom:32px}
+.kpmg{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px}
+h1{font-family:'DM Serif Display',serif;font-size:30px;font-weight:normal;color:var(--dark)}
+.sub{font-family:'DM Serif Display',serif;font-size:20px;color:var(--gold);font-style:italic}
+.meta{font-size:11px;color:#999;margin-top:8px}
+.section{margin-bottom:34px;page-break-inside:avoid}
+h2{font-family:'DM Serif Display',serif;font-size:17px;font-weight:normal;color:var(--dark);border-left:3px solid var(--gold);padding-left:12px;margin-bottom:14px}
+h3{font-size:12px;font-weight:600;color:var(--dark);text-transform:uppercase;letter-spacing:.07em;margin:14px 0 6px}
+.content{white-space:pre-wrap;color:#3c3830;font-size:13.5px}
+.qa{background:#f9f8f5;border-radius:8px;padding:16px 18px;margin-bottom:14px}
+.q{font-family:'DM Serif Display',serif;font-style:italic;font-size:14.5px;color:var(--dark);margin-bottom:8px}
+.a{font-size:13.5px;color:#3c3830;margin-bottom:8px}
+.insight{background:rgba(184,150,14,.08);border-left:2px solid var(--gold);padding:10px 14px;border-radius:0 6px 6px 0;font-size:13px;white-space:pre-wrap}
+.tag{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:5px}
+.pov{background:#f9f8f5;border-radius:8px;padding:16px 18px;margin-bottom:12px}
+.followup{background:#fffdf5;border:1px solid #e8d88a;border-radius:8px;padding:20px;white-space:pre-wrap;font-size:13.5px}
+.entry{background:#f9f8f5;border-radius:6px;padding:14px 18px;margin-bottom:10px}
+.elabel{font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.line{border-bottom:1px solid #d8d0c0;min-height:26px;margin-bottom:5px}
+ul{padding-left:18px} li{margin-bottom:5px}
+@media print{body{padding:20px}.section{page-break-inside:avoid}}
+</style></head><body>
+
+<div class="hdr">
+<div class="kpmg">KPMG Australia — Mining, Energy & Utilities</div>
+<h1>CEO Engagement Brief</h1>
+<div class="sub">${ceo}</div>
+<div class="meta">Prepared: ${date} &nbsp;|&nbsp; STRICTLY CONFIDENTIAL</div>
+</div>
+${exp.profile && state.profile ? sec("Leader Profile", state.profile) : ""}
+${exp.profile && state.preNotes ? sec("Pre-Meeting Context", state.preNotes) : ""}
+${exp.questions && qAndA ? `<div class="section"><h2>Conversation — Questions & Responses</h2>${qAndA}</div>` : ""}
+${exp.povs && povsHTML ? `<div class="section"><h2>Strategic Points of View & Probes</h2>${povsHTML}</div>` : ""}
+${exp.povs && state.futureTrends ? sec("Future Trends Briefing", state.futureTrends) : ""}
+${exp.actions ? `<div class="section"><h2>90-Day Strategic Actions</h2>${actHTML}</div>` : ""}
+${exp.followup && state.followUp ? `<div class="section"><h2>Follow-Up Strategy</h2><div class="followup">${state.followUp}</div></div>` : ""}
+<div class="section">
+<h2>Post-Meeting Commitments — For Completion</h2>
+<p style="font-size:12px;color:#888;margin-bottom:14px">Complete within 24 hours. This page may be shared with ${ceo} as a record of commitments.</p>
+${[1,2,3,4].map(n => `<div class="entry"><div class="elabel">Commitment ${n}</div><div class="line"></div>
+<div style="display:flex;gap:16px;margin-top:6px">
+<div style="flex:1"><div class="elabel">Owner</div><div class="line"></div></div>
+<div style="flex:1"><div class="elabel">Due Date</div><div class="line"></div></div>
+</div></div>`).join("")}
+</div>
+<div style="margin-top:40px;padding-top:16px;border-top:1px solid #ddd;font-size:11px;color:#bbb;text-align:center">
+KPMG Australia — Confidential &nbsp;|&nbsp; Mining, Energy & Utilities &nbsp;|&nbsp; ${date}
+</div></body></html>`;
+};
+
+```
+const dl = (content, name, type) => {
+const blob = new Blob([content], { type });
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+a.href = url; a.download = name; a.click();
+URL.revokeObjectURL(url);
+};
+
+const loadJSON = e => {
+const file = e.target.files[0]; if (!file) return;
+const r = new FileReader();
+r.onload = ev => { try { setState(JSON.parse(ev.target.result)); } catch { alert("Invalid backup file."); } };
+r.readAsText(file);
+};
+
+const Toggle = ({ k, label }) =>
+React.createElement("div", {
+onClick: () => setExp(p => ({ ...p, [k]: !p[k] })),
+style: { display: "flex", alignItems: "center", gap: 10, cursor: "pointer", padding: "4px 0" }
+},
+React.createElement("div", { style: {
+width: 18, height: 18, flexShrink: 0,
+background: exp[k] ? GOLD : "transparent",
+border: `2px solid ${exp[k] ? GOLD : "#444"}`, borderRadius: 4,
+display: "flex", alignItems: "center", justifyContent: "center",
+color: "#0a0a0a", fontSize: 11, fontWeight: 700,
+}}, exp[k] ? "✓" : ""),
+React.createElement("span", { style: { fontSize: 13.5, color: exp[k] ? "#e8dfc8" : "#666" } }, label),
+);
+
+return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 24 } },
+React.createElement(Card, {},
+React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 } },
+React.createElement(Label, {}, "AI Follow-Up Strategy"),
+React.createElement(GoldBtn, { onClick: fetchFollowUp, disabled: loading },
+loading ? React.createElement(React.Fragment, {}, React.createElement(Spinner), " Crafting…") : "✦ Generate Follow-Up"
+),
+),
+React.createElement("p", { style: { fontSize: 13, color: "#777", marginBottom: 12 } },
+"Personalised to their goals, business context and trends discussed. Peer-level, warm, not vendor."
+),
+React.createElement(AIBlock, { content: state.followUp, loading, label: "FOLLOW-UP STRATEGY" }),
+React.createElement("div", { style: { marginTop: 16 } },
+React.createElement(Label, {}, "Your additional notes"),
+React.createElement(TA, {
+value: state.followUpNotes || "",
+onChange: v => setState(p => ({ ...p, followUpNotes: v })),
+placeholder: "Personal commitments, details to remember, next touchpoints…",
+rows: 4,
+}),
+),
+),
+
+React.createElement(Card, {},
+React.createElement(Label, {}, "Export — Select Sections"),
+React.createElement("p", { style: { fontSize: 12, color: "#666", marginBottom: 14, lineHeight: 1.65 } },
+"HTML exports open in any browser and print cleanly to PDF via File → Print → Save as PDF."
+),
+React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 } },
+React.createElement(Toggle, { k: "profile", label: "Leader Profile & Pre-Meeting Context" }),
+React.createElement(Toggle, { k: "questions", label: "Questions, Responses & AI Insights" }),
+React.createElement(Toggle, { k: "povs", label: "Strategic POVs, Probes & Trends Briefing" }),
+React.createElement(Toggle, { k: "actions", label: "90-Day Actions & Agreed Commitments" }),
+React.createElement(Toggle, { k: "followup", label: "Follow-Up Strategy" }),
+),
+React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } },
+React.createElement(GoldBtn, {
+onClick: () => dl(buildHTML(), `KPMG_CEO_${(state.ceoName || "Brief").replace(/\s+/g, "_")}.html`, "text/html")
+}, "↓ Download Report HTML"),
+React.createElement(GoldBtn, {
+outline: true,
+onClick: () => { const w = window.open(); w.document.write(buildHTML()); w.document.close(); }
+}, "↗ Preview / Print to PDF"),
+),
+React.createElement("div", { style: { marginTop: 14, padding: "12px 14px", background: "rgba(200,169,110,0.06)", borderRadius: 8, border: `1px solid ${BORDER}` } },
+React.createElement("div", { style: { fontSize: 11, color: GOLD, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 5 } }, "✦ Recommended workflow"),
+React.createElement("p", { style: { fontSize: 12, color: "#777", lineHeight: 1.7 } },
+"Use Preview → Print → Save as PDF to share with the CEO. Download HTML for your archive. JSON backup saves everything locally."
+),
+),
+),
+
+React.createElement(Card, {},
+React.createElement(Label, {}, "Session Backup"),
+React.createElement("p", { style: { fontSize: 13, color: "#777", marginBottom: 14 } },
+"Nothing stored on any server — save and restore locally."
+),
+React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" } },
+React.createElement(GoldBtn, {
+outline: true,
+onClick: () => dl(JSON.stringify(state, null, 2), `KPMG_Session_${(state.ceoName || "session").replace(/\s+/g, "_")}.json`, "application/json")
+}, "↓ Save JSON Backup"),
+React.createElement("label", {
+style: {
+cursor: "pointer", background: "transparent", color: "#777",
+border: "1px solid #333", borderRadius: 6, padding: "10px 16px",
+fontSize: 12, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase",
+}
+},
+"↑ Restore Backup",
+React.createElement("input", { type: "file", accept: ".json", onChange: loadJSON, style: { display: "none" } }),
+),
+),
+),
+);
+}
+
+// ── Root App ──────────────────────────────────────────────────────────────
+const TABS = [
+{ id: 0, label: "01 — Leader", sub: "Profile & Questions" },
+{ id: 1, label: "02 — Explore", sub: "POVs & Trends" },
+{ id: 2, label: "03 — Actions", sub: "90-Day Strategy" },
+{ id: 3, label: "04 — Output", sub: "Follow-Up & Export" },
+];
+
+function App() {
+const [apiKey, setApiKey] = useState(() => sessionStorage.getItem("anthro_key") || "");
+const [tab, setTab] = useState(0);
+const [state, setState] = useState({
+ceoName: "", profile: "", preNotes: "",
+answers: {}, insights: {}, selectedQuestions: [],
+keyInterests: ["", "", ""], povs: {}, futureTrends: "", tab2Notes: "",
+suggestedActions: "", agreedActions: [""], actionOwners: "",
+followUp: "", followUpNotes: "",
+});
+
+const saveKey = (k) => { sessionStorage.setItem("anthro_key", k); setApiKey(k); };
+
+if (!apiKey) {
+return React.createElement(ApiKeyModal, { onSave: saveKey });
+}
+
+return React.createElement("div", { style: { minHeight: "100vh", background: DARK } },
+// Header
+React.createElement("div", {
+style: {
+background: "#09080a", borderBottom: `1px solid ${BORDER}`,
+padding: "18px 28px 0", position: "sticky", top: 0, zIndex: 100,
+}
+},
+React.createElement("div", { style: { maxWidth: 880, margin: "0 auto" } },
+React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 18 } },
+React.createElement("div", {},
+React.createElement("div", { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 10, letterSpacing: "0.22em", color: GOLD, marginBottom: 3 } },
+"KPMG — MINING, ENERGY & UTILITIES"
+),
+React.createElement("div", { style: { fontFamily: "'DM Serif Display', serif", fontSize: 20, color: "#f0ece4", fontWeight: "normal" } },
+"CEO Engagement Studio"
+),
+),
+React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 16 } },
+state.ceoName && React.createElement("div", {
+style: { fontFamily: "'DM Serif Display'", fontSize: 14, color: GOLD, fontStyle: "italic" }
+}, state.ceoName),
+React.createElement("button", {
+onClick: () => { sessionStorage.removeItem("anthro_key"); setApiKey(""); },
+title: "Change API key",
+style: {
+background: "none", border: "1px solid #333", borderRadius: 4,
+color: "#555", fontSize: 10, padding: "4px 8px", cursor: "pointer",
+letterSpacing: "0.06em", textTransform: "uppercase",
+}
+}, "API Key"),
+),
+),
+// Tabs
+React.createElement("div", { style: { display: "flex" } },
+...TABS.map(t =>
+React.createElement("button", {
+key: t.id,
+onClick: () => setTab(t.id),
+style: {
+background: "none", border: "none",
+borderBottom: tab === t.id ? `2px solid ${GOLD}` : "2px solid transparent",
+color: tab === t.id ? GOLD : "#555",
+cursor: "pointer", padding: "8px 18px",
+fontSize: 11, fontWeight: 600,
+letterSpacing: "0.07em", textTransform: "uppercase",
+transition: "color .15s, border-color .15s", lineHeight: 1.5,
+}
+},
+React.createElement("div", {}, t.label),
+React.createElement("div", { style: { fontSize: 9, fontWeight: 400, opacity: 0.65, marginTop: 1 } }, t.sub),
+)
+),
+),
+),
+),
+// Content
+React.createElement("div", { style: { maxWidth: 880, margin: "0 auto", padding: "26px 20px 60px" } },
+tab === 0 && React.createElement(Tab1, { state, setState, apiKey }),
+tab === 1 && React.createElement(Tab2, { state, setState, apiKey }),
+tab === 2 && React.createElement(Tab3, { state, setState, apiKey }),
+tab === 3 && React.createElement(Tab4, { state, setState, apiKey }),
+),
+);
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(React.createElement(App));
+```
+
+</script>
+</body>
+</html>
