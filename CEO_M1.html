@@ -173,11 +173,13 @@ animation:fadeUp .35s ease both;
     <div class="modal-kpmg">KPMG — CEO Engagement Studio</div>
     <div class="modal-title">Enter your Anthropic API Key</div>
     <p class="modal-desc">
-      Your key is stored only in this browser session — never sent anywhere except directly to the Anthropic API.
-      Get yours at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+      Paste your Anthropic API key below. Find it at 
+      <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com → API Keys</a>.
+      Your key stays in this browser session only — never stored on any server.
     </p>
-    <input id="api-key-input" class="field mb12" type="password" placeholder="sk-ant-…" style="margin-bottom:12px">
-    <button class="btn" id="api-key-save">Start Session</button>
+    <input id="api-key-input" class="field mb12" type="text" placeholder="sk-ant-api03-…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="margin-bottom:10px">
+    <p id="modal-error" style="font-size:12px;color:#c06060;min-height:18px;margin-bottom:10px"></p>
+    <button class="btn" id="api-key-save">Start Session →</button>
     <p class="modal-warn">⚠ This app calls the Anthropic API directly from your browser. Standard API costs apply.</p>
   </div>
 </div>
@@ -382,15 +384,26 @@ var TF = ['0-30 days','30-60 days','60-90 days'];
 function showModal() {
   document.getElementById('modal-overlay').classList.remove('hidden');
   document.getElementById('api-key-input').value = API_KEY;
+  document.getElementById('modal-error').textContent = '';
 }
 function hideModal() {
   document.getElementById('modal-overlay').classList.add('hidden');
 }
 document.getElementById('api-key-save').onclick = function() {
-  var k = document.getElementById('api-key-input').value.trim();
-  if (!k.startsWith('sk-')) { alert('Key must start with sk-'); return; }
+  var raw = document.getElementById('api-key-input').value;
+  var k = raw.trim().replace(/\s+/g, '');  // strip all whitespace (paste issues on iPhone)
+  var errEl = document.getElementById('modal-error');
+  if (!k) {
+    errEl.textContent = 'Please paste your API key above.';
+    return;
+  }
+  if (k.length < 20) {
+    errEl.textContent = 'Key looks too short — make sure you copied the full key.';
+    return;
+  }
   API_KEY = k;
   sessionStorage.setItem('anthro_key', k);
+  errEl.textContent = '';
   hideModal();
 };
 document.getElementById('api-key-input').onkeydown = function(e) {
