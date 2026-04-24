@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -93,7 +92,6 @@ textarea.field{line-height:1.6}
 <div id="main">
 
   <!-- TAB 0 -->
-
   <div class="tab-panel active" id="panel-0">
     <div class="card">
       <span class="label">Leader Profile</span>
@@ -120,7 +118,6 @@ textarea.field{line-height:1.6}
   </div>
 
   <!-- TAB 1 -->
-
   <div class="tab-panel" id="panel-1">
     <div class="card">
       <span class="label">3 Key Interest Areas</span>
@@ -137,7 +134,6 @@ textarea.field{line-height:1.6}
   </div>
 
   <!-- TAB 2 -->
-
   <div class="tab-panel" id="panel-2">
     <div class="card">
       <div class="flex-between mb8">
@@ -158,7 +154,6 @@ textarea.field{line-height:1.6}
   </div>
 
   <!-- TAB 3 -->
-
   <div class="tab-panel" id="panel-3">
     <div class="card">
       <span class="label">Follow-Up Strategy &amp; Notes</span>
@@ -211,19 +206,19 @@ var S = {
 };
 
 var QUESTIONS = [
-  "What does success actually mean to you right now — not the LinkedIn version?",
+  "What does success actually mean to you right now -- not the LinkedIn version?",
   "When did you last feel genuinely out of your depth, and what did that teach you?",
   "What belief are you holding that most people around you would disagree with?",
   "If you stripped away the title tomorrow, who are you?",
   "What's the decision you made that looked wrong to everyone else but you were certain about?",
   "What's the gap between who you present to your board and who you actually are?",
-  "Where is the energy in your industry right now — and where is it dying?",
+  "Where is the energy in your industry right now -- and where is it dying?",
   "What are you most afraid people will discover about how you're running this organisation?",
   "What does the next generation of leaders in your sector fundamentally misunderstand?",
   "If AI, quantum and automation reshape your sector completely in 10 years, what's your honest assessment of whether your organisation will survive?",
   "What would you do differently if you had no obligation to the current stakeholders?",
   "What's the conversation your board needs to have but nobody's willing to start?",
-  "When you look at the energy transition — are you leading it, managing it, or hoping it resolves itself?",
+  "When you look at the energy transition -- are you leading it, managing it, or hoping it resolves itself?",
   "What do you need to unlearn to lead effectively through the next decade?",
 ];
 
@@ -239,10 +234,10 @@ var TREND_TOPICS = [
 ];
 
 var TABS = [
-  {label:'01 — Leader',  sub:'Profile & Questions'},
-  {label:'02 — Explore', sub:'POVs & Trends'},
-  {label:'03 — Actions', sub:'90-Day Strategy'},
-  {label:'04 — Output',  sub:'Follow-Up & Export'},
+  {label:'01 -- Leader',  sub:'Profile & Questions'},
+  {label:'02 -- Explore', sub:'POVs & Trends'},
+  {label:'03 -- Actions', sub:'90-Day Strategy'},
+  {label:'04 -- Output',  sub:'Follow-Up & Export'},
 ];
 
 var EXP_LABELS = [
@@ -291,299 +286,294 @@ function buildQuestions(){
         '<div class="tick'+(sel?' on':'')+'" id="tick-'+i+'" onclick="toggleQ('+i+')">'+(sel?'&#x2713;':'')+'</div>'+
         '<div class="q-text">"'+esc(q)+'"</div>'+
       '</div>'+
-      '<textarea class="field" rows="2" placeholder="Capture their response…" id="ans-'+i+'">'+esc(S.answers[i]||'')+'</textarea>'+
-
-```
-  '<span class="sublabel-small">Your insight / follow-up probe</span>'+
-  '<textarea class="field" rows="2" placeholder="What did this reveal? What is the follow-up question?" id="note-'+i+'">'+esc(S.insights[i]||'')+'</textarea>';
-list.appendChild(d);
-(function(idx){
-  document.getElementById('ans-'+idx).addEventListener('input',function(){ S.answers[idx]=this.value; });
-  document.getElementById('note-'+idx).addEventListener('input',function(){ S.insights[idx]=this.value; });
-})(i);
-```
-
-});
+      '<textarea class="field" rows="2" placeholder="Capture their response..." id="ans-'+i+'">'+esc(S.answers[i]||'')+'</textarea>'+
+      '<span class="sublabel-small">Your insight / follow-up probe</span>'+
+      '<textarea class="field" rows="2" placeholder="What did this reveal? What is the follow-up question?" id="note-'+i+'">'+esc(S.insights[i]||'')+'</textarea>';
+    list.appendChild(d);
+    (function(idx){
+      document.getElementById('ans-'+idx).addEventListener('input',function(){ S.answers[idx]=this.value; });
+      document.getElementById('note-'+idx).addEventListener('input',function(){ S.insights[idx]=this.value; });
+    })(i);
+  });
 }
 
 function toggleQ(i){
-var idx = S.selectedQ.indexOf(i);
-if(idx===-1) S.selectedQ.push(i); else S.selectedQ.splice(idx,1);
-var sel = S.selectedQ.indexOf(i)!==-1;
-document.getElementById(‘qblock-’+i).classList.toggle(‘selected’,sel);
-var t = document.getElementById(‘tick-’+i);
-t.className = ‘tick’+(sel?’ on’:’’);
-t.innerHTML = sel?’✓’:’’;
+  var idx = S.selectedQ.indexOf(i);
+  if(idx===-1) S.selectedQ.push(i); else S.selectedQ.splice(idx,1);
+  var sel = S.selectedQ.indexOf(i)!==-1;
+  document.getElementById('qblock-'+i).classList.toggle('selected',sel);
+  var t = document.getElementById('tick-'+i);
+  t.className = 'tick'+(sel?' on':'');
+  t.innerHTML = sel?'&#x2713;':'';
 }
 
 function buildInterests(){
-var list = document.getElementById(‘interests-list’);
-list.innerHTML = ‘’;
-[0,1,2].forEach(function(idx){
-var d = document.createElement(‘div’);
-d.style.marginBottom=‘20px’;
-d.innerHTML =
-‘<span class="label">Area ‘+(idx+1)+’</span>’+
-‘<input class="field" type="text" id="interest-'+idx+'" placeholder="'+
-['e.g. AI adoption roadmap','e.g. Capital allocation in energy transition','e.g. Workforce & automation anxiety'][idx]+
-'" value="'+esc(S.keyInterests[idx]||'')+'" style="margin-bottom:8px">’+
-‘<span class="sublabel-small">Your point of view</span>’+
-‘<textarea class="field" id="pov-'+idx+'" rows="3" placeholder="Your bold POV — what does this mean for their sector? Contrarian angle?">’+esc(S.povs[idx]||’’)+’</textarea>’+
-‘<span class="sublabel-small">Follow-up questions to explore</span>’+
-‘<textarea class="field" id="povfq-'+idx+'" rows="2" placeholder="Questions to push deeper on this area…">’+esc(S.povFollowUps[idx]||’’)+’</textarea>’;
-list.appendChild(d);
-(function(i){
-document.getElementById(‘interest-’+i).addEventListener(‘input’,function(){ S.keyInterests[i]=this.value; });
-document.getElementById(‘pov-’+i).addEventListener(‘input’,function(){ S.povs[i]=this.value; });
-document.getElementById(‘povfq-’+i).addEventListener(‘input’,function(){ S.povFollowUps[i]=this.value; });
-})(idx);
-});
+  var list = document.getElementById('interests-list');
+  list.innerHTML = '';
+  [0,1,2].forEach(function(idx){
+    var d = document.createElement('div');
+    d.style.marginBottom='20px';
+    d.innerHTML =
+      '<span class="label">Area '+(idx+1)+'</span>'+
+      '<input class="field" type="text" id="interest-'+idx+'" placeholder="'+
+        ['e.g. AI adoption roadmap','e.g. Capital allocation in energy transition','e.g. Workforce & automation anxiety'][idx]+
+        '" value="'+esc(S.keyInterests[idx]||'')+'" style="margin-bottom:8px">'+
+      '<span class="sublabel-small">Your point of view</span>'+
+      '<textarea class="field" id="pov-'+idx+'" rows="3" placeholder="Your bold POV -- what does this mean for their sector? Contrarian angle?">'+esc(S.povs[idx]||'')+'</textarea>'+
+      '<span class="sublabel-small">Follow-up questions to explore</span>'+
+      '<textarea class="field" id="povfq-'+idx+'" rows="2" placeholder="Questions to push deeper on this area...">'+esc(S.povFollowUps[idx]||'')+'</textarea>';
+    list.appendChild(d);
+    (function(i){
+      document.getElementById('interest-'+i).addEventListener('input',function(){ S.keyInterests[i]=this.value; });
+      document.getElementById('pov-'+i).addEventListener('input',function(){ S.povs[i]=this.value; });
+      document.getElementById('povfq-'+i).addEventListener('input',function(){ S.povFollowUps[i]=this.value; });
+    })(idx);
+  });
 }
 
 function buildTrends(){
-var list = document.getElementById(‘trends-list’);
-list.innerHTML = ‘’;
-TREND_TOPICS.forEach(function(topic,i){
-var d = document.createElement(‘div’);
-d.style.marginBottom=‘10px’;
-d.innerHTML =
-‘<span class="sublabel-small">’+esc(topic)+’</span>’+
-‘<textarea class="field" id="trend-'+i+'" rows="2" placeholder="Notes — what it means for them, questions it raises…">’+esc(S.trendNotes[i]||’’)+’</textarea>’;
-list.appendChild(d);
-document.getElementById(‘trend-’+i).addEventListener(‘input’,function(){ S.trendNotes[i]=this.value; });
-});
+  var list = document.getElementById('trends-list');
+  list.innerHTML = '';
+  TREND_TOPICS.forEach(function(topic,i){
+    var d = document.createElement('div');
+    d.style.marginBottom='10px';
+    d.innerHTML =
+      '<span class="sublabel-small">'+esc(topic)+'</span>'+
+      '<textarea class="field" id="trend-'+i+'" rows="2" placeholder="Notes -- what it means for them, questions it raises...">'+esc(S.trendNotes[i]||'')+'</textarea>';
+    list.appendChild(d);
+    document.getElementById('trend-'+i).addEventListener('input',function(){ S.trendNotes[i]=this.value; });
+  });
 }
 
 function buildActions(){
-var list = document.getElementById(‘actions-list’);
-list.innerHTML = ‘’;
-S.actions.forEach(function(a,i){
-var d = document.createElement(‘div’);
-d.className=‘action-block’; d.id=‘action-’+i;
-d.innerHTML =
-‘<div style="display:flex;align-items:center;margin-bottom:10px">’+
-‘<div class="tf-row" style="margin-bottom:0">’+
-TF.map(function(tf,ti){ return ‘<button class="tf-btn'+(a.tf===ti?' active':'')+'" onclick="setTF('+i+','+ti+')">’+tf+’</button>’; }).join(’’)+
-‘</div>’+
-(S.actions.length>1?’<button class="action-remove" onclick="removeAction('+i+')">×</button>’:’’)+
-‘</div>’+
-‘<span class="sublabel-small">Action</span>’+
-‘<input class="field" type="text" id="act-title-'+i+'" placeholder="Action title…" value="'+esc(a.title||'')+'" style="margin-bottom:10px">’+
-‘<div class="two-col">’+
-‘<div><span class="sublabel-small">Why it matters</span><textarea class="field" id="act-why-'+i+'" rows="2" placeholder="Why this matters now…">’+esc(a.why||’’)+’</textarea></div>’+
-‘<div><span class="sublabel-small">KPMG angle</span><textarea class="field" id="act-kpmg-'+i+'" rows="2" placeholder="How KPMG adds value here…">’+esc(a.kpmg||’’)+’</textarea></div>’+
-‘</div>’;
-list.appendChild(d);
-(function(idx){
-document.getElementById(‘act-title-’+idx).addEventListener(‘input’,function(){ S.actions[idx].title=this.value; });
-document.getElementById(‘act-why-’+idx).addEventListener(‘input’,function(){ S.actions[idx].why=this.value; });
-document.getElementById(‘act-kpmg-’+idx).addEventListener(‘input’,function(){ S.actions[idx].kpmg=this.value; });
-})(i);
-});
+  var list = document.getElementById('actions-list');
+  list.innerHTML = '';
+  S.actions.forEach(function(a,i){
+    var d = document.createElement('div');
+    d.className='action-block'; d.id='action-'+i;
+    d.innerHTML =
+      '<div style="display:flex;align-items:center;margin-bottom:10px">'+
+        '<div class="tf-row" style="margin-bottom:0">'+
+          TF.map(function(tf,ti){ return '<button class="tf-btn'+(a.tf===ti?' active':'')+'" onclick="setTF('+i+','+ti+')">'+tf+'</button>'; }).join('')+
+        '</div>'+
+        (S.actions.length>1?'<button class="action-remove" onclick="removeAction('+i+')">&#215;</button>':'')+
+      '</div>'+
+      '<span class="sublabel-small">Action</span>'+
+      '<input class="field" type="text" id="act-title-'+i+'" placeholder="Action title..." value="'+esc(a.title||'')+'" style="margin-bottom:10px">'+
+      '<div class="two-col">'+
+        '<div><span class="sublabel-small">Why it matters</span><textarea class="field" id="act-why-'+i+'" rows="2" placeholder="Why this matters now...">'+esc(a.why||'')+'</textarea></div>'+
+        '<div><span class="sublabel-small">KPMG angle</span><textarea class="field" id="act-kpmg-'+i+'" rows="2" placeholder="How KPMG adds value here...">'+esc(a.kpmg||'')+'</textarea></div>'+
+      '</div>';
+    list.appendChild(d);
+    (function(idx){
+      document.getElementById('act-title-'+idx).addEventListener('input',function(){ S.actions[idx].title=this.value; });
+      document.getElementById('act-why-'+idx).addEventListener('input',function(){ S.actions[idx].why=this.value; });
+      document.getElementById('act-kpmg-'+idx).addEventListener('input',function(){ S.actions[idx].kpmg=this.value; });
+    })(i);
+  });
 }
 
-function addAction(){ S.actions.push({tf:0,title:’’,why:’’,kpmg:’’}); buildActions(); }
+function addAction(){ S.actions.push({tf:0,title:'',why:'',kpmg:''}); buildActions(); }
 function removeAction(i){ S.actions.splice(i,1); buildActions(); }
 function setTF(i,ti){
-S.actions[i].tf=ti;
-document.getElementById(‘action-’+i).querySelectorAll(’.tf-btn’).forEach(function(b,j){ b.classList.toggle(‘active’,j===ti); });
+  S.actions[i].tf=ti;
+  document.getElementById('action-'+i).querySelectorAll('.tf-btn').forEach(function(b,j){ b.classList.toggle('active',j===ti); });
 }
 
 function buildAgreed(){
-var list=document.getElementById(‘agreed-list’);
-list.innerHTML=’’;
-S.agreed.forEach(function(v,i){
-var r=document.createElement(‘div’);
-r.style.cssText=‘display:flex;gap:8px;margin-bottom:8px;align-items:center’;
-r.innerHTML=
-‘<input class="field" type="text" id="agreed-'+i+'" placeholder="Agreed action '+(i+1)+'…" value="'+esc(v||'')+'" style="flex:1;margin-bottom:0">’+
-(S.agreed.length>1?’<button class="btn btn-sm btn-outline" onclick="removeAgreed('+i+')">✕</button>’:’’);
-list.appendChild(r);
-(function(idx){ document.getElementById(‘agreed-’+idx).addEventListener(‘input’,function(){ S.agreed[idx]=this.value; }); })(i);
-});
+  var list=document.getElementById('agreed-list');
+  list.innerHTML='';
+  S.agreed.forEach(function(v,i){
+    var r=document.createElement('div');
+    r.style.cssText='display:flex;gap:8px;margin-bottom:8px;align-items:center';
+    r.innerHTML=
+      '<input class="field" type="text" id="agreed-'+i+'" placeholder="Agreed action '+(i+1)+'..." value="'+esc(v||'')+'" style="flex:1;margin-bottom:0">'+
+      (S.agreed.length>1?'<button class="btn btn-sm btn-outline" onclick="removeAgreed('+i+')">&#x2715;</button>':'');
+    list.appendChild(r);
+    (function(idx){ document.getElementById('agreed-'+idx).addEventListener('input',function(){ S.agreed[idx]=this.value; }); })(i);
+  });
 }
 
-function addAgreed(){ S.agreed.push(’’); buildAgreed(); }
+function addAgreed(){ S.agreed.push(''); buildAgreed(); }
 function removeAgreed(i){ S.agreed.splice(i,1); buildAgreed(); }
 
 function buildExportToggles(){
-var c=document.getElementById(‘export-toggles’);
-c.innerHTML=’’;
-EXP_LABELS.forEach(function(item){
-var r=document.createElement(‘div’);
-r.className=‘toggle-row’+(S.exp[item.k]?’ on’:’’);
-r.innerHTML=’<div class="toggle-box'+(S.exp[item.k]?' on':'')+'">’+
-(S.exp[item.k]?’✓’:’’)+’</div><span class="toggle-label">’+item.label+’</span>’;
-r.onclick=function(){
-S.exp[item.k]=!S.exp[item.k];
-r.classList.toggle(‘on’,S.exp[item.k]);
-var b=r.querySelector(’.toggle-box’);
-b.classList.toggle(‘on’,S.exp[item.k]);
-b.innerHTML=S.exp[item.k]?’✓’:’’;
-};
-c.appendChild(r);
-});
+  var c=document.getElementById('export-toggles');
+  c.innerHTML='';
+  EXP_LABELS.forEach(function(item){
+    var r=document.createElement('div');
+    r.className='toggle-row'+(S.exp[item.k]?' on':'');
+    r.innerHTML='<div class="toggle-box'+(S.exp[item.k]?' on':'')+'">'+
+      (S.exp[item.k]?'&#x2713;':'')+'</div><span class="toggle-label">'+item.label+'</span>';
+    r.onclick=function(){
+      S.exp[item.k]=!S.exp[item.k];
+      r.classList.toggle('on',S.exp[item.k]);
+      var b=r.querySelector('.toggle-box');
+      b.classList.toggle('on',S.exp[item.k]);
+      b.innerHTML=S.exp[item.k]?'&#x2713;':'';
+    };
+    c.appendChild(r);
+  });
 }
 
 function bindFields(){
-function bind(id,key,cb){
-var el=document.getElementById(id); if(!el) return;
-el.value=S[key]||’’;
-el.addEventListener(‘input’,function(){ S[key]=el.value; if(cb) cb(); });
-}
-bind(‘ceoName’,‘ceoName’,updateHeader);
-bind(‘org’,‘org’,updateHeader);
-bind(‘meetingDate’,‘meetingDate’);
-bind(‘profile’,‘profile’);
-bind(‘preNotes’,‘preNotes’);
-bind(‘customQuestions’,‘customQuestions’);
-bind(‘tab2Notes’,‘tab2Notes’);
-bind(‘actionOwners’,‘actionOwners’);
-bind(‘followUp’,‘followUp’);
-bind(‘followUpNotes’,‘followUpNotes’);
+  function bind(id,key,cb){
+    var el=document.getElementById(id); if(!el) return;
+    el.value=S[key]||'';
+    el.addEventListener('input',function(){ S[key]=el.value; if(cb) cb(); });
+  }
+  bind('ceoName','ceoName',updateHeader);
+  bind('org','org',updateHeader);
+  bind('meetingDate','meetingDate');
+  bind('profile','profile');
+  bind('preNotes','preNotes');
+  bind('customQuestions','customQuestions');
+  bind('tab2Notes','tab2Notes');
+  bind('actionOwners','actionOwners');
+  bind('followUp','followUp');
+  bind('followUpNotes','followUpNotes');
 }
 
 function buildReportHTML(){
-var ceo=S.ceoName||‘CEO / Board Chair’, org=S.org||’’;
-var date=S.meetingDate
-? new Date(S.meetingDate+‘T12:00:00’).toLocaleDateString(‘en-AU’,{day:‘numeric’,month:‘long’,year:‘numeric’})
-: new Date().toLocaleDateString(‘en-AU’,{day:‘numeric’,month:‘long’,year:‘numeric’});
-var e2=function(s){ return (s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’); };
-var sec=function(h,b){ return b?’<div class="section"><h2>’+h+’</h2><div class="content">’+b+’</div></div>’:’’; };
+  var ceo=S.ceoName||'CEO / Board Chair', org=S.org||'';
+  var date=S.meetingDate
+    ? new Date(S.meetingDate+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})
+    : new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  var e2=function(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  var sec=function(h,b){ return b?'<div class="section"><h2>'+h+'</h2><div class="content">'+b+'</div></div>':''; };
 
-var qAndA=QUESTIONS.map(function(q,i){
-if(!S.answers[i]&&S.selectedQ.indexOf(i)===-1) return ‘’;
-return ‘<div class="qa">’+
-‘<div class="q">”’+e2(q)+’”</div>’+
-(S.answers[i]?’<div class="a"><strong>Response:</strong> ‘+e2(S.answers[i])+’</div>’:’’)+
-(S.insights[i]?’<div class="insight"><span class="tag">Insight / Follow-up</span>’+e2(S.insights[i])+’</div>’:’’)+
-‘</div>’;
-}).filter(Boolean).join(’’);
+  var qAndA=QUESTIONS.map(function(q,i){
+    if(!S.answers[i]&&S.selectedQ.indexOf(i)===-1) return '';
+    return '<div class="qa">'+
+      '<div class="q">"'+e2(q)+'"</div>'+
+      (S.answers[i]?'<div class="a"><strong>Response:</strong> '+e2(S.answers[i])+'</div>':'')+
+      (S.insights[i]?'<div class="insight"><span class="tag">Insight / Follow-up</span>'+e2(S.insights[i])+'</div>':'')+
+      '</div>';
+  }).filter(Boolean).join('');
 
-var povsHTML=[0,1,2].map(function(i){
-if(!S.keyInterests[i]) return ‘’;
-return ‘<div class="pov"><h3>’+e2(S.keyInterests[i])+’</h3>’+
-(S.povs[i]?’<div class="content">’+e2(S.povs[i])+’</div>’:’’)+
-(S.povFollowUps[i]?’<div class="insight" style="margin-top:8px"><span class="tag">Follow-up questions</span>’+e2(S.povFollowUps[i])+’</div>’:’’)+
-‘</div>’;
-}).filter(Boolean).join(’’);
+  var povsHTML=[0,1,2].map(function(i){
+    if(!S.keyInterests[i]) return '';
+    return '<div class="pov"><h3>'+e2(S.keyInterests[i])+'</h3>'+
+      (S.povs[i]?'<div class="content">'+e2(S.povs[i])+'</div>':'')+
+      (S.povFollowUps[i]?'<div class="insight" style="margin-top:8px"><span class="tag">Follow-up questions</span>'+e2(S.povFollowUps[i])+'</div>':'')+
+      '</div>';
+  }).filter(Boolean).join('');
 
-var trendsHTML=TREND_TOPICS.map(function(topic,i){
-if(!S.trendNotes[i]) return ‘’;
-return ‘<div class="trend"><strong>’+e2(topic)+’</strong><div>’+e2(S.trendNotes[i])+’</div></div>’;
-}).filter(Boolean).join(’’);
+  var trendsHTML=TREND_TOPICS.map(function(topic,i){
+    if(!S.trendNotes[i]) return '';
+    return '<div class="trend"><strong>'+e2(topic)+'</strong><div>'+e2(S.trendNotes[i])+'</div></div>';
+  }).filter(Boolean).join('');
 
-var actHTML=
-S.actions.filter(function(a){ return a.title; }).map(function(a){
-return ‘<div class="action-item">’+
-‘<div class="tf-badge">’+(TF[a.tf]||‘0-30 days’)+’</div>’+
-‘<div class="action-title">’+e2(a.title)+’</div>’+
-(a.why?’<div><strong>Why it matters:</strong> ‘+e2(a.why)+’</div>’:’’)+
-(a.kpmg?’<div><strong>KPMG angle:</strong> ‘+e2(a.kpmg)+’</div>’:’’)+
-‘</div>’;
-}).join(’’)+
-(S.agreed.filter(Boolean).length?’<h3>Agreed in Meeting</h3><ul>’+S.agreed.filter(Boolean).map(function(a){ return ‘<li>’+e2(a)+’</li>’; }).join(’’)+’</ul>’:’’)+
-(S.actionOwners?’<h3>Owners & Timeline</h3><div class="content">’+e2(S.actionOwners)+’</div>’:’’);
+  var actHTML=
+    S.actions.filter(function(a){ return a.title; }).map(function(a){
+      return '<div class="action-item">'+
+        '<div class="tf-badge">'+(TF[a.tf]||'0-30 days')+'</div>'+
+        '<div class="action-title">'+e2(a.title)+'</div>'+
+        (a.why?'<div><strong>Why it matters:</strong> '+e2(a.why)+'</div>':'')+
+        (a.kpmg?'<div><strong>KPMG angle:</strong> '+e2(a.kpmg)+'</div>':'')+
+        '</div>';
+    }).join('')+
+    (S.agreed.filter(Boolean).length?'<h3>Agreed in Meeting</h3><ul>'+S.agreed.filter(Boolean).map(function(a){ return '<li>'+e2(a)+'</li>'; }).join('')+'</ul>':'')+
+    (S.actionOwners?'<h3>Owners &amp; Timeline</h3><div class="content">'+e2(S.actionOwners)+'</div>':'');
 
-var followupContent=[S.followUp,S.followUpNotes].filter(Boolean).join(’\n\n’);
+  var followupContent=[S.followUp,S.followUpNotes].filter(Boolean).join('\n\n');
 
-return ‘<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">’+
-‘<title>KPMG CEO Engagement — ‘+e2(ceo)+’</title>’+
-‘<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">’+
-‘<style>:root{–gold:#b8960e;–dark:#1a1814;–txt:#2c2820}*,*::before,*::after{box-sizing:border-box}’+
-‘body{font-family:'DM Sans',sans-serif;color:var(–txt);background:#fff;max-width:860px;margin:0 auto;padding:36px 28px;font-size:14px;line-height:1.75}’+
-‘.hdr{border-bottom:3px solid var(–gold);padding-bottom:20px;margin-bottom:30px}’+
-‘.kpmg{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(–gold);font-weight:600;margin-bottom:6px}’+
-‘h1{font-family:'DM Serif Display',serif;font-size:28px;font-weight:normal;color:var(–dark);margin-bottom:2px}’+
-‘.sub{font-family:'DM Serif Display',serif;font-size:18px;color:var(–gold);font-style:italic}’+
-‘.meta{font-size:11px;color:#999;margin-top:6px}.section{margin-bottom:32px;page-break-inside:avoid}’+
-‘h2{font-family:'DM Serif Display',serif;font-size:16px;font-weight:normal;color:var(–dark);border-left:3px solid var(–gold);padding-left:12px;margin-bottom:12px}’+
-‘h3{font-size:12px;font-weight:600;color:var(–dark);text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px}’+
-‘.content{white-space:pre-wrap;color:#3c3830;font-size:13.5px;line-height:1.75}’+
-‘.qa{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:12px}’+
-‘.q{font-family:'DM Serif Display',serif;font-style:italic;font-size:14px;color:var(–dark);margin-bottom:8px}’+
-‘.a{font-size:13px;color:#3c3830;margin-bottom:6px;white-space:pre-wrap}’+
-‘.insight{background:rgba(184,150,14,.08);border-left:2px solid var(–gold);padding:8px 12px;border-radius:0 5px 5px 0;font-size:12.5px;white-space:pre-wrap;margin-top:6px}’+
-‘.tag{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(–gold);font-weight:600;margin-bottom:4px}’+
-‘.pov{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:10px}’+
-‘.trend{background:#f9f8f5;border-radius:6px;padding:10px 14px;margin-bottom:7px;font-size:13px}’+
-‘.trend strong{display:block;color:var(–dark);margin-bottom:3px}’+
-‘.action-item{background:#f9f8f5;border-radius:8px;padding:12px 16px;margin-bottom:10px;font-size:13px}’+
-‘.tf-badge{display:inline-block;background:var(–gold);color:#1a1814;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-bottom:6px}’+
-‘.action-title{font-size:14px;font-weight:600;color:var(–dark);margin-bottom:5px}’+
-‘.followup-box{background:#fffdf5;border:1px solid #e8d88a;border-radius:8px;padding:18px;white-space:pre-wrap;font-size:13.5px;line-height:1.75}’+
-‘.commit{background:#f9f8f5;border-radius:6px;padding:12px 16px;margin-bottom:8px}’+
-‘.el{font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}’+
-‘.line{border-bottom:1px solid #d8d0c0;min-height:24px;margin-bottom:5px}’+
-‘ul{padding-left:16px}li{margin-bottom:4px}’+
-‘@media print{body{padding:16px}.section,.action-item,.qa{page-break-inside:avoid}}</style></head><body>’+
-‘<div class="hdr"><div class="kpmg">KPMG Australia — Mining, Energy & Utilities</div>’+
-‘<h1>CEO Engagement Brief</h1><div class="sub">’+e2(ceo)+(org?’ — ‘+e2(org):’’)+’</div>’+
-‘<div class="meta">Meeting: ‘+date+’  |  STRICTLY CONFIDENTIAL</div></div>’+
-(S.exp.profile&&S.profile  ? sec(‘Leader Background & Research’,e2(S.profile))  : ‘’)+
-(S.exp.profile&&S.preNotes ? sec(‘Pre-Meeting Context & Agenda’,e2(S.preNotes)) : ‘’)+
-(S.exp.questions&&qAndA    ? ‘<div class="section"><h2>Conversation — Questions & Responses</h2>’+qAndA+’</div>’ : ‘’)+
-(S.exp.povs&&povsHTML      ? ‘<div class="section"><h2>Key Interest Areas — POVs & Probes</h2>’+povsHTML+’</div>’ : ‘’)+
-(S.exp.povs&&trendsHTML    ? ‘<div class="section"><h2>Future Trends & Technology</h2>’+trendsHTML+(S.tab2Notes?’<div class="content" style="margin-top:10px">’+e2(S.tab2Notes)+’</div>’:’’)+’</div>’ : ‘’)+
-(S.exp.actions&&actHTML    ? ‘<div class="section"><h2>90-Day Strategic Actions</h2>’+actHTML+’</div>’ : ‘’)+
-(S.exp.followup&&followupContent ? ‘<div class="section"><h2>Follow-Up Strategy & Notes</h2><div class="followup-box">’+e2(followupContent)+’</div></div>’ : ‘’)+
-‘<div class="section"><h2>Post-Meeting Commitments — For Completion</h2>’+
-‘<p style="font-size:12px;color:#888;margin-bottom:14px">Complete within 24 hours of the meeting.</p>’+
+  return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
+'<title>KPMG CEO Engagement -- '+e2(ceo)+'</title>'+
+'<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">'+
+'<style>:root{--gold:#b8960e;--dark:#1a1814;--txt:#2c2820}*,*::before,*::after{box-sizing:border-box}'+
+'body{font-family:\'DM Sans\',sans-serif;color:var(--txt);background:#fff;max-width:860px;margin:0 auto;padding:36px 28px;font-size:14px;line-height:1.75}'+
+'.hdr{border-bottom:3px solid var(--gold);padding-bottom:20px;margin-bottom:30px}'+
+'.kpmg{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px}'+
+'h1{font-family:\'DM Serif Display\',serif;font-size:28px;font-weight:normal;color:var(--dark);margin-bottom:2px}'+
+'.sub{font-family:\'DM Serif Display\',serif;font-size:18px;color:var(--gold);font-style:italic}'+
+'.meta{font-size:11px;color:#999;margin-top:6px}.section{margin-bottom:32px;page-break-inside:avoid}'+
+'h2{font-family:\'DM Serif Display\',serif;font-size:16px;font-weight:normal;color:var(--dark);border-left:3px solid var(--gold);padding-left:12px;margin-bottom:12px}'+
+'h3{font-size:12px;font-weight:600;color:var(--dark);text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px}'+
+'.content{white-space:pre-wrap;color:#3c3830;font-size:13.5px;line-height:1.75}'+
+'.qa{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:12px}'+
+'.q{font-family:\'DM Serif Display\',serif;font-style:italic;font-size:14px;color:var(--dark);margin-bottom:8px}'+
+'.a{font-size:13px;color:#3c3830;margin-bottom:6px;white-space:pre-wrap}'+
+'.insight{background:rgba(184,150,14,.08);border-left:2px solid var(--gold);padding:8px 12px;border-radius:0 5px 5px 0;font-size:12.5px;white-space:pre-wrap;margin-top:6px}'+
+'.tag{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:4px}'+
+'.pov{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:10px}'+
+'.trend{background:#f9f8f5;border-radius:6px;padding:10px 14px;margin-bottom:7px;font-size:13px}'+
+'.trend strong{display:block;color:var(--dark);margin-bottom:3px}'+
+'.action-item{background:#f9f8f5;border-radius:8px;padding:12px 16px;margin-bottom:10px;font-size:13px}'+
+'.tf-badge{display:inline-block;background:var(--gold);color:#1a1814;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-bottom:6px}'+
+'.action-title{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:5px}'+
+'.followup-box{background:#fffdf5;border:1px solid #e8d88a;border-radius:8px;padding:18px;white-space:pre-wrap;font-size:13.5px;line-height:1.75}'+
+'.commit{background:#f9f8f5;border-radius:6px;padding:12px 16px;margin-bottom:8px}'+
+'.el{font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}'+
+'.line{border-bottom:1px solid #d8d0c0;min-height:24px;margin-bottom:5px}'+
+'ul{padding-left:16px}li{margin-bottom:4px}'+
+'@media print{body{padding:16px}.section,.action-item,.qa{page-break-inside:avoid}}</style></head><body>'+
+'<div class="hdr"><div class="kpmg">KPMG Australia -- Mining, Energy &amp; Utilities</div>'+
+'<h1>CEO Engagement Brief</h1><div class="sub">'+e2(ceo)+(org?' -- '+e2(org):'')+'</div>'+
+'<div class="meta">Meeting: '+date+' &nbsp;|&nbsp; STRICTLY CONFIDENTIAL</div></div>'+
+(S.exp.profile&&S.profile  ? sec('Leader Background &amp; Research',e2(S.profile))  : '')+
+(S.exp.profile&&S.preNotes ? sec('Pre-Meeting Context &amp; Agenda',e2(S.preNotes)) : '')+
+(S.exp.questions&&qAndA    ? '<div class="section"><h2>Conversation -- Questions &amp; Responses</h2>'+qAndA+'</div>' : '')+
+(S.exp.povs&&povsHTML      ? '<div class="section"><h2>Key Interest Areas -- POVs &amp; Probes</h2>'+povsHTML+'</div>' : '')+
+(S.exp.povs&&trendsHTML    ? '<div class="section"><h2>Future Trends &amp; Technology</h2>'+trendsHTML+(S.tab2Notes?'<div class="content" style="margin-top:10px">'+e2(S.tab2Notes)+'</div>':'')+'</div>' : '')+
+(S.exp.actions&&actHTML    ? '<div class="section"><h2>90-Day Strategic Actions</h2>'+actHTML+'</div>' : '')+
+(S.exp.followup&&followupContent ? '<div class="section"><h2>Follow-Up Strategy &amp; Notes</h2><div class="followup-box">'+e2(followupContent)+'</div></div>' : '')+
+'<div class="section"><h2>Post-Meeting Commitments -- For Completion</h2>'+
+'<p style="font-size:12px;color:#888;margin-bottom:14px">Complete within 24 hours of the meeting.</p>'+
 [1,2,3,4].map(function(n){
-return ‘<div class="commit"><div class="el">Commitment ‘+n+’</div><div class="line"></div>’+
-‘<div style="display:flex;gap:14px;margin-top:7px">’+
-‘<div style="flex:1"><div class="el">Owner</div><div class="line"></div></div>’+
-‘<div style="flex:1"><div class="el">Due Date</div><div class="line"></div></div>’+
-‘</div></div>’;
-}).join(’’)+’</div>’+
-‘<div style="margin-top:36px;padding-top:14px;border-top:1px solid #ddd;font-size:11px;color:#bbb;text-align:center">’+
-’KPMG Australia — Confidential  |  Mining, Energy & Utilities  |  ’+date+
-‘</div></body></html>’;
+  return '<div class="commit"><div class="el">Commitment '+n+'</div><div class="line"></div>'+
+    '<div style="display:flex;gap:14px;margin-top:7px">'+
+    '<div style="flex:1"><div class="el">Owner</div><div class="line"></div></div>'+
+    '<div style="flex:1"><div class="el">Due Date</div><div class="line"></div></div>'+
+    '</div></div>';
+}).join('')+'</div>'+
+'<div style="margin-top:36px;padding-top:14px;border-top:1px solid #ddd;font-size:11px;color:#bbb;text-align:center">'+
+'KPMG Australia -- Confidential &nbsp;|&nbsp; Mining, Energy &amp; Utilities &nbsp;|&nbsp; '+date+
+'</div></body></html>';
 }
 
 function downloadReport(){
-var b=new Blob([buildReportHTML()],{type:‘text/html’});
-var u=URL.createObjectURL(b);
-var a=document.createElement(‘a’);
-a.href=u; a.download=‘KPMG_CEO_’+(S.ceoName||‘Brief’).replace(/\s+/g,’_’)+’.html’;
-a.click(); URL.revokeObjectURL(u);
+  var b=new Blob([buildReportHTML()],{type:'text/html'});
+  var u=URL.createObjectURL(b);
+  var a=document.createElement('a');
+  a.href=u; a.download='KPMG_CEO_'+(S.ceoName||'Brief').replace(/\s+/g,'_')+'.html';
+  a.click(); URL.revokeObjectURL(u);
 }
 
 function previewReport(){
-var w=window.open(’’,’_blank’);
-w.document.write(buildReportHTML());
-w.document.close();
+  var w=window.open('','_blank');
+  w.document.write(buildReportHTML());
+  w.document.close();
 }
 
 function saveBackup(){
-var b=new Blob([JSON.stringify(S,null,2)],{type:‘application/json’});
-var u=URL.createObjectURL(b);
-var a=document.createElement(‘a’);
-a.href=u; a.download=‘KPMG_Session_’+(S.ceoName||‘session’).replace(/\s+/g,’_’)+’.json’;
-a.click(); URL.revokeObjectURL(u);
+  var b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  var u=URL.createObjectURL(b);
+  var a=document.createElement('a');
+  a.href=u; a.download='KPMG_Session_'+(S.ceoName||'session').replace(/\s+/g,'_')+'.json';
+  a.click(); URL.revokeObjectURL(u);
 }
 
 function loadBackup(event){
-var file=event.target.files[0]; if(!file) return;
-var r=new FileReader();
-r.onload=function(ev){ try{ Object.assign(S,JSON.parse(ev.target.result)); init(); } catch(e){ alert(‘Invalid backup file.’); } };
-r.readAsText(file);
+  var file=event.target.files[0]; if(!file) return;
+  var r=new FileReader();
+  r.onload=function(ev){ try{ Object.assign(S,JSON.parse(ev.target.result)); init(); } catch(e){ alert('Invalid backup file.'); } };
+  r.readAsText(file);
 }
 
-function esc(s){ return (s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function init(){
-buildTabs(); buildQuestions(); buildInterests();
-buildTrends(); buildActions(); buildAgreed();
-buildExportToggles(); bindFields(); updateHeader();
+  buildTabs(); buildQuestions(); buildInterests();
+  buildTrends(); buildActions(); buildAgreed();
+  buildExportToggles(); bindFields(); updateHeader();
 }
 
-if (document.readyState === ‘loading’) {
-document.addEventListener(‘DOMContentLoaded’, init);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
 } else {
-init();
+  init();
 }
 </script>
-
 </body>
 </html>
