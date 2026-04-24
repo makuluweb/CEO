@@ -2,764 +2,797 @@
 
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CEO Engagement Studio — KPMG</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body { background: #0f0e0c; color: #f0ece4; font-family: 'DM Sans', sans-serif; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #111; }
-    ::-webkit-scrollbar-thumb { background: #c8a96e; border-radius: 2px; }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-    .fade-up { animation: fadeUp .35s ease both; }
-    textarea, input, button { font-family: 'DM Sans', sans-serif; }
-    textarea { resize: vertical; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEO Engagement Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#c8a96e;
+  --gold-dark:#a8883e;
+  --dark:#0f0e0c;
+  --card:#141210;
+  --border:rgba(200,169,110,0.2);
+  --text:#f0ece4;
+  --muted:#888;
+  --input-bg:#0d0c0a;
+}
+html,body{height:100%;-webkit-text-size-adjust:100%}
+body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6}
+input,textarea,button,select{font-family:'DM Sans',sans-serif;font-size:14px}
+textarea{resize:vertical}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#111}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+
+/* ── Header ───────────────────────────────────────────────── */
+#app-header{
+background:#09080a;
+border-bottom:1px solid var(–border);
+padding:14px 16px 0;
+position:sticky;top:0;z-index:100;
+}
+.header-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px}
+.header-brand .kpmg-label{
+font-family:‘Bebas Neue’,sans-serif;font-size:10px;
+letter-spacing:0.2em;color:var(–gold);margin-bottom:2px;
+}
+.header-brand .app-title{
+font-family:‘DM Serif Display’,serif;font-size:18px;
+color:var(–text);font-weight:normal;
+}
+#header-name{
+font-family:‘DM Serif Display’,serif;font-size:13px;
+color:var(–gold);font-style:italic;text-align:right;line-height:1.3;
+}
+#header-org{font-size:11px;color:var(–muted);font-style:normal}
+
+/* ── Tabs ─────────────────────────────────────────────────── */
+.tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:0}
+.tab-btn{
+background:none;border:none;
+border-bottom:2px solid transparent;
+color:#555;cursor:pointer;
+padding:7px 12px;font-size:10px;font-weight:600;
+letter-spacing:0.07em;text-transform:uppercase;
+white-space:nowrap;flex-shrink:0;line-height:1.5;
+transition:color .15s,border-color .15s;
+}
+.tab-btn.active{color:var(–gold);border-bottom-color:var(–gold)}
+.tab-sub{font-size:8px;font-weight:400;opacity:0.6;margin-top:1px}
+
+/* ── Main content ─────────────────────────────────────────── */
+#main{max-width:860px;margin:0 auto;padding:18px 14px 60px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── Cards ────────────────────────────────────────────────── */
+.card{
+background:var(–card);border:1px solid var(–border);
+border-radius:12px;padding:18px;margin-bottom:18px;
+}
+
+/* ── Labels ───────────────────────────────────────────────── */
+.label{
+font-family:‘Bebas Neue’,sans-serif;font-size:11px;
+letter-spacing:0.15em;color:var(–gold);
+margin-bottom:6px;text-transform:uppercase;display:block;
+}
+.sublabel{font-size:12px;color:#666;margin-bottom:12px;line-height:1.6}
+
+/* ── Inputs ───────────────────────────────────────────────── */
+.field{
+width:100%;background:var(–input-bg);border:1px solid var(–border);
+border-radius:8px;color:var(–text);font-size:14px;
+padding:10px 14px;outline:none;display:block;margin-bottom:2px;
+}
+.field::placeholder{color:#555}
+textarea.field{line-height:1.6}
+input[type=“date”].field{color:var(–text)}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.btn{
+display:inline-flex;align-items:center;gap:6px;
+border-radius:6px;padding:10px 18px;font-size:12px;font-weight:600;
+letter-spacing:0.06em;text-transform:uppercase;
+cursor:pointer;border:none;white-space:nowrap;
+background:linear-gradient(135deg,var(–gold),var(–gold-dark));
+color:#0a0a0a;
+}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+.btn-outline{background:transparent;border:1px solid var(–gold);color:var(–gold)}
+.btn-sm{padding:5px 12px;font-size:10px}
+.btn-danger{background:transparent;border:1px solid #553;color:#888}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+
+/* ── Question blocks ──────────────────────────────────────── */
+.q-block{
+background:var(–input-bg);border:1px solid var(–border);
+border-radius:10px;padding:12px;margin-bottom:12px;
+transition:border-color .2s;
+}
+.q-block.selected{border-color:var(–gold)}
+.q-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.tick{
+width:20px;height:20px;flex-shrink:0;margin-top:2px;
+background:transparent;border:2px solid #444;
+border-radius:4px;cursor:pointer;color:#0a0a0a;
+font-size:11px;font-weight:700;
+display:flex;align-items:center;justify-content:center;
+}
+.tick.on{background:var(–gold);border-color:var(–gold)}
+.q-text{font-size:13.5px;line-height:1.6;color:#e8dfc8;font-style:italic;flex:1}
+.sublabel-small{font-size:10px;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin:8px 0 4px;display:block}
+
+/* ── Trend topics ─────────────────────────────────────────── */
+.trend-item{
+background:var(–input-bg);border:1px solid var(–border);
+border-radius:8px;padding:10px 12px;margin-bottom:8px;
+transition:border-color .2s;
+}
+.trend-item.selected{border-color:var(–gold)}
+.trend-header{display:flex;align-items:center;gap:10px;cursor:pointer}
+.trend-label{font-size:13.5px;color:#888;transition:color .2s}
+.trend-item.selected .trend-label{color:#e8dfc8}
+.trend-notes{margin-top:8px;display:none}
+.trend-item.selected .trend-notes{display:block}
+
+/* ── Action items ─────────────────────────────────────────── */
+.action-block{
+background:var(–input-bg);border:1px solid var(–border);
+border-radius:10px;padding:14px;margin-bottom:12px;
+}
+.tf-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tf-btn{
+padding:4px 10px;border-radius:4px;font-size:10px;font-weight:600;
+letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;
+background:transparent;color:#666;border:1px solid #444;
+transition:all .15s;
+}
+.tf-btn.active{background:var(–gold);color:#0a0a0a;border-color:var(–gold)}
+.action-remove{margin-left:auto;background:none;border:none;color:#555;cursor:pointer;font-size:20px;line-height:1;padding:0 4px}
+.two-col{display:flex;gap:12px}
+.two-col > div{flex:1;min-width:0}
+
+/* ── Export toggles ───────────────────────────────────────── */
+.toggle-row{display:flex;align-items:center;gap:10px;cursor:pointer;padding:5px 0}
+.toggle-box{
+width:18px;height:18px;flex-shrink:0;
+background:transparent;border:2px solid #444;border-radius:4px;
+display:flex;align-items:center;justify-content:center;
+color:#0a0a0a;font-size:11px;font-weight:700;
+transition:all .15s;
+}
+.toggle-box.on{background:var(–gold);border-color:var(–gold)}
+.toggle-label{font-size:13.5px;color:#666;transition:color .15s}
+.toggle-row.on .toggle-label{color:#e8dfc8}
+
+/* ── Note box ─────────────────────────────────────────────── */
+.note-box{
+padding:12px 14px;background:rgba(200,169,110,0.06);
+border-radius:8px;border:1px solid var(–border);margin-top:12px;
+}
+.note-box .note-title{
+font-size:11px;color:var(–gold);font-weight:600;
+letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px;
+}
+.note-box p{font-size:12px;color:#777;line-height:1.7}
+
+/* ── Restore label ────────────────────────────────────────── */
+.restore-label{
+cursor:pointer;background:transparent;color:#777;
+border:1px solid #333;border-radius:6px;padding:10px 16px;
+font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;
+display:inline-flex;align-items:center;
+}
+
+/* ── Utility ──────────────────────────────────────────────── */
+.mt8{margin-top:8px}
+.mt12{margin-top:12px}
+.mt16{margin-top:16px}
+.mt20{margin-top:20px}
+.mb8{margin-bottom:8px}
+</style>
+
 </head>
 <body>
-  <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState } = React;
+<!-- Header -->
 
-    const GOLD   = "#c8a96e";
-    const DARK   = "#0f0e0c";
-    const CARD   = "#141210";
-    const BORDER = "rgba(200,169,110,0.2)";
+<div id="app-header">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="header-top">
+      <div class="header-brand">
+        <div class="kpmg-label">KPMG — Mining, Energy & Utilities</div>
+        <div class="app-title">CEO Engagement Studio</div>
+      </div>
+      <div id="header-name"></div>
+    </div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+</div>
 
-    const QUESTIONS = [
-      "What does success actually mean to you right now — not the LinkedIn version?",
-      "When did you last feel genuinely out of your depth, and what did that teach you?",
-      "What belief are you holding that most people around you would disagree with?",
-      "If you stripped away the title tomorrow, who are you?",
-      "What's the decision you made that looked wrong to everyone else but you were certain about?",
-      "What's the gap between who you present to your board and who you actually are?",
-      "Where is the energy in your industry right now — and where is it dying?",
-      "What are you most afraid people will discover about how you're running this organisation?",
-      "What does the next generation of leaders in your sector fundamentally misunderstand?",
-      "If AI, quantum and automation reshape your sector completely in 10 years, what's your honest assessment of whether your organisation will survive?",
-      "What would you do differently if you had no obligation to the current stakeholders?",
-      "What's the conversation your board needs to have but nobody's willing to start?",
-      "When you look at the energy transition — are you leading it, managing it, or hoping it resolves itself?",
-      "What do you need to unlearn to lead effectively through the next decade?",
-    ];
+<!-- Main -->
 
-    // ── Shared UI ──────────────────────────────────────────────────────────────
-    function Card({ children, style }) {
-      return React.createElement("div", {
-        style: { background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 20, ...style }
-      }, children);
-    }
+<div id="main">
 
-    function Label({ children }) {
-      return React.createElement("div", {
-        style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 11, letterSpacing: "0.15em", color: GOLD, marginBottom: 6, textTransform: "uppercase" }
-      }, children);
-    }
+  <!-- TAB 1: Leader & Questions -->
 
-    function TA({ value, onChange, placeholder, rows = 3 }) {
-      return React.createElement("textarea", {
-        value, placeholder, rows,
-        onChange: e => onChange(e.target.value),
-        style: {
-          width: "100%", background: "#0d0c0a", border: `1px solid ${BORDER}`, borderRadius: 8,
-          color: "#f0ece4", fontSize: 14, lineHeight: 1.6,
-          padding: "10px 14px", outline: "none", marginTop: 4,
-        }
-      });
-    }
+  <div class="tab-panel active" id="panel-0">
 
-    function GoldBtn({ onClick, disabled, children, small, outline }) {
-      return React.createElement("button", {
-        onClick, disabled,
-        style: {
-          background: outline ? "transparent" : disabled ? "#1c1a16" : `linear-gradient(135deg, ${GOLD}, #a8883e)`,
-          color: outline ? GOLD : disabled ? "#444" : "#0a0a0a",
-          border: outline ? `1px solid ${GOLD}` : "none",
-          borderRadius: 6, padding: small ? "6px 14px" : "10px 20px",
-          fontSize: small ? 11 : 12, fontWeight: 600,
-          cursor: disabled ? "not-allowed" : "pointer", letterSpacing: "0.06em",
-          textTransform: "uppercase", opacity: disabled ? 0.4 : 1,
-          whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6,
-        }
-      }, children);
-    }
+```
+<div class="card">
+  <span class="label">Leader Profile</span>
+  <input class="field" type="text" id="ceoName" placeholder="CEO / Board Chair full name…">
+  <div class="mt12"></div>
+  <span class="label">Organisation</span>
+  <input class="field" type="text" id="org" placeholder="Company / Organisation…">
+  <div class="mt12"></div>
+  <span class="label">Meeting Date</span>
+  <input class="field" type="date" id="meetingDate" style="max-width:220px">
+  <div class="mt12"></div>
+  <span class="label">Background & Research Notes</span>
+  <textarea class="field" id="profile" rows="5" placeholder="What do you know about them? Leadership style, career background, public positions, key decisions, what drives them as a person…"></textarea>
+  <div class="mt12"></div>
+  <span class="label">Pre-Meeting Context & Agenda</span>
+  <textarea class="field" id="preNotes" rows="3" placeholder="Relationship history, agenda priorities, what you want to get out of this meeting…"></textarea>
+</div>
 
-    function SectionNote({ children }) {
-      return React.createElement("p", {
-        style: { fontSize: 12, color: "#666", lineHeight: 1.65, marginBottom: 14 }
-      }, children);
-    }
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+    <span class="label" style="margin-bottom:0">Question Bank — Steve Bartlett Style</span>
+    <span style="font-size:10px;color:#555;font-style:italic">✓ = include in report</span>
+  </div>
+  <p class="sublabel">Select the questions you plan to use and capture responses below each one.</p>
+  <div id="questions-list"></div>
+  <div class="mt16"></div>
+  <span class="label">Additional Questions / Custom Notes</span>
+  <textarea class="field" id="customQuestions" rows="4" placeholder="Your own questions or notes from the conversation…"></textarea>
+</div>
+```
 
-    // ── Tab 1: Leader Profile & Questions ──────────────────────────────────────
-    function Tab1({ state, setState }) {
-      const sel = state.selectedQuestions || [];
-      const toggle = i => setState(p => ({
-        ...p,
-        selectedQuestions: sel.includes(i) ? sel.filter(x => x !== i) : [...sel, i]
-      }));
+  </div>
 
-      return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 20 } },
+  <!-- TAB 2: Explore -->
 
-        // Profile
-        React.createElement(Card, {},
-          React.createElement(Label, {}, "Leader Profile"),
-          React.createElement("input", {
-            type: "text",
-            value: state.ceoName || "",
-            onChange: e => setState(p => ({ ...p, ceoName: e.target.value })),
-            placeholder: "CEO / Board Chair full name…",
-            style: {
-              width: "100%", background: "#0d0c0a", border: `1px solid ${BORDER}`,
-              borderRadius: 8, color: "#f0ece4", fontSize: 16,
-              padding: "10px 14px", outline: "none", fontWeight: 500, marginBottom: 14,
-            }
-          }),
-          React.createElement(Label, {}, "Organisation"),
-          React.createElement("input", {
-            type: "text",
-            value: state.org || "",
-            onChange: e => setState(p => ({ ...p, org: e.target.value })),
-            placeholder: "Company / Organisation…",
-            style: {
-              width: "100%", background: "#0d0c0a", border: `1px solid ${BORDER}`,
-              borderRadius: 8, color: "#f0ece4", fontSize: 14,
-              padding: "9px 14px", outline: "none", marginBottom: 14,
-            }
-          }),
-          React.createElement(Label, {}, "Meeting Date"),
-          React.createElement("input", {
-            type: "date",
-            value: state.meetingDate || "",
-            onChange: e => setState(p => ({ ...p, meetingDate: e.target.value })),
-            style: {
-              background: "#0d0c0a", border: `1px solid ${BORDER}`,
-              borderRadius: 8, color: "#f0ece4", fontSize: 14,
-              padding: "9px 14px", outline: "none", marginBottom: 14,
-            }
-          }),
-          React.createElement(Label, {}, "Background & Research Notes"),
-          React.createElement(TA, {
-            value: state.profile || "",
-            onChange: v => setState(p => ({ ...p, profile: v })),
-            placeholder: "What do you know about them? Leadership style, career background, public positions, key decisions, what drives them as a person…",
-            rows: 5,
-          }),
-          React.createElement("div", { style: { marginTop: 14 } },
-            React.createElement(Label, {}, "Pre-Meeting Context & Agenda"),
-            React.createElement(TA, {
-              value: state.preNotes || "",
-              onChange: v => setState(p => ({ ...p, preNotes: v })),
-              placeholder: "Relationship history, agenda priorities, what you want to get out of this meeting…",
-              rows: 3,
-            }),
-          ),
-        ),
+  <div class="tab-panel" id="panel-1">
 
-        // Questions
-        React.createElement(Card, {},
-          React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 } },
-            React.createElement(Label, {}, "Question Bank — Steve Bartlett Style"),
-            React.createElement("span", { style: { fontSize: 10, color: "#555", fontStyle: "italic" } }, "✓ = include in report"),
-          ),
-          React.createElement(SectionNote, {}, "Select the questions you plan to use. Capture responses in the field below each one."),
-          React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 12 } },
-            ...QUESTIONS.map((q, i) =>
-              React.createElement("div", {
-                key: i,
-                style: {
-                  background: "#0d0c0a",
-                  border: `1px solid ${sel.includes(i) ? GOLD : BORDER}`,
-                  borderRadius: 10, padding: "12px 14px",
-                }
-              },
-                React.createElement("div", { style: { display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 8 } },
-                  React.createElement("button", {
-                    onClick: () => toggle(i),
-                    style: {
-                      width: 20, height: 20, flexShrink: 0, marginTop: 2,
-                      background: sel.includes(i) ? GOLD : "transparent",
-                      border: `2px solid ${sel.includes(i) ? GOLD : "#444"}`,
-                      borderRadius: 4, cursor: "pointer", color: "#0a0a0a",
-                      fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center",
-                    }
-                  }, sel.includes(i) ? "✓" : ""),
-                  React.createElement("div", { style: { fontSize: 13.5, lineHeight: 1.6, color: "#e8dfc8", fontStyle: "italic", flex: 1 } }, `"${q}"`),
-                ),
-                React.createElement(TA, {
-                  value: state.answers?.[i] || "",
-                  onChange: v => setState(p => ({ ...p, answers: { ...p.answers, [i]: v } })),
-                  placeholder: "Capture their response…",
-                  rows: 2,
-                }),
-                React.createElement("div", { style: { marginTop: 8 } },
-                  React.createElement("div", { style: { fontSize: 10, color: "#555", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 } }, "Your insight / follow-up probe"),
-                  React.createElement(TA, {
-                    value: state.insights?.[i] || "",
-                    onChange: v => setState(p => ({ ...p, insights: { ...p.insights, [i]: v } })),
-                    placeholder: "What did this reveal? What's the follow-up question?",
-                    rows: 2,
-                  }),
-                ),
-              )
-            ),
-          ),
-          React.createElement("div", { style: { marginTop: 18 } },
-            React.createElement(Label, {}, "Additional Questions / Custom Notes"),
-            React.createElement(TA, {
-              value: state.customQuestions || "",
-              onChange: v => setState(p => ({ ...p, customQuestions: v })),
-              placeholder: "Your own questions or notes from the conversation…",
-              rows: 4,
-            }),
-          ),
-        ),
-      );
-    }
+```
+<div class="card">
+  <span class="label">3 Key Interest Areas</span>
+  <p class="sublabel">Based on what emerged — define areas to explore and record your own POV and follow-up questions.</p>
+  <div id="interests-list"></div>
+</div>
 
-    // ── Tab 2: Key Interests & POVs ────────────────────────────────────────────
-    function Tab2({ state, setState }) {
-      const TREND_TOPICS = [
-        "Generative AI & autonomous decision-making",
-        "Quantum computing readiness",
-        "Industrial automation & workforce",
-        "Energy transition & decarbonisation",
-        "Critical minerals & supply chain sovereignty",
-        "Cyber resilience in operational technology",
-        "Capital markets & ESG pressure",
-        "Geopolitical risk & resource nationalism",
-      ];
+<div class="card">
+  <span class="label">Future Trends — Key Topics</span>
+  <p class="sublabel">Tick the trends most relevant to this conversation and add your notes.</p>
+  <div id="trends-list"></div>
+  <div class="mt16"></div>
+  <span class="label">Your Additional Observations</span>
+  <textarea class="field" id="tab2Notes" rows="4" placeholder="Overarching themes, tensions or opportunities from this conversation…"></textarea>
+</div>
+```
 
-      return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 20 } },
+  </div>
 
-        // Key interests
-        React.createElement(Card, {},
-          React.createElement(Label, {}, "3 Key Interest Areas"),
-          React.createElement(SectionNote, {}, "Based on what emerged in the conversation — define the three areas you want to explore and record your own points of view and follow-up questions."),
-          ...[0, 1, 2].map(idx =>
-            React.createElement("div", { key: idx, style: { marginBottom: 20 } },
-              React.createElement(Label, {}, `Area ${idx + 1}`),
-              React.createElement("input", {
-                type: "text",
-                value: state.keyInterests?.[idx] || "",
-                onChange: e => {
-                  const arr = [...(state.keyInterests || ["", "", ""])];
-                  arr[idx] = e.target.value;
-                  setState(p => ({ ...p, keyInterests: arr }));
-                },
-                placeholder: ["e.g. AI adoption roadmap", "e.g. Capital allocation in energy transition", "e.g. Workforce & automation anxiety"][idx],
-                style: {
-                  width: "100%", background: "#0d0c0a", border: `1px solid ${BORDER}`, borderRadius: 8,
-                  color: "#f0ece4", fontSize: 14, padding: "9px 14px", outline: "none", marginBottom: 8,
-                }
-              }),
-              React.createElement("div", { style: { fontSize: 10, color: "#555", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 } }, "Your point of view"),
-              React.createElement(TA, {
-                value: state.povs?.[idx] || "",
-                onChange: v => setState(p => ({ ...p, povs: { ...p.povs, [idx]: v } })),
-                placeholder: "What's your bold POV on this topic? What does it mean for their sector? Contrarian angle?",
-                rows: 3,
-              }),
-              React.createElement("div", { style: { fontSize: 10, color: "#555", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4, marginTop: 8 } }, "Follow-up questions to explore"),
-              React.createElement(TA, {
-                value: state.povFollowUps?.[idx] || "",
-                onChange: v => setState(p => ({ ...p, povFollowUps: { ...p.povFollowUps, [idx]: v } })),
-                placeholder: "Questions to push deeper on this area…",
-                rows: 2,
-              }),
-            )
-          ),
-        ),
+  <!-- TAB 3: Actions -->
 
-        // Trends
-        React.createElement(Card, {},
-          React.createElement(Label, {}, "Future Trends — Key Topics"),
-          React.createElement(SectionNote, {}, "Tick the trends most relevant to this conversation and add your notes on each."),
-          React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 } },
-            ...TREND_TOPICS.map((topic, i) => {
-              const checked = (state.trendTopics || []).includes(i);
-              return React.createElement("div", {
-                key: i,
-                style: { background: "#0d0c0a", border: `1px solid ${checked ? GOLD : BORDER}`, borderRadius: 8, padding: "10px 12px" }
-              },
-                React.createElement("div", {
-                  onClick: () => {
-                    const arr = state.trendTopics || [];
-                    setState(p => ({ ...p, trendTopics: checked ? arr.filter(x => x !== i) : [...arr, i] }));
-                  },
-                  style: { display: "flex", alignItems: "center", gap: 10, cursor: "pointer", marginBottom: checked ? 8 : 0 }
-                },
-                  React.createElement("div", { style: {
-                    width: 18, height: 18, flexShrink: 0,
-                    background: checked ? GOLD : "transparent",
-                    border: `2px solid ${checked ? GOLD : "#444"}`, borderRadius: 4,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    color: "#0a0a0a", fontSize: 11, fontWeight: 700,
-                  }}, checked ? "✓" : ""),
-                  React.createElement("span", { style: { fontSize: 13.5, color: checked ? "#e8dfc8" : "#888" } }, topic),
-                ),
-                checked && React.createElement(TA, {
-                  value: state.trendNotes?.[i] || "",
-                  onChange: v => setState(p => ({ ...p, trendNotes: { ...p.trendNotes, [i]: v } })),
-                  placeholder: "Notes on this trend — what it means for them, key questions it raises…",
-                  rows: 2,
-                }),
-              );
-            })
-          ),
-          React.createElement(Label, {}, "Your additional observations"),
-          React.createElement(TA, {
-            value: state.tab2Notes || "",
-            onChange: v => setState(p => ({ ...p, tab2Notes: v })),
-            placeholder: "Overarching themes, tensions or opportunities from this conversation…",
-            rows: 4,
-          }),
-        ),
-      );
-    }
+  <div class="tab-panel" id="panel-2">
 
-    // ── Tab 3: 90-Day Actions ──────────────────────────────────────────────────
-    function Tab3({ state, setState }) {
-      const TIMEFRAMES = ["0–30 days", "30–60 days", "60–90 days"];
+```
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <span class="label" style="margin-bottom:0">90-Day Strategic Actions</span>
+    <button class="btn btn-sm btn-outline" onclick="addAction()">+ Add Action</button>
+  </div>
+  <p class="sublabel">Record strategic actions across the 90-day horizon with timeframe, owner and KPMG angle.</p>
+  <div id="actions-list"></div>
+</div>
 
-      return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 20 } },
+<div class="card">
+  <span class="label">Actions Agreed in the Meeting</span>
+  <p class="sublabel">Record commitments made in the room.</p>
+  <div id="agreed-list"></div>
+  <button class="btn btn-sm btn-outline mt8" onclick="addAgreed()">+ Add</button>
+  <div class="mt16"></div>
+  <span class="label">Owner / Timeline / Dependencies</span>
+  <textarea class="field" id="actionOwners" rows="3" placeholder="Assign owners and dates, note blockers…"></textarea>
+</div>
+```
 
-        React.createElement(Card, {},
-          React.createElement(Label, {}, "Suggested 90-Day Strategic Actions"),
-          React.createElement(SectionNote, {}, "Record strategic actions across the 90-day horizon. Assign a timeframe, owner and KPMG angle for each."),
-          ...(state.suggestedActionsList || [{ tf: 0, title: "", why: "", kpmg: "" }]).map((action, i) =>
-            React.createElement("div", {
-              key: i,
-              style: { background: "#0d0c0a", border: `1px solid ${BORDER}`, borderRadius: 10, padding: "14px", marginBottom: 12 }
-            },
-              React.createElement("div", { style: { display: "flex", gap: 10, marginBottom: 10, flexWrap: "wrap", alignItems: "center" } },
-                React.createElement("div", { style: { display: "flex", gap: 6 } },
-                  ...TIMEFRAMES.map((tf, ti) =>
-                    React.createElement("button", {
-                      key: ti,
-                      onClick: () => {
-                        const arr = [...(state.suggestedActionsList || [])];
-                        arr[i] = { ...arr[i], tf: ti };
-                        setState(p => ({ ...p, suggestedActionsList: arr }));
-                      },
-                      style: {
-                        padding: "4px 10px", borderRadius: 4, fontSize: 10, fontWeight: 600,
-                        letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer",
-                        background: action.tf === ti ? GOLD : "transparent",
-                        color: action.tf === ti ? "#0a0a0a" : "#666",
-                        border: `1px solid ${action.tf === ti ? GOLD : "#444"}`,
-                      }
-                    }, tf)
-                  )
-                ),
-                (state.suggestedActionsList || []).length > 1 && React.createElement("button", {
-                  onClick: () => setState(p => ({ ...p, suggestedActionsList: (p.suggestedActionsList || []).filter((_, j) => j !== i) })),
-                  style: { marginLeft: "auto", background: "none", border: "none", color: "#555", cursor: "pointer", fontSize: 18, lineHeight: 1 }
-                }, "×"),
-              ),
-              React.createElement("div", { style: { fontSize: 10, color: "#555", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 } }, "Action"),
-              React.createElement("input", {
-                type: "text",
-                value: action.title || "",
-                onChange: e => {
-                  const arr = [...(state.suggestedActionsList || [])];
-                  arr[i] = { ...arr[i], title: e.target.value };
-                  setState(p => ({ ...p, suggestedActionsList: arr }));
-                },
-                placeholder: "Action title…",
-                style: { width: "100%", background: "#111", border: `1px solid ${BORDER}`, borderRadius: 6, color: "#f0ece4", fontSize: 14, padding: "8px 12px", outline: "none", marginBottom: 8 }
-              }),
-              React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } },
-                React.createElement("div", { style: { flex: 1, minWidth: 180 } },
-                  React.createElement("div", { style: { fontSize: 10, color: "#555", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 } }, "Why it matters"),
-                  React.createElement(TA, {
-                    value: action.why || "",
-                    onChange: v => {
-                      const arr = [...(state.suggestedActionsList || [])];
-                      arr[i] = { ...arr[i], why: v };
-                      setState(p => ({ ...p, suggestedActionsList: arr }));
-                    },
-                    placeholder: "Why this matters now…",
-                    rows: 2,
-                  }),
-                ),
-                React.createElement("div", { style: { flex: 1, minWidth: 180 } },
-                  React.createElement("div", { style: { fontSize: 10, color: "#555", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 } }, "KPMG angle"),
-                  React.createElement(TA, {
-                    value: action.kpmg || "",
-                    onChange: v => {
-                      const arr = [...(state.suggestedActionsList || [])];
-                      arr[i] = { ...arr[i], kpmg: v };
-                      setState(p => ({ ...p, suggestedActionsList: arr }));
-                    },
-                    placeholder: "How KPMG adds value here…",
-                    rows: 2,
-                  }),
-                ),
-              ),
-            )
-          ),
-          React.createElement(GoldBtn, {
-            onClick: () => setState(p => ({ ...p, suggestedActionsList: [...(p.suggestedActionsList || [{ tf: 0, title: "", why: "", kpmg: "" }]), { tf: 0, title: "", why: "", kpmg: "" }] })),
-            small: true,
-            outline: true,
-          }, "+ Add Action"),
-        ),
+  </div>
 
-        React.createElement(Card, {},
-          React.createElement(Label, {}, "Actions Agreed in the Meeting"),
-          React.createElement(SectionNote, {}, "Record commitments made in the room."),
-          ...(state.agreedActions || [""]).map((action, i) =>
-            React.createElement("div", { key: i, style: { display: "flex", gap: 8, marginBottom: 8, alignItems: "center" } },
-              React.createElement("input", {
-                type: "text",
-                value: action,
-                onChange: e => {
-                  const arr = [...(state.agreedActions || [""])];
-                  arr[i] = e.target.value;
-                  setState(p => ({ ...p, agreedActions: arr }));
-                },
-                placeholder: `Agreed action ${i + 1}…`,
-                style: { flex: 1, background: "#0d0c0a", border: `1px solid ${BORDER}`, borderRadius: 8, color: "#f0ece4", fontSize: 14, padding: "9px 14px", outline: "none" }
-              }),
-              React.createElement("div", { style: { display: "flex", gap: 4 } },
-                i === (state.agreedActions || [""]).length - 1 && (state.agreedActions || [""]).length < 15 &&
-                  React.createElement(GoldBtn, { small: true, onClick: () => setState(p => ({ ...p, agreedActions: [...(p.agreedActions || [""]), ""] })) }, "+ Add"),
-                (state.agreedActions || [""]).length > 1 &&
-                  React.createElement(GoldBtn, { small: true, outline: true, onClick: () => setState(p => ({ ...p, agreedActions: (p.agreedActions || [""]).filter((_, j) => j !== i) })) }, "✕"),
-              ),
-            )
-          ),
-          React.createElement("div", { style: { marginTop: 16 } },
-            React.createElement(Label, {}, "Owner / Timeline / Dependencies"),
-            React.createElement(TA, {
-              value: state.actionOwners || "",
-              onChange: v => setState(p => ({ ...p, actionOwners: v })),
-              placeholder: "Assign owners and dates, note blockers…",
-              rows: 3,
-            }),
-          ),
-        ),
-      );
-    }
+  <!-- TAB 4: Output -->
 
-    // ── Tab 4: Follow-Up & Export ──────────────────────────────────────────────
-    function Tab4({ state, setState }) {
-      const [exp, setExp] = useState({ profile: true, questions: true, povs: true, actions: true, followup: true });
+  <div class="tab-panel" id="panel-3">
 
-      const TREND_TOPICS = [
-        "Generative AI & autonomous decision-making",
-        "Quantum computing readiness",
-        "Industrial automation & workforce",
-        "Energy transition & decarbonisation",
-        "Critical minerals & supply chain sovereignty",
-        "Cyber resilience in operational technology",
-        "Capital markets & ESG pressure",
-        "Geopolitical risk & resource nationalism",
-      ];
+```
+<div class="card">
+  <span class="label">Follow-Up Strategy & Notes</span>
+  <p class="sublabel">Record your personalised follow-up plan — personal note, next meeting topics, resources to send, relationship actions.</p>
+  <textarea class="field" id="followUp" rows="10" placeholder="1. Personal note to send within 24hrs (warm, direct, not corporate)&#10;2. Three follow-up meeting topics with value for them&#10;3. Resources or provocations to send in next 2 weeks&#10;4. Long-term relationship action&#10;5. Thought leadership idea to co-develop"></textarea>
+</div>
 
-      const buildHTML = () => {
-        const ceo  = state.ceoName || "CEO / Board Chair";
-        const org  = state.org || "";
-        const date = state.meetingDate
-          ? new Date(state.meetingDate).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })
-          : new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
+<div class="card">
+  <span class="label">Export — Select Sections</span>
+  <p class="sublabel">Choose what to include. Use Preview → Print → Save as PDF to share with the CEO.</p>
+  <div id="export-toggles" style="margin-bottom:18px"></div>
+  <div class="btn-row">
+    <button class="btn" onclick="downloadReport()">↓ Download Report</button>
+    <button class="btn btn-outline" onclick="previewReport()">↗ Preview / Print to PDF</button>
+  </div>
+  <div class="note-box">
+    <div class="note-title">✦ PDF workflow on iPhone</div>
+    <p>Tap Preview → then tap the Share icon → Print. On desktop: File → Print → Save as PDF.</p>
+  </div>
+</div>
 
-        const sec = (h, b) => b ? `<div class="section"><h2>${h}</h2><div class="content">${b}</div></div>` : "";
+<div class="card">
+  <span class="label">Session Backup</span>
+  <p class="sublabel">Save your session locally. Restore any time. Nothing stored on any server.</p>
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="saveBackup()">↓ Save Backup</button>
+    <label class="restore-label">
+      ↑ Restore Backup
+      <input type="file" accept=".json" onchange="loadBackup(event)" style="display:none">
+    </label>
+  </div>
+</div>
+```
 
-        const qAndA = QUESTIONS.map((q, i) => {
-          if (!state.answers?.[i] && !state.selectedQuestions?.includes(i)) return "";
-          return `<div class="qa">
-            <div class="q">"${q}"</div>
-            ${state.answers?.[i] ? `<div class="a"><strong>Response:</strong> ${state.answers[i]}</div>` : ""}
-            ${state.insights?.[i] ? `<div class="insight"><span class="tag">✦ Insight / Follow-up</span>${state.insights[i]}</div>` : ""}
-          </div>`;
-        }).filter(Boolean).join("");
+  </div>
 
-        const povsHTML = (state.keyInterests || []).map((area, i) => {
-          if (!area) return "";
-          return `<div class="pov">
-            <h3>${area}</h3>
-            ${state.povs?.[i] ? `<div class="content">${state.povs[i]}</div>` : ""}
-            ${state.povFollowUps?.[i] ? `<div class="followq"><span class="tag">Follow-up questions</span>${state.povFollowUps[i]}</div>` : ""}
-          </div>`;
-        }).join("");
+</div><!-- /main -->
 
-        const trendsHTML = (state.trendTopics || []).map(i => `
-          <div class="trend">
-            <strong>${TREND_TOPICS[i]}</strong>
-            ${state.trendNotes?.[i] ? `<div>${state.trendNotes[i]}</div>` : ""}
-          </div>
-        `).join("");
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+const S = {
+  ceoName:'', org:'', meetingDate:'', profile:'', preNotes:'',
+  answers:{}, insights:{}, selectedQ:[],
+  customQuestions:'',
+  keyInterests:['','',''], povs:['','',''], povFollowUps:['','',''],
+  trendTopics:[], trendNotes:{},
+  tab2Notes:'',
+  actions:[{tf:0,title:'',why:'',kpmg:''}],
+  agreed:[''], actionOwners:'',
+  followUp:'',
+  exp:{profile:true,questions:true,povs:true,actions:true,followup:true},
+};
 
-        const actionsListHTML = (state.suggestedActionsList || []).filter(a => a.title).map(a => {
-          const tf = ["0–30 days", "30–60 days", "60–90 days"][a.tf] || "0–30 days";
-          return `<div class="action-item">
-            <div class="tf-badge">${tf}</div>
-            <div class="action-title">${a.title}</div>
-            ${a.why ? `<div><strong>Why it matters:</strong> ${a.why}</div>` : ""}
-            ${a.kpmg ? `<div><strong>KPMG angle:</strong> ${a.kpmg}</div>` : ""}
-          </div>`;
-        }).join("");
+const QUESTIONS = [
+  "What does success actually mean to you right now — not the LinkedIn version?",
+  "When did you last feel genuinely out of your depth, and what did that teach you?",
+  "What belief are you holding that most people around you would disagree with?",
+  "If you stripped away the title tomorrow, who are you?",
+  "What's the decision you made that looked wrong to everyone else but you were certain about?",
+  "What's the gap between who you present to your board and who you actually are?",
+  "Where is the energy in your industry right now — and where is it dying?",
+  "What are you most afraid people will discover about how you're running this organisation?",
+  "What does the next generation of leaders in your sector fundamentally misunderstand?",
+  "If AI, quantum and automation reshape your sector completely in 10 years, what's your honest assessment of whether your organisation will survive?",
+  "What would you do differently if you had no obligation to the current stakeholders?",
+  "What's the conversation your board needs to have but nobody's willing to start?",
+  "When you look at the energy transition — are you leading it, managing it, or hoping it resolves itself?",
+  "What do you need to unlearn to lead effectively through the next decade?",
+];
 
-        const agreedHTML = (state.agreedActions || []).filter(Boolean).length
-          ? `<h3>Agreed in Meeting</h3><ul>${(state.agreedActions || []).filter(Boolean).map(a => `<li>${a}</li>`).join("")}</ul>` : "";
+const TRENDS = [
+  "Generative AI & autonomous decision-making",
+  "Quantum computing readiness",
+  "Industrial automation & workforce",
+  "Energy transition & decarbonisation",
+  "Critical minerals & supply chain sovereignty",
+  "Cyber resilience in operational technology",
+  "Capital markets & ESG pressure",
+  "Geopolitical risk & resource nationalism",
+];
 
-        return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<title>KPMG CEO Engagement — ${ceo}</title>
+const TABS = [
+  {label:'01 — Leader', sub:'Profile & Questions'},
+  {label:'02 — Explore', sub:'POVs & Trends'},
+  {label:'03 — Actions', sub:'90-Day Strategy'},
+  {label:'04 — Output',  sub:'Follow-Up & Export'},
+];
+
+const EXP_LABELS = [
+  {k:'profile',   label:'Leader Background & Pre-Meeting Context'},
+  {k:'questions', label:'Questions, Responses & Insights'},
+  {k:'povs',      label:'Key Interest Areas, POVs & Trends'},
+  {k:'actions',   label:'90-Day Actions & Agreed Commitments'},
+  {k:'followup',  label:'Follow-Up Strategy & Notes'},
+];
+
+// ── Tab switching ──────────────────────────────────────────────────────────
+let currentTab = 0;
+
+function buildTabs() {
+  const container = document.getElementById('tabs');
+  TABS.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+    btn.innerHTML = `<div>${t.label}</div><div class="tab-sub">${t.sub}</div>`;
+    btn.onclick = () => switchTab(i);
+    container.appendChild(btn);
+  });
+}
+
+function switchTab(i) {
+  document.querySelectorAll('.tab-btn').forEach((b,j) => b.classList.toggle('active', j===i));
+  document.querySelectorAll('.tab-panel').forEach((p,j) => p.classList.toggle('active', j===i));
+  currentTab = i;
+}
+
+// ── Header name update ─────────────────────────────────────────────────────
+function updateHeader() {
+  const el = document.getElementById('header-name');
+  const name = S.ceoName.trim();
+  const org  = S.org.trim();
+  el.innerHTML = name
+    ? `${name}${org ? `<div id="header-org">${org}</div>` : ''}`
+    : '';
+}
+
+// ── Build questions list ───────────────────────────────────────────────────
+function buildQuestions() {
+  const list = document.getElementById('questions-list');
+  list.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const sel = S.selectedQ.includes(i);
+    const div = document.createElement('div');
+    div.className = 'q-block' + (sel ? ' selected' : '');
+    div.id = `qblock-${i}`;
+    div.innerHTML = `
+      <div class="q-header">
+        <div class="tick${sel?' on':''}" id="tick-${i}" onclick="toggleQ(${i})">
+          ${sel?'✓':''}
+        </div>
+        <div class="q-text">"${q}"</div>
+      </div>
+      <textarea class="field" rows="2" placeholder="Capture their response…" oninput="S.answers[${i}]=this.value">${S.answers[i]||''}</textarea>
+
+```
+  <span class="sublabel-small">Your insight / follow-up probe</span>
+  <textarea class="field" rows="2" placeholder="What did this reveal? What's the follow-up question?" oninput="S.insights[${i}]=this.value">${S.insights[i]||''}</textarea>
+`;
+list.appendChild(div);
+```
+
+});
+}
+
+function toggleQ(i) {
+const idx = S.selectedQ.indexOf(i);
+if (idx === -1) S.selectedQ.push(i); else S.selectedQ.splice(idx, 1);
+const sel = S.selectedQ.includes(i);
+const block = document.getElementById(`qblock-${i}`);
+const tick  = document.getElementById(`tick-${i}`);
+block.classList.toggle(‘selected’, sel);
+tick.className = ‘tick’ + (sel ? ’ on’ : ‘’);
+tick.textContent = sel ? ‘✓’ : ‘’;
+}
+
+// ── Build key interests ────────────────────────────────────────────────────
+function buildInterests() {
+const list = document.getElementById(‘interests-list’);
+list.innerHTML = ‘’;
+[0,1,2].forEach(i => {
+const div = document.createElement(‘div’);
+div.style.marginBottom = ‘20px’;
+div.innerHTML = `<span class="label">Area ${i+1}</span> <input class="field" type="text" placeholder="${['e.g. AI adoption roadmap','e.g. Capital allocation in energy transition','e.g. Workforce & automation anxiety'][i]}" value="${esc(S.keyInterests[i])}" oninput="S.keyInterests[${i}]=this.value" style="margin-bottom:8px"> <span class="sublabel-small">Your point of view</span> <textarea class="field" rows="3" placeholder="What's your bold POV on this topic? What does it mean for their sector? Contrarian angle?" oninput="S.povs[${i}]=this.value">${S.povs[i]||''}</textarea> <span class="sublabel-small">Follow-up questions to explore</span> <textarea class="field" rows="2" placeholder="Questions to push deeper on this area…" oninput="S.povFollowUps[${i}]=this.value">${S.povFollowUps[i]||''}</textarea>`;
+list.appendChild(div);
+});
+}
+
+// ── Build trends ───────────────────────────────────────────────────────────
+function buildTrends() {
+const list = document.getElementById(‘trends-list’);
+list.innerHTML = ‘’;
+TRENDS.forEach((t, i) => {
+const sel = S.trendTopics.includes(i);
+const div = document.createElement(‘div’);
+div.className = ‘trend-item’ + (sel ? ’ selected’ : ‘’);
+div.id = `trend-${i}`;
+div.innerHTML = `<div class="trend-header" onclick="toggleTrend(${i})"> <div class="toggle-box${sel?' on':''}"> ${sel?'✓':''} </div> <span class="trend-label">${t}</span> </div> <div class="trend-notes"> <textarea class="field mt8" rows="2" placeholder="Notes on this trend — what it means for them, questions it raises…" oninput="S.trendNotes[${i}]=this.value">${S.trendNotes[i]||''}</textarea> </div>`;
+list.appendChild(div);
+});
+}
+
+function toggleTrend(i) {
+const idx = S.trendTopics.indexOf(i);
+if (idx === -1) S.trendTopics.push(i); else S.trendTopics.splice(idx, 1);
+const sel  = S.trendTopics.includes(i);
+const item = document.getElementById(`trend-${i}`);
+item.classList.toggle(‘selected’, sel);
+item.querySelector(’.toggle-box’).className = ‘toggle-box’ + (sel ? ’ on’ : ‘’);
+item.querySelector(’.toggle-box’).textContent = sel ? ‘✓’ : ‘’;
+}
+
+// ── Build actions ──────────────────────────────────────────────────────────
+const TF = [‘0–30 days’,‘30–60 days’,‘60–90 days’];
+
+function buildActions() {
+const list = document.getElementById(‘actions-list’);
+list.innerHTML = ‘’;
+S.actions.forEach((a, i) => renderAction(i));
+}
+
+function renderAction(i) {
+const list = document.getElementById(‘actions-list’);
+const a    = S.actions[i];
+const div  = document.createElement(‘div’);
+div.className = ‘action-block’;
+div.id = `action-${i}`;
+div.innerHTML = `<div style="display:flex;align-items:center;margin-bottom:10px"> <div class="tf-row" style="margin-bottom:0"> ${TF.map((tf,ti) =>`<button class="tf-btn${a.tf===ti?' active':''}" onclick="setTF(${i},${ti})">${tf}</button>`).join('')} </div> ${S.actions.length > 1 ? `<button class="action-remove" onclick="removeAction(${i})">×</button>`: ''} </div> <span class="sublabel-small">Action</span> <input class="field" type="text" placeholder="Action title…" value="${esc(a.title)}" oninput="S.actions[${i}].title=this.value" style="margin-bottom:10px"> <div class="two-col"> <div> <span class="sublabel-small">Why it matters</span> <textarea class="field" rows="2" placeholder="Why this matters now…" oninput="S.actions[${i}].why=this.value">${a.why||''}</textarea> </div> <div> <span class="sublabel-small">KPMG angle</span> <textarea class="field" rows="2" placeholder="How KPMG adds value here…" oninput="S.actions[${i}].kpmg=this.value">${a.kpmg||''}</textarea> </div> </div>`;
+list.appendChild(div);
+}
+
+function addAction() {
+S.actions.push({tf:0,title:’’,why:’’,kpmg:’’});
+buildActions();
+}
+
+function removeAction(i) {
+S.actions.splice(i,1);
+buildActions();
+}
+
+function setTF(i, ti) {
+S.actions[i].tf = ti;
+const block = document.getElementById(`action-${i}`);
+block.querySelectorAll(’.tf-btn’).forEach((b,j) => b.classList.toggle(‘active’, j===ti));
+}
+
+// ── Build agreed actions ───────────────────────────────────────────────────
+function buildAgreed() {
+const list = document.getElementById(‘agreed-list’);
+list.innerHTML = ‘’;
+S.agreed.forEach((v, i) => {
+const row = document.createElement(‘div’);
+row.style.cssText = ‘display:flex;gap:8px;margin-bottom:8px;align-items:center’;
+row.innerHTML = `<input class="field" type="text" placeholder="Agreed action ${i+1}…" value="${esc(v)}" oninput="S.agreed[${i}]=this.value" style="flex:1;margin-bottom:0"> ${S.agreed.length > 1 ?`<button class="btn btn-sm btn-outline" onclick="removeAgreed(${i})">✕</button>`: ''}`;
+list.appendChild(row);
+});
+}
+
+function addAgreed() {
+S.agreed.push(’’);
+buildAgreed();
+}
+
+function removeAgreed(i) {
+S.agreed.splice(i,1);
+buildAgreed();
+}
+
+// ── Build export toggles ───────────────────────────────────────────────────
+function buildExportToggles() {
+const container = document.getElementById(‘export-toggles’);
+container.innerHTML = ‘’;
+EXP_LABELS.forEach(({k, label}) => {
+const row = document.createElement(‘div’);
+row.className = ‘toggle-row’ + (S.exp[k] ? ’ on’ : ‘’);
+row.id = `toggle-${k}`;
+row.innerHTML = `<div class="toggle-box${S.exp[k]?' on':''}"> ${S.exp[k]?'✓':''} </div> <span class="toggle-label">${label}</span>`;
+row.onclick = () => {
+S.exp[k] = !S.exp[k];
+row.classList.toggle(‘on’, S.exp[k]);
+const box = row.querySelector(’.toggle-box’);
+box.classList.toggle(‘on’, S.exp[k]);
+box.textContent = S.exp[k] ? ‘✓’ : ‘’;
+};
+container.appendChild(row);
+});
+}
+
+// ── Bind simple fields ─────────────────────────────────────────────────────
+function bindFields() {
+const bind = (id, key) => {
+const el = document.getElementById(id);
+if (!el) return;
+el.value = S[key] || ‘’;
+el.addEventListener(‘input’, () => {
+S[key] = el.value;
+if (id === ‘ceoName’ || id === ‘org’) updateHeader();
+});
+};
+bind(‘ceoName’,‘ceoName’);
+bind(‘org’,‘org’);
+bind(‘meetingDate’,‘meetingDate’);
+bind(‘profile’,‘profile’);
+bind(‘preNotes’,‘preNotes’);
+bind(‘customQuestions’,‘customQuestions’);
+bind(‘tab2Notes’,‘tab2Notes’);
+bind(‘actionOwners’,‘actionOwners’);
+bind(‘followUp’,‘followUp’);
+}
+
+// ── Report HTML builder ────────────────────────────────────────────────────
+function buildReportHTML() {
+const ceo  = S.ceoName || ‘CEO / Board Chair’;
+const org  = S.org || ‘’;
+const date = S.meetingDate
+? new Date(S.meetingDate + ‘T12:00:00’).toLocaleDateString(‘en-AU’,{day:‘numeric’,month:‘long’,year:‘numeric’})
+: new Date().toLocaleDateString(‘en-AU’,{day:‘numeric’,month:‘long’,year:‘numeric’});
+
+const sec = (h, b) => b ? `<div class="section"><h2>${h}</h2><div class="content">${b}</div></div>` : ‘’;
+const e   = s => (s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’);
+
+const qAndA = QUESTIONS.map((q, i) => {
+if (!S.answers[i] && !S.selectedQ.includes(i)) return ‘’;
+return `<div class="qa"> <div class="q">"${e(q)}"</div> ${S.answers[i] ? `<div class="a"><strong>Response:</strong> ${e(S.answers[i])}</div>`: ''} ${S.insights[i] ?`<div class="insight"><span class="tag">✦ Insight / Follow-up</span>${e(S.insights[i])}</div>` : ''} </div>`;
+}).filter(Boolean).join(’’);
+
+const povsHTML = [0,1,2].map(i => {
+if (!S.keyInterests[i]) return ‘’;
+return `<div class="pov"> <h3>${e(S.keyInterests[i])}</h3> ${S.povs[i] ? `<div class="content">${e(S.povs[i])}</div>`: ''} ${S.povFollowUps[i] ?`<div class="followq"><span class="tag">Follow-up questions</span>${e(S.povFollowUps[i])}</div>` : ''} </div>`;
+}).filter(Boolean).join(’’);
+
+const trendsHTML = S.trendTopics.map(i =>
+`<div class="trend"><strong>${e(TRENDS[i])}</strong>${S.trendNotes[i] ? `<div>${e(S.trendNotes[i])}</div>` : ''}</div>`
+).join(’’);
+
+const actHTML = S.actions.filter(a => a.title).map(a => {
+const tf = TF[a.tf] || ‘0–30 days’;
+return `<div class="action-item"> <div class="tf-badge">${tf}</div> <div class="action-title">${e(a.title)}</div> ${a.why  ? `<div><strong>Why it matters:</strong> ${e(a.why)}</div>` : ''} ${a.kpmg ?`<div><strong>KPMG angle:</strong> ${e(a.kpmg)}</div>` : ''} </div>`;
+}).join(’’);
+
+const agreedHTML = S.agreed.filter(Boolean).length
+? `<h3>Agreed in Meeting</h3><ul>${S.agreed.filter(Boolean).map(a=>`<li>${e(a)}</li>`).join('')}</ul>` : ‘’;
+
+return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>KPMG CEO Engagement — ${e(ceo)}</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{--gold:#b8960e;--dark:#1a1814;--txt:#2c2820}
 *,*::before,*::after{box-sizing:border-box}
-body{font-family:'DM Sans',sans-serif;color:var(--txt);background:#fff;max-width:860px;margin:0 auto;padding:40px 32px;font-size:14px;line-height:1.75}
-.hdr{border-bottom:3px solid var(--gold);padding-bottom:22px;margin-bottom:32px}
+body{font-family:'DM Sans',sans-serif;color:var(--txt);background:#fff;max-width:860px;margin:0 auto;padding:36px 28px;font-size:14px;line-height:1.75}
+.hdr{border-bottom:3px solid var(--gold);padding-bottom:20px;margin-bottom:30px}
 .kpmg{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px}
-h1{font-family:'DM Serif Display',serif;font-size:30px;font-weight:normal;color:var(--dark);margin-bottom:2px}
-.sub{font-family:'DM Serif Display',serif;font-size:20px;color:var(--gold);font-style:italic}
-.meta{font-size:11px;color:#999;margin-top:8px}
-.section{margin-bottom:34px;page-break-inside:avoid}
-h2{font-family:'DM Serif Display',serif;font-size:17px;font-weight:normal;color:var(--dark);border-left:3px solid var(--gold);padding-left:12px;margin-bottom:14px}
-h3{font-size:12px;font-weight:600;color:var(--dark);text-transform:uppercase;letter-spacing:.07em;margin:14px 0 6px}
+h1{font-family:'DM Serif Display',serif;font-size:28px;font-weight:normal;color:var(--dark);margin-bottom:2px}
+.sub{font-family:'DM Serif Display',serif;font-size:18px;color:var(--gold);font-style:italic}
+.meta{font-size:11px;color:#999;margin-top:6px}
+.section{margin-bottom:32px;page-break-inside:avoid}
+h2{font-family:'DM Serif Display',serif;font-size:16px;font-weight:normal;color:var(--dark);border-left:3px solid var(--gold);padding-left:12px;margin-bottom:12px}
+h3{font-size:12px;font-weight:600;color:var(--dark);text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px}
 .content{white-space:pre-wrap;color:#3c3830;font-size:13.5px;line-height:1.75}
-.qa{background:#f9f8f5;border-radius:8px;padding:16px 18px;margin-bottom:14px}
-.q{font-family:'DM Serif Display',serif;font-style:italic;font-size:14.5px;color:var(--dark);margin-bottom:8px}
-.a{font-size:13.5px;color:#3c3830;margin-bottom:8px;white-space:pre-wrap}
-.insight{background:rgba(184,150,14,.08);border-left:2px solid var(--gold);padding:10px 14px;border-radius:0 6px 6px 0;font-size:13px;white-space:pre-wrap;margin-top:6px}
-.followq{background:rgba(184,150,14,.06);border-left:2px solid #d4b96e;padding:10px 14px;border-radius:0 6px 6px 0;font-size:13px;white-space:pre-wrap;margin-top:6px}
-.tag{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:5px}
-.pov{background:#f9f8f5;border-radius:8px;padding:16px 18px;margin-bottom:12px}
-.trend{background:#f9f8f5;border-radius:6px;padding:12px 16px;margin-bottom:8px;font-size:13.5px}
-.trend strong{display:block;color:var(--dark);margin-bottom:4px}
-.action-item{background:#f9f8f5;border-radius:8px;padding:14px 18px;margin-bottom:12px;font-size:13.5px}
-.tf-badge{display:inline-block;background:var(--gold);color:#1a1814;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px;margin-bottom:8px}
-.action-title{font-size:15px;font-weight:600;color:var(--dark);margin-bottom:6px}
-.followup-box{background:#fffdf5;border:1px solid #e8d88a;border-radius:8px;padding:20px;white-space:pre-wrap;font-size:13.5px;line-height:1.75}
-.commit-entry{background:#f9f8f5;border-radius:6px;padding:14px 18px;margin-bottom:10px}
-.elabel{font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-.line{border-bottom:1px solid #d8d0c0;min-height:26px;margin-bottom:6px}
-ul{padding-left:18px} li{margin-bottom:5px}
-@media print{body{padding:20px}.section{page-break-inside:avoid}.action-item{page-break-inside:avoid}}
+.qa{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:12px}
+.q{font-family:'DM Serif Display',serif;font-style:italic;font-size:14px;color:var(--dark);margin-bottom:8px}
+.a{font-size:13px;color:#3c3830;margin-bottom:6px;white-space:pre-wrap}
+.insight,.followq{border-left:2px solid var(--gold);padding:8px 12px;border-radius:0 5px 5px 0;font-size:12.5px;white-space:pre-wrap;margin-top:6px}
+.insight{background:rgba(184,150,14,.08)}
+.followq{background:rgba(184,150,14,.05)}
+.tag{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:4px}
+.pov{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:10px}
+.trend{background:#f9f8f5;border-radius:6px;padding:10px 14px;margin-bottom:7px;font-size:13px}
+.trend strong{display:block;color:var(--dark);margin-bottom:3px}
+.action-item{background:#f9f8f5;border-radius:8px;padding:12px 16px;margin-bottom:10px;font-size:13px}
+.tf-badge{display:inline-block;background:var(--gold);color:#1a1814;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-bottom:6px}
+.action-title{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:5px}
+.followup-box{background:#fffdf5;border:1px solid #e8d88a;border-radius:8px;padding:18px;white-space:pre-wrap;font-size:13.5px;line-height:1.75}
+.commit{background:#f9f8f5;border-radius:6px;padding:12px 16px;margin-bottom:8px}
+.el{font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.line{border-bottom:1px solid #d8d0c0;min-height:24px;margin-bottom:5px}
+ul{padding-left:16px} li{margin-bottom:4px}
+@media print{body{padding:16px}.section,.action-item,.qa{page-break-inside:avoid}}
 </style></head><body>
-
 <div class="hdr">
-  <div class="kpmg">KPMG Australia — Mining, Energy & Utilities</div>
+  <div class="kpmg">KPMG Australia — Mining, Energy &amp; Utilities</div>
   <h1>CEO Engagement Brief</h1>
-  <div class="sub">${ceo}${org ? ` — ${org}` : ""}</div>
+  <div class="sub">${e(ceo)}${org ? ` — ${e(org)}` : ''}</div>
   <div class="meta">Meeting: ${date} &nbsp;|&nbsp; STRICTLY CONFIDENTIAL</div>
 </div>
 
-${exp.profile && state.profile ? sec(“Leader Background & Research”, state.profile) : “”}
-${exp.profile && state.preNotes ? sec(“Pre-Meeting Context & Agenda”, state.preNotes) : “”}
-
-${exp.questions && qAndA ? `<div class="section"><h2>Conversation — Questions & Responses</h2>${qAndA}</div>` : “”}
-
-${exp.povs && povsHTML ? `<div class="section"><h2>Key Interest Areas — Points of View & Probes</h2>${povsHTML}</div>` : “”}
-${exp.povs && trendsHTML ? `<div class="section"><h2>Future Trends Discussed</h2>${trendsHTML}${state.tab2Notes ? `<div class="content" style="margin-top:12px">${state.tab2Notes}</div>` : ""}</div>` : “”}
-
-${exp.actions && (actionsListHTML || agreedHTML) ? `<div class="section"><h2>90-Day Strategic Actions</h2>${actionsListHTML}${agreedHTML}${state.actionOwners ? `<h3>Owners & Timeline</h3><div class="content">${state.actionOwners}</div>` : ""}</div>` : “”}
-
-${exp.followup && state.followUp ? `<div class="section"><h2>Follow-Up Strategy & Notes</h2><div class="followup-box">${state.followUp}</div></div>` : “”}
+${S.exp.profile && S.profile ? sec(‘Leader Background & Research’, e(S.profile)) : ‘’}
+${S.exp.profile && S.preNotes ? sec(‘Pre-Meeting Context & Agenda’, e(S.preNotes)) : ‘’}
+${S.exp.questions && qAndA ? `<div class="section"><h2>Conversation — Questions &amp; Responses</h2>${qAndA}</div>` : ‘’}
+${S.exp.povs && povsHTML ? `<div class="section"><h2>Key Interest Areas — Points of View &amp; Probes</h2>${povsHTML}</div>` : ‘’}
+${S.exp.povs && trendsHTML ? `<div class="section"><h2>Future Trends Discussed</h2>${trendsHTML}${S.tab2Notes ? `<div class="content" style="margin-top:10px">${e(S.tab2Notes)}</div>` : ''}</div>` : ‘’}
+${S.exp.actions ? `<div class="section"><h2>90-Day Strategic Actions</h2>${actHTML}${agreedHTML}${S.actionOwners ? `<h3>Owners & Timeline</h3><div class="content">${e(S.actionOwners)}</div>` : ''}</div>` : ‘’}
+${S.exp.followup && S.followUp ? `<div class="section"><h2>Follow-Up Strategy &amp; Notes</h2><div class="followup-box">${e(S.followUp)}</div></div>` : ‘’}
 
 <div class="section">
   <h2>Post-Meeting Commitments — For Completion</h2>
-  <p style="font-size:12px;color:#888;margin-bottom:16px">Complete within 24 hours of the meeting.</p>
-  ${[1,2,3,4].map(n => `<div class="commit-entry">
-    <div class="elabel">Commitment ${n}</div><div class="line"></div>
-    <div style="display:flex;gap:16px;margin-top:8px">
-      <div style="flex:1"><div class="elabel">Owner</div><div class="line"></div></div>
-      <div style="flex:1"><div class="elabel">Due Date</div><div class="line"></div></div>
+  <p style="font-size:12px;color:#888;margin-bottom:14px">Complete within 24 hours of the meeting.</p>
+  ${[1,2,3,4].map(n=>`<div class="commit">
+    <div class="el">Commitment ${n}</div><div class="line"></div>
+    <div style="display:flex;gap:14px;margin-top:7px">
+      <div style="flex:1"><div class="el">Owner</div><div class="line"></div></div>
+      <div style="flex:1"><div class="el">Due Date</div><div class="line"></div></div>
     </div>
-  </div>`).join("")}
+  </div>`).join('')}
 </div>
 
-<div style="margin-top:40px;padding-top:16px;border-top:1px solid #ddd;font-size:11px;color:#bbb;text-align:center">
-  KPMG Australia — Confidential &nbsp;|&nbsp; Mining, Energy & Utilities &nbsp;|&nbsp; ${date}
+<div style="margin-top:36px;padding-top:14px;border-top:1px solid #ddd;font-size:11px;color:#bbb;text-align:center">
+  KPMG Australia — Confidential &nbsp;|&nbsp; Mining, Energy &amp; Utilities &nbsp;|&nbsp; ${date}
 </div>
 </body></html>`;
-      };
-
-```
-  const dl = (content, name, type) => {
-    const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = name; a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const loadJSON = e => {
-    const file = e.target.files[0]; if (!file) return;
-    const r = new FileReader();
-    r.onload = ev => { try { setState(JSON.parse(ev.target.result)); } catch { alert("Invalid backup file."); } };
-    r.readAsText(file);
-  };
-
-  const Toggle = ({ k, label }) =>
-    React.createElement("div", {
-      onClick: () => setExp(p => ({ ...p, [k]: !p[k] })),
-      style: { display: "flex", alignItems: "center", gap: 10, cursor: "pointer", padding: "5px 0" }
-    },
-      React.createElement("div", { style: {
-        width: 18, height: 18, flexShrink: 0, background: exp[k] ? GOLD : "transparent",
-        border: `2px solid ${exp[k] ? GOLD : "#444"}`, borderRadius: 4,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        color: "#0a0a0a", fontSize: 11, fontWeight: 700,
-      }}, exp[k] ? "✓" : ""),
-      React.createElement("span", { style: { fontSize: 13.5, color: exp[k] ? "#e8dfc8" : "#666" } }, label),
-    );
-
-  return React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 20 } },
-
-    React.createElement(Card, {},
-      React.createElement(Label, {}, "Follow-Up Strategy & Notes"),
-      React.createElement(SectionNote, {}, "Record your personalised follow-up plan — personal note, next meeting topics, resources to send, relationship actions."),
-      React.createElement(TA, {
-        value: state.followUp || "",
-        onChange: v => setState(p => ({ ...p, followUp: v })),
-        placeholder: `1. Personal note to send within 24hrs (warm, direct, not corporate)\n2. Three follow-up meeting topics with value for them\n3. Resources or provocations to send in next 2 weeks\n4. Long-term relationship action\n5. Thought leadership idea to co-develop`,
-        rows: 10,
-      }),
-    ),
-
-    React.createElement(Card, {},
-      React.createElement(Label, {}, "Export — Select Sections"),
-      React.createElement(SectionNote, {}, "Choose what to include. Use Preview → Print → Save as PDF to share with the CEO."),
-      React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 6, marginBottom: 20 } },
-        React.createElement(Toggle, { k: "profile", label: "Leader Background & Pre-Meeting Context" }),
-        React.createElement(Toggle, { k: "questions", label: "Questions, Responses & Insights" }),
-        React.createElement(Toggle, { k: "povs", label: "Key Interest Areas, POVs & Trends" }),
-        React.createElement(Toggle, { k: "actions", label: "90-Day Actions & Agreed Commitments" }),
-        React.createElement(Toggle, { k: "followup", label: "Follow-Up Strategy & Notes" }),
-      ),
-      React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 } },
-        React.createElement(GoldBtn, {
-          onClick: () => dl(buildHTML(), `KPMG_CEO_${(state.ceoName || "Brief").replace(/\s+/g, "_")}.html`, "text/html")
-        }, "↓ Download Report"),
-        React.createElement(GoldBtn, {
-          outline: true,
-          onClick: () => { const w = window.open(); w.document.write(buildHTML()); w.document.close(); }
-        }, "↗ Preview / Print to PDF"),
-      ),
-      React.createElement("div", { style: { padding: "12px 14px", background: "rgba(200,169,110,0.06)", borderRadius: 8, border: `1px solid ${BORDER}` } },
-        React.createElement("div", { style: { fontSize: 11, color: GOLD, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 5 } }, "✦ PDF workflow"),
-        React.createElement("p", { style: { fontSize: 12, color: "#777", lineHeight: 1.7 } },
-          "Tap Preview → then Share → Print in Safari. Or on desktop: File → Print → Save as PDF."
-        ),
-      ),
-    ),
-
-    React.createElement(Card, {},
-      React.createElement(Label, {}, "Session Backup"),
-      React.createElement(SectionNote, {}, "Save your session locally. Restore any time. Nothing is stored on any server."),
-      React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" } },
-        React.createElement(GoldBtn, {
-          outline: true,
-          onClick: () => dl(JSON.stringify(state, null, 2), `KPMG_Session_${(state.ceoName || "session").replace(/\s+/g, "_")}.json`, "application/json")
-        }, "↓ Save Backup"),
-        React.createElement("label", {
-          style: {
-            cursor: "pointer", background: "transparent", color: "#777",
-            border: "1px solid #333", borderRadius: 6, padding: "10px 16px",
-            fontSize: 12, fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase",
-          }
-        },
-          "↑ Restore Backup",
-          React.createElement("input", { type: "file", accept: ".json", onChange: loadJSON, style: { display: "none" } }),
-        ),
-      ),
-    ),
-  );
 }
 
-// ── Root App ──────────────────────────────────────────────────────────────
-const TABS = [
-  { id: 0, label: "01 — Leader",  sub: "Profile & Questions" },
-  { id: 1, label: "02 — Explore", sub: "POVs & Trends" },
-  { id: 2, label: "03 — Actions", sub: "90-Day Strategy" },
-  { id: 3, label: "04 — Output",  sub: "Follow-Up & Export" },
-];
-
-function App() {
-  const [tab, setTab]     = useState(0);
-  const [state, setState] = useState({
-    ceoName: "", org: "", meetingDate: "", profile: "", preNotes: "",
-    answers: {}, insights: {}, selectedQuestions: [],
-    keyInterests: ["", "", ""], povs: {}, povFollowUps: {},
-    trendTopics: [], trendNotes: {}, tab2Notes: "",
-    suggestedActionsList: [{ tf: 0, title: "", why: "", kpmg: "" }],
-    agreedActions: [""], actionOwners: "",
-    followUp: "",
-  });
-
-  return React.createElement("div", { style: { minHeight: "100vh", background: DARK } },
-    // Header
-    React.createElement("div", {
-      style: {
-        background: "#09080a", borderBottom: `1px solid ${BORDER}`,
-        padding: "16px 20px 0", position: "sticky", top: 0, zIndex: 100,
-      }
-    },
-      React.createElement("div", { style: { maxWidth: 860, margin: "0 auto" } },
-        React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 14 } },
-          React.createElement("div", {},
-            React.createElement("div", { style: { fontFamily: "'Bebas Neue', sans-serif", fontSize: 10, letterSpacing: "0.22em", color: GOLD, marginBottom: 2 } },
-              "KPMG — Mining, Energy & Utilities"
-            ),
-            React.createElement("div", { style: { fontFamily: "'DM Serif Display', serif", fontSize: 19, color: "#f0ece4", fontWeight: "normal" } },
-              "CEO Engagement Studio"
-            ),
-          ),
-          state.ceoName && React.createElement("div", {
-            style: { fontFamily: "'DM Serif Display'", fontSize: 13, color: GOLD, fontStyle: "italic", textAlign: "right", lineHeight: 1.3 }
-          },
-            state.ceoName,
-            state.org && React.createElement("div", { style: { fontSize: 11, color: "#888", fontStyle: "normal" } }, state.org),
-          ),
-        ),
-        React.createElement("div", { style: { display: "flex", overflowX: "auto" } },
-          ...TABS.map(t =>
-            React.createElement("button", {
-              key: t.id,
-              onClick: () => setTab(t.id),
-              style: {
-                background: "none", border: "none",
-                borderBottom: tab === t.id ? `2px solid ${GOLD}` : "2px solid transparent",
-                color: tab === t.id ? GOLD : "#555",
-                cursor: "pointer", padding: "7px 14px",
-                fontSize: 10, fontWeight: 600,
-                letterSpacing: "0.07em", textTransform: "uppercase",
-                transition: "color .15s, border-color .15s", lineHeight: 1.5,
-                whiteSpace: "nowrap", flexShrink: 0,
-              }
-            },
-              React.createElement("div", {}, t.label),
-              React.createElement("div", { style: { fontSize: 8, fontWeight: 400, opacity: 0.6, marginTop: 1 } }, t.sub),
-            )
-          ),
-        ),
-      ),
-    ),
-    // Content
-    React.createElement("div", { style: { maxWidth: 860, margin: "0 auto", padding: "20px 16px 60px" } },
-      tab === 0 && React.createElement(Tab1, { state, setState }),
-      tab === 1 && React.createElement(Tab2, { state, setState }),
-      tab === 2 && React.createElement(Tab3, { state, setState }),
-      tab === 3 && React.createElement(Tab4, { state, setState }),
-    ),
-  );
+// ── Export / backup ────────────────────────────────────────────────────────
+function downloadReport() {
+const html  = buildReportHTML();
+const blob  = new Blob([html], {type:‘text/html’});
+const url   = URL.createObjectURL(blob);
+const a     = document.createElement(‘a’);
+a.href      = url;
+a.download  = `KPMG_CEO_${(S.ceoName||'Brief').replace(/\s+/g,'_')}.html`;
+a.click();
+URL.revokeObjectURL(url);
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(App));
-```
+function previewReport() {
+const w = window.open(’’, ‘_blank’);
+w.document.write(buildReportHTML());
+w.document.close();
+}
 
-  </script>
+function saveBackup() {
+// Sync textarea values into state before saving
+syncAll();
+const blob = new Blob([JSON.stringify(S, null, 2)], {type:‘application/json’});
+const url  = URL.createObjectURL(blob);
+const a    = document.createElement(‘a’);
+a.href     = url;
+a.download = `KPMG_Session_${(S.ceoName||'session').replace(/\s+/g,'_')}.json`;
+a.click();
+URL.revokeObjectURL(url);
+}
+
+function loadBackup(event) {
+const file = event.target.files[0];
+if (!file) return;
+const reader = new FileReader();
+reader.onload = ev => {
+try {
+const data = JSON.parse(ev.target.result);
+Object.assign(S, data);
+init();
+} catch {
+alert(‘Invalid backup file.’);
+}
+};
+reader.readAsText(file);
+}
+
+// Sync textarea/input values that use oninput but might be missed
+function syncAll() {
+[‘ceoName’,‘org’,‘meetingDate’,‘profile’,‘preNotes’,‘customQuestions’,‘tab2Notes’,‘actionOwners’,‘followUp’].forEach(id => {
+const el = document.getElementById(id);
+if (el) S[id] = el.value;
+});
+}
+
+// ── Utility ────────────────────────────────────────────────────────────────
+function esc(s) {
+return (s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+function init() {
+buildTabs();
+buildQuestions();
+buildInterests();
+buildTrends();
+buildActions();
+buildAgreed();
+buildExportToggles();
+bindFields();
+updateHeader();
+}
+
+// Re-init only the dynamic lists (not tabs/fields which are already bound)
+function reInit() {
+document.getElementById(‘tabs’).innerHTML = ‘’;
+init();
+}
+
+init();
+</script>
+
 </body>
-</html>
+</html
