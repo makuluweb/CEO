@@ -1,5 +1,5 @@
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -29,46 +29,46 @@ textarea{resize:vertical}
 
 /* ── Modal ──────────────────────────────────────────────────────────────── */
 #modal-overlay{
-position:fixed;inset:0;background:rgba(0,0,0,0.88);
-display:flex;align-items:center;justify-content:center;z-index:9999;
+  position:fixed;inset:0;background:rgba(0,0,0,0.88);
+  display:flex;align-items:center;justify-content:center;z-index:9999;
 }
 #modal-overlay.hidden{display:none}
 .modal-box{
-background:#1a1814;border:1px solid rgba(200,169,110,0.3);
-border-radius:14px;padding:32px;max-width:460px;width:92%;
+  background:#1a1814;border:1px solid rgba(200,169,110,0.3);
+  border-radius:14px;padding:32px;max-width:460px;width:92%;
 }
-.modal-kpmg{font-family:‘Bebas Neue’,sans-serif;font-size:10px;letter-spacing:0.2em;color:var(–gold);margin-bottom:8px}
-.modal-title{font-family:‘DM Serif Display’,serif;font-size:20px;color:var(–text);margin-bottom:14px;font-weight:normal}
+.modal-kpmg{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:0.2em;color:var(--gold);margin-bottom:8px}
+.modal-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);margin-bottom:14px;font-weight:normal}
 .modal-desc{font-size:13px;color:#888;line-height:1.7;margin-bottom:18px}
-.modal-desc a{color:var(–gold)}
+.modal-desc a{color:var(--gold)}
 .modal-warn{font-size:11px;color:#555;margin-top:12px}
 
 /* ── Header ─────────────────────────────────────────────────────────────── */
 #app-header{
-background:#09080a;border-bottom:1px solid var(–border);
-padding:14px 16px 0;position:sticky;top:0;z-index:100;
+  background:#09080a;border-bottom:1px solid var(--border);
+  padding:14px 16px 0;position:sticky;top:0;z-index:100;
 }
 .header-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px}
-.kpmg-label{font-family:‘Bebas Neue’,sans-serif;font-size:10px;letter-spacing:0.2em;color:var(–gold);margin-bottom:2px}
-.app-title{font-family:‘DM Serif Display’,serif;font-size:18px;color:var(–text);font-weight:normal}
+.kpmg-label{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:0.2em;color:var(--gold);margin-bottom:2px}
+.app-title{font-family:'DM Serif Display',serif;font-size:18px;color:var(--text);font-weight:normal}
 #header-right{display:flex;align-items:center;gap:12px}
-#header-name{font-family:‘DM Serif Display’,serif;font-size:13px;color:var(–gold);font-style:italic;text-align:right;line-height:1.3}
+#header-name{font-family:'DM Serif Display',serif;font-size:13px;color:var(--gold);font-style:italic;text-align:right;line-height:1.3}
 #api-key-btn{
-background:none;border:1px solid #333;border-radius:4px;
-color:#555;font-size:10px;padding:4px 8px;cursor:pointer;
-letter-spacing:0.06em;text-transform:uppercase;
+  background:none;border:1px solid #333;border-radius:4px;
+  color:#555;font-size:10px;padding:4px 8px;cursor:pointer;
+  letter-spacing:0.06em;text-transform:uppercase;
 }
 
 /* ── Tabs ───────────────────────────────────────────────────────────────── */
 .tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tab-btn{
-background:none;border:none;border-bottom:2px solid transparent;
-color:#555;cursor:pointer;padding:7px 12px;
-font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;
-white-space:nowrap;flex-shrink:0;line-height:1.5;
-transition:color .15s,border-color .15s;
+  background:none;border:none;border-bottom:2px solid transparent;
+  color:#555;cursor:pointer;padding:7px 12px;
+  font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;
+  white-space:nowrap;flex-shrink:0;line-height:1.5;
+  transition:color .15s,border-color .15s;
 }
-.tab-btn.active{color:var(–gold);border-bottom-color:var(–gold)}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
 .tab-sub{font-size:8px;font-weight:400;opacity:0.6;margin-top:1px}
 
 /* ── Main ───────────────────────────────────────────────────────────────── */
@@ -77,79 +77,79 @@ transition:color .15s,border-color .15s;
 .tab-panel.active{display:block}
 
 /* ── Cards ──────────────────────────────────────────────────────────────── */
-.card{background:var(–card);border:1px solid var(–border);border-radius:12px;padding:18px;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:18px}
 
 /* ── Labels / text ──────────────────────────────────────────────────────── */
-.label{font-family:‘Bebas Neue’,sans-serif;font-size:11px;letter-spacing:0.15em;color:var(–gold);margin-bottom:6px;text-transform:uppercase;display:block}
+.label{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:0.15em;color:var(--gold);margin-bottom:6px;text-transform:uppercase;display:block}
 .sublabel{font-size:12px;color:#666;margin-bottom:12px;line-height:1.6}
 
 /* ── Fields ─────────────────────────────────────────────────────────────── */
 .field{
-width:100%;background:var(–input-bg);border:1px solid var(–border);
-border-radius:8px;color:var(–text);font-size:14px;
-padding:10px 14px;outline:none;display:block;
+  width:100%;background:var(--input-bg);border:1px solid var(--border);
+  border-radius:8px;color:var(--text);font-size:14px;
+  padding:10px 14px;outline:none;display:block;
 }
 .field::placeholder{color:#555}
 textarea.field{line-height:1.6}
 
 /* ── Buttons ────────────────────────────────────────────────────────────── */
 .btn{
-display:inline-flex;align-items:center;gap:6px;
-border-radius:6px;padding:10px 18px;font-size:12px;font-weight:600;
-letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;border:none;
-white-space:nowrap;background:linear-gradient(135deg,var(–gold),var(–gold-dark));
-color:#0a0a0a;transition:opacity .15s;
+  display:inline-flex;align-items:center;gap:6px;
+  border-radius:6px;padding:10px 18px;font-size:12px;font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;border:none;
+  white-space:nowrap;background:linear-gradient(135deg,var(--gold),var(--gold-dark));
+  color:#0a0a0a;transition:opacity .15s;
 }
 .btn:disabled{opacity:0.4;cursor:not-allowed}
-.btn-outline{background:transparent;border:1px solid var(–gold);color:var(–gold)}
+.btn-outline{background:transparent;border:1px solid var(--gold);color:var(--gold)}
 .btn-sm{padding:5px 12px;font-size:10px}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
 
 /* ── Spinner ────────────────────────────────────────────────────────────── */
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner{
-width:13px;height:13px;flex-shrink:0;display:inline-block;
-border:2px solid rgba(200,169,110,0.3);border-top-color:var(–gold);
-border-radius:50%;animation:spin .7s linear infinite;
+  width:13px;height:13px;flex-shrink:0;display:inline-block;
+  border:2px solid rgba(200,169,110,0.3);border-top-color:var(--gold);
+  border-radius:50%;animation:spin .7s linear infinite;
 }
 
 /* ── AI result block ────────────────────────────────────────────────────── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .ai-block{
-margin-top:12px;background:rgba(200,169,110,0.06);
-border:1px solid rgba(200,169,110,0.28);border-radius:8px;padding:14px 16px;
-animation:fadeUp .35s ease both;
+  margin-top:12px;background:rgba(200,169,110,0.06);
+  border:1px solid rgba(200,169,110,0.28);border-radius:8px;padding:14px 16px;
+  animation:fadeUp .35s ease both;
 }
-.ai-block-label{font-family:‘Bebas Neue’,sans-serif;font-size:10px;letter-spacing:0.14em;color:var(–gold);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.ai-block-label{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:0.14em;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .ai-thinking{display:flex;align-items:center;gap:8px;opacity:0.6;font-size:12px;color:#777;font-style:italic}
 .ai-text{font-size:13.5px;line-height:1.75;color:#e8dfc8;white-space:pre-wrap}
 
 /* ── Question blocks ────────────────────────────────────────────────────── */
-.q-block{background:var(–input-bg);border:1px solid var(–border);border-radius:10px;padding:12px;margin-bottom:12px;transition:border-color .2s}
-.q-block.selected{border-color:var(–gold)}
+.q-block{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:12px;transition:border-color .2s}
+.q-block.selected{border-color:var(--gold)}
 .q-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
 .tick{width:20px;height:20px;flex-shrink:0;margin-top:2px;background:transparent;border:2px solid #444;border-radius:4px;cursor:pointer;color:#0a0a0a;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.tick.on{background:var(–gold);border-color:var(–gold)}
+.tick.on{background:var(--gold);border-color:var(--gold)}
 .q-text{font-size:13.5px;line-height:1.6;color:#e8dfc8;font-style:italic;flex:1}
 .sublabel-small{font-size:10px;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin:8px 0 4px;display:block}
 
 /* ── Export toggles ─────────────────────────────────────────────────────── */
 .toggle-row{display:flex;align-items:center;gap:10px;cursor:pointer;padding:5px 0}
 .toggle-box{width:18px;height:18px;flex-shrink:0;background:transparent;border:2px solid #444;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#0a0a0a;font-size:11px;font-weight:700;transition:all .15s}
-.toggle-box.on{background:var(–gold);border-color:var(–gold)}
+.toggle-box.on{background:var(--gold);border-color:var(--gold)}
 .toggle-label{font-size:13.5px;color:#666;transition:color .15s}
 .toggle-row.on .toggle-label{color:#e8dfc8}
 
 /* ── Note box ───────────────────────────────────────────────────────────── */
-.note-box{padding:12px 14px;background:rgba(200,169,110,0.06);border-radius:8px;border:1px solid var(–border);margin-top:12px}
-.note-title{font-size:11px;color:var(–gold);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px}
+.note-box{padding:12px 14px;background:rgba(200,169,110,0.06);border-radius:8px;border:1px solid var(--border);margin-top:12px}
+.note-title{font-size:11px;color:var(--gold);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px}
 .note-box p{font-size:12px;color:#777;line-height:1.7}
 
 /* ── Action blocks ──────────────────────────────────────────────────────── */
-.action-block{background:var(–input-bg);border:1px solid var(–border);border-radius:10px;padding:14px;margin-bottom:12px}
+.action-block{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px}
 .tf-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .tf-btn{padding:4px 10px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;background:transparent;color:#666;border:1px solid #444;transition:all .15s}
-.tf-btn.active{background:var(–gold);color:#0a0a0a;border-color:var(–gold)}
+.tf-btn.active{background:var(--gold);color:#0a0a0a;border-color:var(--gold)}
 .two-col{display:flex;gap:12px}
 .two-col>div{flex:1;min-width:0}
 .action-remove{margin-left:auto;background:none;border:none;color:#555;cursor:pointer;font-size:20px;line-height:1;padding:0 4px}
@@ -162,30 +162,35 @@ animation:fadeUp .35s ease both;
 .mb8{margin-bottom:8px}.mb12{margin-bottom:12px}
 .flex-between{display:flex;justify-content:space-between;align-items:center}
 </style>
-
 </head>
 <body>
 
 <!-- API Key Modal -->
-
 <div id="modal-overlay">
   <div class="modal-box">
     <div class="modal-kpmg">KPMG — CEO Engagement Studio</div>
     <div class="modal-title">Enter your Anthropic API Key</div>
     <p class="modal-desc">
-      Paste your Anthropic API key below. Find it at 
+      Paste your API key below. Get it from
       <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com → API Keys</a>.
-      Your key stays in this browser session only — never stored on any server.
     </p>
-    <input id="api-key-input" class="field mb12" type="text" placeholder="sk-ant-api03-…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="margin-bottom:10px">
-    <p id="modal-error" style="font-size:12px;color:#c06060;min-height:18px;margin-bottom:10px"></p>
-    <button class="btn" id="api-key-save">Start Session →</button>
-    <p class="modal-warn">⚠ This app calls the Anthropic API directly from your browser. Standard API costs apply.</p>
+    <input id="api-key-input" class="field" type="text" placeholder="sk-ant-api03-…"
+      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+      style="margin-bottom:10px;font-size:12px;letter-spacing:0.02em">
+    <!-- Debug info panel -->
+    <div id="modal-debug" style="
+      background:#0d0c0a;border:1px solid #333;border-radius:6px;
+      padding:10px 12px;margin-bottom:12px;font-size:11px;
+      color:#888;line-height:1.7;min-height:48px;font-family:monospace;
+      white-space:pre-wrap;word-break:break-all;
+    ">Waiting for input…</div>
+    <p id="modal-error" style="font-size:12px;color:#c06060;min-height:16px;margin-bottom:10px"></p>
+    <button class="btn" id="api-key-save" style="width:100%;justify-content:center">Start Session →</button>
+    <p class="modal-warn" style="margin-top:10px">⚠ API calls go via your Cloudflare Worker. Standard Anthropic costs apply.</p>
   </div>
 </div>
 
 <!-- Header -->
-
 <div id="app-header">
   <div style="max-width:860px;margin:0 auto">
     <div class="header-top">
@@ -203,11 +208,9 @@ animation:fadeUp .35s ease both;
 </div>
 
 <!-- Main -->
-
 <div id="main">
 
   <!-- TAB 0: Leader & Questions -->
-
   <div class="tab-panel active" id="panel-0">
     <div class="card">
       <span class="label">Leader Profile</span>
@@ -226,23 +229,19 @@ animation:fadeUp .35s ease both;
       <textarea class="field" id="preNotes" rows="3" placeholder="Relationship history, agenda priorities, what you want to achieve…"></textarea>
     </div>
 
-```
-<div class="card">
-  <div class="flex-between mb8">
-    <span class="label" style="margin-bottom:0">Question Bank — Steve Bartlett Style</span>
-    <span style="font-size:10px;color:#555;font-style:italic">✓ = include in report</span>
-  </div>
-  <p class="sublabel">Select questions to use. Capture responses and tap ✦ Get Insight for AI analysis.</p>
-  <div id="questions-list"></div>
-  <span class="label mt16">Additional Questions / Custom Notes</span>
-  <textarea class="field" id="customQuestions" rows="4" placeholder="Your own questions or notes from the conversation…"></textarea>
-</div>
-```
-
+    <div class="card">
+      <div class="flex-between mb8">
+        <span class="label" style="margin-bottom:0">Question Bank — Steve Bartlett Style</span>
+        <span style="font-size:10px;color:#555;font-style:italic">✓ = include in report</span>
+      </div>
+      <p class="sublabel">Select questions to use. Capture responses and tap ✦ Get Insight for AI analysis.</p>
+      <div id="questions-list"></div>
+      <span class="label mt16">Additional Questions / Custom Notes</span>
+      <textarea class="field" id="customQuestions" rows="4" placeholder="Your own questions or notes from the conversation…"></textarea>
+    </div>
   </div>
 
   <!-- TAB 1: Explore -->
-
   <div class="tab-panel" id="panel-1">
     <div class="card">
       <span class="label">3 Key Interest Areas</span>
@@ -262,7 +261,6 @@ animation:fadeUp .35s ease both;
   </div>
 
   <!-- TAB 2: Actions -->
-
   <div class="tab-panel" id="panel-2">
     <div class="card">
       <div class="flex-between mb8">
@@ -282,7 +280,6 @@ animation:fadeUp .35s ease both;
   </div>
 
   <!-- TAB 3: Output -->
-
   <div class="tab-panel" id="panel-3">
     <div class="card">
       <div class="flex-between mb8">
@@ -295,34 +292,31 @@ animation:fadeUp .35s ease both;
       <textarea class="field" id="followUpNotes" rows="4" placeholder="Personal commitments, details to remember, next touchpoints…"></textarea>
     </div>
 
-```
-<div class="card">
-  <span class="label">Export — Select Sections</span>
-  <p class="sublabel">HTML exports open in any browser. Use Preview → Print → Save as PDF to share with the CEO.</p>
-  <div id="export-toggles" class="mb12"></div>
-  <div class="btn-row">
-    <button class="btn" onclick="downloadReport()">↓ Download Report</button>
-    <button class="btn btn-outline" onclick="previewReport()">↗ Preview / Print to PDF</button>
-  </div>
-  <div class="note-box">
-    <div class="note-title">✦ PDF on iPhone</div>
-    <p>Tap Preview → Share icon → Print. On desktop: File → Print → Save as PDF.</p>
-  </div>
-</div>
+    <div class="card">
+      <span class="label">Export — Select Sections</span>
+      <p class="sublabel">HTML exports open in any browser. Use Preview → Print → Save as PDF to share with the CEO.</p>
+      <div id="export-toggles" class="mb12"></div>
+      <div class="btn-row">
+        <button class="btn" onclick="downloadReport()">↓ Download Report</button>
+        <button class="btn btn-outline" onclick="previewReport()">↗ Preview / Print to PDF</button>
+      </div>
+      <div class="note-box">
+        <div class="note-title">✦ PDF on iPhone</div>
+        <p>Tap Preview → Share icon → Print. On desktop: File → Print → Save as PDF.</p>
+      </div>
+    </div>
 
-<div class="card">
-  <span class="label">Session Backup</span>
-  <p class="sublabel">Nothing stored on any server — save and restore locally.</p>
-  <div class="btn-row">
-    <button class="btn btn-outline" onclick="saveBackup()">↓ Save Backup</button>
-    <label class="restore-label">
-      ↑ Restore Backup
-      <input type="file" accept=".json" onchange="loadBackup(event)" style="display:none">
-    </label>
-  </div>
-</div>
-```
-
+    <div class="card">
+      <span class="label">Session Backup</span>
+      <p class="sublabel">Nothing stored on any server — save and restore locally.</p>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="saveBackup()">↓ Save Backup</button>
+        <label class="restore-label">
+          ↑ Restore Backup
+          <input type="file" accept=".json" onchange="loadBackup(event)" style="display:none">
+        </label>
+      </div>
+    </div>
   </div>
 
 </div><!-- /main -->
@@ -330,7 +324,7 @@ animation:fadeUp .35s ease both;
 <script>
 'use strict';
 
-// ── State ────────────────────────────────────────────────────────────────────
+// -- State --------------------------------------------------------------------
 var S = {
   ceoName:'', org:'', meetingDate:'', profile:'', preNotes:'',
   answers:{}, insights:{}, aiInsights:{}, selectedQ:[],
@@ -344,29 +338,29 @@ var S = {
 
 var API_KEY = sessionStorage.getItem('anthro_key') || '';
 
-// ── Constants ────────────────────────────────────────────────────────────────
+// -- Constants ----------------------------------------------------------------
 var QUESTIONS = [
-  "What does success actually mean to you right now — not the LinkedIn version?",
+  "What does success actually mean to you right now -- not the LinkedIn version?",
   "When did you last feel genuinely out of your depth, and what did that teach you?",
   "What belief are you holding that most people around you would disagree with?",
   "If you stripped away the title tomorrow, who are you?",
   "What's the decision you made that looked wrong to everyone else but you were certain about?",
   "What's the gap between who you present to your board and who you actually are?",
-  "Where is the energy in your industry right now — and where is it dying?",
+  "Where is the energy in your industry right now -- and where is it dying?",
   "What are you most afraid people will discover about how you're running this organisation?",
   "What does the next generation of leaders in your sector fundamentally misunderstand?",
   "If AI, quantum and automation reshape your sector completely in 10 years, what's your honest assessment of whether your organisation will survive?",
   "What would you do differently if you had no obligation to the current stakeholders?",
   "What's the conversation your board needs to have but nobody's willing to start?",
-  "When you look at the energy transition — are you leading it, managing it, or hoping it resolves itself?",
+  "When you look at the energy transition -- are you leading it, managing it, or hoping it resolves itself?",
   "What do you need to unlearn to lead effectively through the next decade?",
 ];
 
 var TABS = [
-  {label:'01 — Leader',  sub:'Profile & Questions'},
-  {label:'02 — Explore', sub:'POVs & Trends'},
-  {label:'03 — Actions', sub:'90-Day Strategy'},
-  {label:'04 — Output',  sub:'Follow-Up & Export'},
+  {label:'01 -- Leader',  sub:'Profile & Questions'},
+  {label:'02 -- Explore', sub:'POVs & Trends'},
+  {label:'03 -- Actions', sub:'90-Day Strategy'},
+  {label:'04 -- Output',  sub:'Follow-Up & Export'},
 ];
 
 var EXP_LABELS = [
@@ -380,47 +374,129 @@ var EXP_LABELS = [
 var SYSTEM = "You are a strategic advisor to a senior KPMG partner who leads Mining, Energy & Utilities. Be direct, insightful, and provocative in the style of Steve Bartlett from Diary of a CEO. Avoid corporate jargon. Be concise and human.";
 var TF = ['0-30 days','30-60 days','60-90 days'];
 
-// ── Modal ────────────────────────────────────────────────────────────────────
+// -- Modal --------------------------------------------------------------------
+function dbg(msg) {
+  var el = document.getElementById('modal-debug');
+  if (el) el.textContent = msg;
+  console.log('[CEO App]', msg);
+}
+
 function showModal() {
   document.getElementById('modal-overlay').classList.remove('hidden');
   document.getElementById('api-key-input').value = API_KEY;
   document.getElementById('modal-error').textContent = '';
+  dbg('Modal open. Paste your API key and tap Start Session.');
 }
 function hideModal() {
   document.getElementById('modal-overlay').classList.add('hidden');
 }
+
+// Live key preview as user types/pastes
+document.getElementById('api-key-input').addEventListener('input', function() {
+  var raw = this.value;
+  var stripped = raw.trim().replace(/\s+/g, '');
+  dbg(
+    'Raw length: ' + raw.length + '\n' +
+    'Stripped length: ' + stripped.length + '\n' +
+    'Starts with sk-: ' + stripped.startsWith('sk-') + '\n' +
+    'Preview: ' + (stripped.length > 12 ? stripped.substring(0,8) + '...' + stripped.substring(stripped.length-4) : stripped || '(empty)')
+  );
+});
+
 document.getElementById('api-key-save').onclick = function() {
+  dbg('Button clicked...');
   var raw = document.getElementById('api-key-input').value;
-  var k = raw.trim().replace(/\s+/g, '');  // strip all whitespace (paste issues on iPhone)
+  var k = raw.trim().replace(/\s+/g, '');
   var errEl = document.getElementById('modal-error');
+
+  dbg('Raw length: ' + raw.length + ' | Stripped length: ' + k.length);
+
   if (!k) {
-    errEl.textContent = 'Please paste your API key above.';
+    errEl.textContent = 'No key detected -- please paste your API key.';
+    dbg('FAIL: empty key');
     return;
   }
   if (k.length < 20) {
-    errEl.textContent = 'Key looks too short — make sure you copied the full key.';
+    errEl.textContent = 'Key too short (' + k.length + ' chars) -- copy the full key.';
+    dbg('FAIL: too short (' + k.length + ' chars)');
     return;
   }
-  API_KEY = k;
-  sessionStorage.setItem('anthro_key', k);
+
+  dbg('Key accepted (' + k.length + ' chars). Testing connection to Worker...');
   errEl.textContent = '';
-  hideModal();
+
+  // Test the worker with a real minimal API call before closing modal
+  var btn = document.getElementById('api-key-save');
+  btn.disabled = true;
+  btn.textContent = 'Testing connection...';
+
+  fetch('https://still-wildflower-b4db.makuluizizwe.workers.dev/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': k,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 10,
+      messages: [{role:'user', content:'Hi'}],
+    }),
+  })
+  .then(function(res) {
+    dbg('Worker responded. HTTP status: ' + res.status);
+    return res.text().then(function(body) {
+      return {status: res.status, body: body};
+    });
+  })
+  .then(function(r) {
+    dbg('Status: ' + r.status + '\nBody preview: ' + r.body.substring(0, 120));
+    if (r.status === 200) {
+      dbg('SUCCESS -- connection working. Opening app...');
+      API_KEY = k;
+      sessionStorage.setItem('anthro_key', k);
+      hideModal();
+    } else if (r.status === 401) {
+      errEl.textContent = 'API key rejected (401) -- check the key is correct and active.';
+      dbg('FAIL: 401 Unauthorized -- invalid key');
+    } else if (r.status === 403) {
+      errEl.textContent = 'Access denied (403) -- check your Cloudflare Worker is deployed.';
+      dbg('FAIL: 403 Forbidden');
+    } else {
+      errEl.textContent = 'Error ' + r.status + ' -- see debug box for details.';
+      dbg('FAIL: HTTP ' + r.status + '\n' + r.body.substring(0, 200));
+    }
+    btn.disabled = false;
+    btn.textContent = 'Start Session ->';
+  })
+  .catch(function(err) {
+    dbg('NETWORK ERROR: ' + err.message + '\nWorker URL may be wrong or Worker is offline.');
+    errEl.textContent = 'Cannot reach Worker -- check it is deployed and URL is correct.';
+    btn.disabled = false;
+    btn.textContent = 'Start Session ->';
+  });
 };
+
 document.getElementById('api-key-input').onkeydown = function(e) {
   if (e.key === 'Enter') document.getElementById('api-key-save').click();
 };
-if (API_KEY) hideModal();
 
-// ── API call ─────────────────────────────────────────────────────────────────
+if (API_KEY) {
+  dbg('Existing key found in session (' + API_KEY.length + ' chars). Skipping modal.');
+  hideModal();
+} else {
+  dbg('No key in session. Paste your API key above.');
+}
+
+// -- API call -----------------------------------------------------------------
 async function callClaude(prompt, systemPrompt) {
   if (!API_KEY) { showModal(); throw new Error('No API key set'); }
-  var res = await fetch('https://api.anthropic.com/v1/messages', {
+  var res = await fetch('https://still-wildflower-b4db.makuluizizwe.workers.dev/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': API_KEY,
       'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-5',
@@ -440,23 +516,23 @@ async function callClaude(prompt, systemPrompt) {
   return text;
 }
 
-// ── AI block helpers ─────────────────────────────────────────────────────────
+// -- AI block helpers ---------------------------------------------------------
 function showThinking(containerId, label) {
   var el = document.getElementById(containerId);
-  el.innerHTML = '<div class="ai-block"><div class="ai-block-label">✦ ' + label +
-    ' <div class="spinner"></div></div><div class="ai-thinking"><div class="spinner"></div> Calling Claude API…</div></div>';
+  el.innerHTML = '<div class="ai-block"><div class="ai-block-label">* ' + label +
+    ' <div class="spinner"></div></div><div class="ai-thinking"><div class="spinner"></div> Calling Claude API...</div></div>';
 }
 function showAIResult(containerId, label, text) {
   var el = document.getElementById(containerId);
   if (!text) { el.innerHTML = ''; return; }
   var safe = esc(text);
-  el.innerHTML = '<div class="ai-block"><div class="ai-block-label">✦ ' + label + '</div>' +
+  el.innerHTML = '<div class="ai-block"><div class="ai-block-label">* ' + label + '</div>' +
     '<div class="ai-text">' + safe + '</div></div>';
 }
 function showAIError(containerId, label, msg) {
   var el = document.getElementById(containerId);
-  el.innerHTML = '<div class="ai-block"><div class="ai-block-label">✦ ' + label + '</div>' +
-    '<div class="ai-text" style="color:#c06060">⚠ Error: ' + esc(msg) + '</div></div>';
+  el.innerHTML = '<div class="ai-block"><div class="ai-block-label">* ' + label + '</div>' +
+    '<div class="ai-text" style="color:#c06060">(!) Error: ' + esc(msg) + '</div></div>';
 }
 function setBtn(id, loading, loadingText, defaultText) {
   var btn = document.getElementById(id);
@@ -465,21 +541,21 @@ function setBtn(id, loading, loadingText, defaultText) {
   btn.innerHTML = loading ? '<div class="spinner"></div> ' + loadingText : defaultText;
 }
 
-// ── Tab 0: Research & Insights ───────────────────────────────────────────────
+// -- Tab 0: Research & Insights -----------------------------------------------
 async function doResearch() {
   var name = S.ceoName;
   if (!name) { alert('Enter a name first'); return; }
-  setBtn('btn-research', true, 'Researching…', '✦ AI Research');
+  setBtn('btn-research', true, 'Researching...', '* AI Research');
   showThinking('ai-profile', 'RESEARCH BRIEFING');
   try {
     var text = await callClaude(
-      'Give me a concise but rich briefing on ' + name + ' — background, known leadership style, major decisions, public positions on energy/mining/AI, notable controversies or achievements. 4-5 punchy paragraphs. Include what drives them as a person if known. Be frank.',
+      'Give me a concise but rich briefing on ' + name + ' -- background, known leadership style, major decisions, public positions on energy/mining/AI, notable controversies or achievements. 4-5 punchy paragraphs. Include what drives them as a person if known. Be frank.',
       'You are a world-class executive research analyst. Be direct, factual, insightful. No platitudes.'
     );
     S.aiResearch = text;
     showAIResult('ai-profile', 'RESEARCH BRIEFING', text);
   } catch(e) { showAIError('ai-profile', 'RESEARCH BRIEFING', e.message); }
-  setBtn('btn-research', false, '', '✦ AI Research');
+  setBtn('btn-research', false, '', '* AI Research');
 }
 
 async function doInsight(i) {
@@ -487,7 +563,7 @@ async function doInsight(i) {
   if (!ans.trim()) { alert('Capture a response first'); return; }
   var btnId = 'btn-insight-' + i;
   var aiId  = 'ai-insight-' + i;
-  setBtn(btnId, true, 'Analysing…', '✦ Get Insight');
+  setBtn(btnId, true, 'Analysing...', '* Get Insight');
   showThinking(aiId, 'INSIGHT');
   try {
     var text = await callClaude(
@@ -498,17 +574,17 @@ async function doInsight(i) {
     S.aiInsights[i] = text;
     showAIResult(aiId, 'INSIGHT', text);
   } catch(e) { showAIError(aiId, 'INSIGHT', e.message); }
-  setBtn(btnId, false, '', '✦ Get Insight');
+  setBtn(btnId, false, '', '* Get Insight');
 }
 
-// ── Tab 1: POVs & Trends ─────────────────────────────────────────────────────
+// -- Tab 1: POVs & Trends -----------------------------------------------------
 async function doPOV(idx) {
   var area = S.keyInterests[idx];
   if (!area) { alert('Enter an interest area first'); return; }
   var btnId = 'btn-pov-' + idx;
   var aiId  = 'ai-pov-' + idx;
-  setBtn(btnId, true, 'Thinking…', '✦ AI POV');
-  showThinking(aiId, 'POV — AREA ' + (idx+1));
+  setBtn(btnId, true, 'Thinking...', '* AI POV');
+  showThinking(aiId, 'POV -- AREA ' + (idx+1));
   var ansText = Object.keys(S.answers).filter(function(k){ return S.answers[k] && S.answers[k].trim(); })
     .map(function(k){ return 'Q: "' + QUESTIONS[k] + '"\nA: "' + S.answers[k] + '"'; }).join('\n\n');
   try {
@@ -519,34 +595,34 @@ async function doPOV(idx) {
       'Give:\n1. A sharp KPMG point of view (2-3 bold sentences)\n2. What this means specifically for their sector\n3. Three incisive follow-up questions\n4. A contrarian perspective they haven\'t considered\n\nBe provocative, not safe.'
     );
     S.aiPovs[idx] = text;
-    showAIResult(aiId, 'POV — AREA ' + (idx+1), text);
-  } catch(e) { showAIError(aiId, 'POV — AREA ' + (idx+1), e.message); }
-  setBtn(btnId, false, '', '✦ AI POV');
+    showAIResult(aiId, 'POV -- AREA ' + (idx+1), text);
+  } catch(e) { showAIError(aiId, 'POV -- AREA ' + (idx+1), e.message); }
+  setBtn(btnId, false, '', '* AI POV');
 }
 
 async function doTrends() {
-  setBtn('btn-trends', true, 'Generating…', '✦ AI Trends Brief');
+  setBtn('btn-trends', true, 'Generating...', '* AI Trends Brief');
   showThinking('ai-trends', 'TRENDS BRIEFING');
   var interests = S.keyInterests.filter(function(x){ return x; }).join(', ');
   try {
     var text = await callClaude(
       'Meeting with ' + (S.ceoName || 'a CEO') + ' in mining/energy/utilities. Their interests: ' + (interests || 'general') + '.\n\n' +
-      '5-point briefing on critical emerging tech and macro trends — AI, quantum, automation, energy transition. For each: what it means for their sector, the timeline, and the key question it raises. KPMG-sharp, not generic.'
+      '5-point briefing on critical emerging tech and macro trends -- AI, quantum, automation, energy transition. For each: what it means for their sector, the timeline, and the key question it raises. KPMG-sharp, not generic.'
     );
     S.aiTrends = text;
     showAIResult('ai-trends', 'TRENDS BRIEFING', text);
   } catch(e) { showAIError('ai-trends', 'TRENDS BRIEFING', e.message); }
-  setBtn('btn-trends', false, '', '✦ AI Trends Brief');
+  setBtn('btn-trends', false, '', '* AI Trends Brief');
 }
 
-// ── Tab 2: Actions ───────────────────────────────────────────────────────────
+// -- Tab 2: Actions -----------------------------------------------------------
 async function doActions() {
-  setBtn('btn-actions', true, 'Generating…', '✦ AI Suggest Actions');
+  setBtn('btn-actions', true, 'Generating...', '* AI Suggest Actions');
   showThinking('ai-actions', 'SUGGESTED ACTIONS');
   var summary = [
     S.aiResearch ? 'Background: ' + S.aiResearch.substring(0, 400) : '',
     Object.keys(S.answers).filter(function(k){ return S.answers[k] && S.answers[k].trim(); })
-      .map(function(k){ return 'Q: ' + QUESTIONS[k].substring(0,60) + '… A: ' + S.answers[k]; }).join('\n'),
+      .map(function(k){ return 'Q: ' + QUESTIONS[k].substring(0,60) + '... A: ' + S.answers[k]; }).join('\n'),
     S.keyInterests.filter(function(x){ return x; }).map(function(x){ return 'Interest: '+x; }).join('\n'),
     S.tab2Notes || '',
   ].filter(function(x){ return x; }).join('\n\n');
@@ -559,18 +635,18 @@ async function doActions() {
     S.aiActions = text;
     showAIResult('ai-actions', 'SUGGESTED ACTIONS', text);
   } catch(e) { showAIError('ai-actions', 'SUGGESTED ACTIONS', e.message); }
-  setBtn('btn-actions', false, '', '✦ AI Suggest Actions');
+  setBtn('btn-actions', false, '', '* AI Suggest Actions');
 }
 
-// ── Tab 3: Follow-up ─────────────────────────────────────────────────────────
+// -- Tab 3: Follow-up ---------------------------------------------------------
 async function doFollowUp() {
-  setBtn('btn-followup', true, 'Crafting…', '✦ Generate Follow-Up');
+  setBtn('btn-followup', true, 'Crafting...', '* Generate Follow-Up');
   showThinking('ai-followup', 'FOLLOW-UP STRATEGY');
   var summary = [
     'CEO: ' + (S.ceoName || 'Unknown'),
     S.aiResearch ? 'Profile: ' + S.aiResearch.substring(0, 300) : '',
     Object.keys(S.answers).filter(function(k){ return S.answers[k] && S.answers[k].trim(); })
-      .map(function(k){ return '- ' + QUESTIONS[k].substring(0,50) + '… → ' + S.answers[k].substring(0,100); }).join('\n'),
+      .map(function(k){ return '- ' + QUESTIONS[k].substring(0,50) + '... -> ' + S.answers[k].substring(0,100); }).join('\n'),
     S.keyInterests.filter(function(x){ return x; }).map(function(x){ return 'Interest: '+x; }).join(', '),
   ].filter(function(x){ return x; }).join('\n\n');
   try {
@@ -585,10 +661,10 @@ async function doFollowUp() {
     S.aiFollowUp = text;
     showAIResult('ai-followup', 'FOLLOW-UP STRATEGY', text);
   } catch(e) { showAIError('ai-followup', 'FOLLOW-UP STRATEGY', e.message); }
-  setBtn('btn-followup', false, '', '✦ Generate Follow-Up');
+  setBtn('btn-followup', false, '', '* Generate Follow-Up');
 }
 
-// ── Build Questions list ─────────────────────────────────────────────────────
+// -- Build Questions list -----------------------------------------------------
 function buildQuestions() {
   var list = document.getElementById('questions-list');
   list.innerHTML = '';
@@ -599,346 +675,338 @@ function buildQuestions() {
     div.id = 'qblock-' + i;
     div.innerHTML =
       '<div class="q-header">' +
-        '<div class="tick' + (sel?' on':'') + '" id="tick-' + i + '" onclick="toggleQ(' + i + ')">' + (sel?'✓':'') + '</div>' +
+        '<div class="tick' + (sel?' on':'') + '" id="tick-' + i + '" onclick="toggleQ(' + i + ')">' + (sel?'&#x2713;':'') + '</div>' +
         '<div class="q-text">"' + q + '"</div>' +
       '</div>' +
-      '<textarea class="field" rows="2" placeholder="Capture their response…" id="ans-' + i + '">' + esc(S.answers[i]||'') + '</textarea>' +
+      '<textarea class="field" rows="2" placeholder="Capture their response..." id="ans-' + i + '">' + esc(S.answers[i]||'') + '</textarea>' +
+      '<span class="sublabel-small">Your notes</span>' +
+      '<textarea class="field" rows="2" placeholder="Your own insight or follow-up probe..." id="note-' + i + '">' + esc(S.insights[i]||'') + '</textarea>' +
+      '<div style="display:flex;justify-content:flex-end;margin-top:8px">' +
+        '<button class="btn btn-sm btn-outline" id="btn-insight-' + i + '" onclick="doInsight(' + i + ')">* Get Insight</button>' +
+      '</div>' +
+      '<div id="ai-insight-' + i + '"></div>';
+    list.appendChild(div);
 
-```
-  '<span class="sublabel-small">Your notes</span>' +
-  '<textarea class="field" rows="2" placeholder="Your own insight or follow-up probe…" id="note-' + i + '">' + esc(S.insights[i]||'') + '</textarea>' +
-  '<div style="display:flex;justify-content:flex-end;margin-top:8px">' +
-    '<button class="btn btn-sm btn-outline" id="btn-insight-' + i + '" onclick="doInsight(' + i + ')">✦ Get Insight</button>' +
-  '</div>' +
-  '<div id="ai-insight-' + i + '"></div>';
-list.appendChild(div);
+    // Bind answer textarea
+    (function(idx) {
+      document.getElementById('ans-' + idx).addEventListener('input', function() {
+        S.answers[idx] = this.value;
+      });
+      document.getElementById('note-' + idx).addEventListener('input', function() {
+        S.insights[idx] = this.value;
+      });
+    })(i);
 
-// Bind answer textarea
-(function(idx) {
-  document.getElementById('ans-' + idx).addEventListener('input', function() {
-    S.answers[idx] = this.value;
+    // Restore existing AI insight if any
+    if (S.aiInsights[i]) {
+      showAIResult('ai-insight-' + i, 'INSIGHT', S.aiInsights[i]);
+    }
   });
-  document.getElementById('note-' + idx).addEventListener('input', function() {
-    S.insights[idx] = this.value;
-  });
-})(i);
-
-// Restore existing AI insight if any
-if (S.aiInsights[i]) {
-  showAIResult('ai-insight-' + i, 'INSIGHT', S.aiInsights[i]);
-}
-```
-
-});
 }
 
 function toggleQ(i) {
-var idx = S.selectedQ.indexOf(i);
-if (idx === -1) S.selectedQ.push(i); else S.selectedQ.splice(idx, 1);
-var sel = S.selectedQ.indexOf(i) !== -1;
-document.getElementById(‘qblock-’ + i).classList.toggle(‘selected’, sel);
-var tick = document.getElementById(‘tick-’ + i);
-tick.className = ‘tick’ + (sel ? ’ on’ : ‘’);
-tick.textContent = sel ? ‘✓’ : ‘’;
+  var idx = S.selectedQ.indexOf(i);
+  if (idx === -1) S.selectedQ.push(i); else S.selectedQ.splice(idx, 1);
+  var sel = S.selectedQ.indexOf(i) !== -1;
+  document.getElementById('qblock-' + i).classList.toggle('selected', sel);
+  var tick = document.getElementById('tick-' + i);
+  tick.className = 'tick' + (sel ? ' on' : '');
+  tick.textContent = sel ? '&#x2713;' : '';
 }
 
-// ── Build Interests list ─────────────────────────────────────────────────────
+// -- Build Interests list -----------------------------------------------------
 function buildInterests() {
-var list = document.getElementById(‘interests-list’);
-list.innerHTML = ‘’;
-[0,1,2].forEach(function(idx) {
-var div = document.createElement(‘div’);
-div.style.marginBottom = ‘20px’;
-div.innerHTML =
-‘<span class="label">Area ’ + (idx+1) + ‘</span>’ +
-‘<div style="display:flex;gap:10px;margin-bottom:8px">’ +
-‘<input class="field" type="text" id="interest-' + idx + '" placeholder="' +
-['e.g. AI adoption roadmap','e.g. Capital allocation in energy transition','e.g. Workforce & automation anxiety'][idx] +
-'" value="' + esc(S.keyInterests[idx]) + '" style="flex:1;margin-bottom:0">’ +
-‘<button class="btn btn-sm" id="btn-pov-' + idx + '" onclick="doPOV(' + idx + ')">✦ AI POV</button>’ +
-‘</div>’ +
-‘<div id="ai-pov-' + idx + '"></div>’ +
-‘<span class="sublabel-small mt8">Your notes on this area</span>’ +
-‘<textarea class="field" id="pov-note-' + idx + '" rows="2" placeholder="Your own POV or questions…">’ + esc(S.povs[idx]||’’) + ‘</textarea>’;
-list.appendChild(div);
+  var list = document.getElementById('interests-list');
+  list.innerHTML = '';
+  [0,1,2].forEach(function(idx) {
+    var div = document.createElement('div');
+    div.style.marginBottom = '20px';
+    div.innerHTML =
+      '<span class="label">Area ' + (idx+1) + '</span>' +
+      '<div style="display:flex;gap:10px;margin-bottom:8px">' +
+        '<input class="field" type="text" id="interest-' + idx + '" placeholder="' +
+          ['e.g. AI adoption roadmap','e.g. Capital allocation in energy transition','e.g. Workforce & automation anxiety'][idx] +
+          '" value="' + esc(S.keyInterests[idx]) + '" style="flex:1;margin-bottom:0">' +
+        '<button class="btn btn-sm" id="btn-pov-' + idx + '" onclick="doPOV(' + idx + ')">* AI POV</button>' +
+      '</div>' +
+      '<div id="ai-pov-' + idx + '"></div>' +
+      '<span class="sublabel-small mt8">Your notes on this area</span>' +
+      '<textarea class="field" id="pov-note-' + idx + '" rows="2" placeholder="Your own POV or questions...">' + esc(S.povs[idx]||'') + '</textarea>';
+    list.appendChild(div);
 
-```
-(function(i) {
-  document.getElementById('interest-' + i).addEventListener('input', function() {
-    S.keyInterests[i] = this.value;
+    (function(i) {
+      document.getElementById('interest-' + i).addEventListener('input', function() {
+        S.keyInterests[i] = this.value;
+      });
+      document.getElementById('pov-note-' + i).addEventListener('input', function() {
+        S.povs[i] = this.value;
+      });
+    })(idx);
+
+    if (S.aiPovs[idx]) {
+      showAIResult('ai-pov-' + idx, 'POV -- AREA ' + (idx+1), S.aiPovs[idx]);
+    }
   });
-  document.getElementById('pov-note-' + i).addEventListener('input', function() {
-    S.povs[i] = this.value;
-  });
-})(idx);
-
-if (S.aiPovs[idx]) {
-  showAIResult('ai-pov-' + idx, 'POV — AREA ' + (idx+1), S.aiPovs[idx]);
-}
-```
-
-});
 }
 
-// ── Build Agreed list ────────────────────────────────────────────────────────
+// -- Build Agreed list --------------------------------------------------------
 function buildAgreed() {
-var list = document.getElementById(‘agreed-list’);
-list.innerHTML = ‘’;
-S.agreed.forEach(function(v, i) {
-var row = document.createElement(‘div’);
-row.style.cssText = ‘display:flex;gap:8px;margin-bottom:8px;align-items:center’;
-row.innerHTML =
-‘<input class="field" type="text" id="agreed-' + i + '" placeholder="Agreed action ' + (i+1) + '…" value="' + esc(v) + '" style="flex:1;margin-bottom:0">’ +
-(S.agreed.length > 1 ? ‘<button class="btn btn-sm btn-outline" onclick="removeAgreed(' + i + ')">✕</button>’ : ‘’);
-list.appendChild(row);
-(function(idx) {
-document.getElementById(‘agreed-’ + idx).addEventListener(‘input’, function() {
-S.agreed[idx] = this.value;
-});
-})(i);
-});
+  var list = document.getElementById('agreed-list');
+  list.innerHTML = '';
+  S.agreed.forEach(function(v, i) {
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:center';
+    row.innerHTML =
+      '<input class="field" type="text" id="agreed-' + i + '" placeholder="Agreed action ' + (i+1) + '..." value="' + esc(v) + '" style="flex:1;margin-bottom:0">' +
+      (S.agreed.length > 1 ? '<button class="btn btn-sm btn-outline" onclick="removeAgreed(' + i + ')">&#x2715;</button>' : '');
+    list.appendChild(row);
+    (function(idx) {
+      document.getElementById('agreed-' + idx).addEventListener('input', function() {
+        S.agreed[idx] = this.value;
+      });
+    })(i);
+  });
 }
 
-function addAgreed() { S.agreed.push(’’); buildAgreed(); }
+function addAgreed() { S.agreed.push(''); buildAgreed(); }
 function removeAgreed(i) { S.agreed.splice(i,1); buildAgreed(); }
 
-// ── Build Export Toggles ─────────────────────────────────────────────────────
+// -- Build Export Toggles -----------------------------------------------------
 function buildExportToggles() {
-var container = document.getElementById(‘export-toggles’);
-container.innerHTML = ‘’;
-EXP_LABELS.forEach(function(item) {
-var row = document.createElement(‘div’);
-row.className = ‘toggle-row’ + (S.exp[item.k] ? ’ on’ : ‘’);
-row.id = ‘toggle-’ + item.k;
-row.innerHTML =
-‘<div class="toggle-box' + (S.exp[item.k]?' on':'') + '">’ + (S.exp[item.k]?‘✓’:’’) + ‘</div>’ +
-‘<span class="toggle-label">’ + item.label + ‘</span>’;
-row.onclick = function() {
-S.exp[item.k] = !S.exp[item.k];
-row.classList.toggle(‘on’, S.exp[item.k]);
-var box = row.querySelector(’.toggle-box’);
-box.classList.toggle(‘on’, S.exp[item.k]);
-box.textContent = S.exp[item.k] ? ‘✓’ : ‘’;
-};
-container.appendChild(row);
-});
+  var container = document.getElementById('export-toggles');
+  container.innerHTML = '';
+  EXP_LABELS.forEach(function(item) {
+    var row = document.createElement('div');
+    row.className = 'toggle-row' + (S.exp[item.k] ? ' on' : '');
+    row.id = 'toggle-' + item.k;
+    row.innerHTML =
+      '<div class="toggle-box' + (S.exp[item.k]?' on':'') + '">' + (S.exp[item.k]?'&#x2713;':'') + '</div>' +
+      '<span class="toggle-label">' + item.label + '</span>';
+    row.onclick = function() {
+      S.exp[item.k] = !S.exp[item.k];
+      row.classList.toggle('on', S.exp[item.k]);
+      var box = row.querySelector('.toggle-box');
+      box.classList.toggle('on', S.exp[item.k]);
+      box.textContent = S.exp[item.k] ? '&#x2713;' : '';
+    };
+    container.appendChild(row);
+  });
 }
 
-// ── Build Tabs ───────────────────────────────────────────────────────────────
+// -- Build Tabs ---------------------------------------------------------------
 function buildTabs() {
-var container = document.getElementById(‘tabs’);
-TABS.forEach(function(t, i) {
-var btn = document.createElement(‘button’);
-btn.className = ‘tab-btn’ + (i === 0 ? ’ active’ : ‘’);
-btn.innerHTML = ‘<div>’ + t.label + ‘</div><div class="tab-sub">’ + t.sub + ‘</div>’;
-btn.onclick = function() { switchTab(i); };
-container.appendChild(btn);
-});
+  var container = document.getElementById('tabs');
+  TABS.forEach(function(t, i) {
+    var btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+    btn.innerHTML = '<div>' + t.label + '</div><div class="tab-sub">' + t.sub + '</div>';
+    btn.onclick = function() { switchTab(i); };
+    container.appendChild(btn);
+  });
 }
 
 function switchTab(i) {
-document.querySelectorAll(’.tab-btn’).forEach(function(b,j){ b.classList.toggle(‘active’, j===i); });
-document.querySelectorAll(’.tab-panel’).forEach(function(p,j){ p.classList.toggle(‘active’, j===i); });
+  document.querySelectorAll('.tab-btn').forEach(function(b,j){ b.classList.toggle('active', j===i); });
+  document.querySelectorAll('.tab-panel').forEach(function(p,j){ p.classList.toggle('active', j===i); });
 }
 
-// ── Bind simple fields ───────────────────────────────────────────────────────
+// -- Bind simple fields -------------------------------------------------------
 function bindFields() {
-function bind(id, key, cb) {
-var el = document.getElementById(id);
-if (!el) return;
-el.value = S[key] || ‘’;
-el.addEventListener(‘input’, function() {
-S[key] = el.value;
-if (cb) cb();
-});
-}
-bind(‘ceoName’,‘ceoName’, updateHeader);
-bind(‘org’,‘org’, updateHeader);
-bind(‘meetingDate’,‘meetingDate’);
-bind(‘profile’,‘profile’);
-bind(‘preNotes’,‘preNotes’);
-bind(‘customQuestions’,‘customQuestions’);
-bind(‘tab2Notes’,‘tab2Notes’);
-bind(‘actionOwners’,‘actionOwners’);
-bind(‘followUpNotes’,‘followUpNotes’);
+  function bind(id, key, cb) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.value = S[key] || '';
+    el.addEventListener('input', function() {
+      S[key] = el.value;
+      if (cb) cb();
+    });
+  }
+  bind('ceoName','ceoName', updateHeader);
+  bind('org','org', updateHeader);
+  bind('meetingDate','meetingDate');
+  bind('profile','profile');
+  bind('preNotes','preNotes');
+  bind('customQuestions','customQuestions');
+  bind('tab2Notes','tab2Notes');
+  bind('actionOwners','actionOwners');
+  bind('followUpNotes','followUpNotes');
 }
 
 function updateHeader() {
-var el = document.getElementById(‘header-name’);
-var name = S.ceoName.trim();
-var org  = S.org.trim();
-el.innerHTML = name ? (name + (org ? ‘<br><span style="font-size:11px;color:#888;font-style:normal">’ + esc(org) + ‘</span>’ : ‘’)) : ‘’;
+  var el = document.getElementById('header-name');
+  var name = S.ceoName.trim();
+  var org  = S.org.trim();
+  el.innerHTML = name ? (name + (org ? '<br><span style="font-size:11px;color:#888;font-style:normal">' + esc(org) + '</span>' : '')) : '';
 }
 
-// ── Report HTML ──────────────────────────────────────────────────────────────
+// -- Report HTML --------------------------------------------------------------
 function buildReportHTML() {
-var ceo  = S.ceoName || ‘CEO / Board Chair’;
-var org  = S.org || ‘’;
-var date = S.meetingDate
-? new Date(S.meetingDate + ‘T12:00:00’).toLocaleDateString(‘en-AU’,{day:‘numeric’,month:‘long’,year:‘numeric’})
-: new Date().toLocaleDateString(‘en-AU’,{day:‘numeric’,month:‘long’,year:‘numeric’});
+  var ceo  = S.ceoName || 'CEO / Board Chair';
+  var org  = S.org || '';
+  var date = S.meetingDate
+    ? new Date(S.meetingDate + 'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})
+    : new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
 
-var e2 = function(s){ return (s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’); };
-var sec = function(h,b){ return b ? ‘<div class="section"><h2>’+h+’</h2><div class="content">’+b+’</div></div>’ : ‘’; };
+  var e2 = function(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  var sec = function(h,b){ return b ? '<div class="section"><h2>'+h+'</h2><div class="content">'+b+'</div></div>' : ''; };
 
-var qAndA = QUESTIONS.map(function(q,i) {
-if (!S.answers[i] && S.selectedQ.indexOf(i) === -1) return ‘’;
-return ‘<div class="qa"><div class="q">”’ + e2(q) + ‘”</div>’ +
-(S.answers[i] ? ‘<div class="a"><strong>Response:</strong> ’ + e2(S.answers[i]) + ‘</div>’ : ‘’) +
-(S.aiInsights[i] ? ‘<div class="insight"><span class="tag">✦ AI Insight</span>’ + e2(S.aiInsights[i]) + ‘</div>’ : ‘’) +
-(S.insights[i] ? ‘<div class="insight" style="margin-top:4px"><span class="tag">Your notes</span>’ + e2(S.insights[i]) + ‘</div>’ : ‘’) +
-‘</div>’;
-}).filter(Boolean).join(’’);
+  var qAndA = QUESTIONS.map(function(q,i) {
+    if (!S.answers[i] && S.selectedQ.indexOf(i) === -1) return '';
+    return '<div class="qa"><div class="q">"' + e2(q) + '"</div>' +
+      (S.answers[i] ? '<div class="a"><strong>Response:</strong> ' + e2(S.answers[i]) + '</div>' : '') +
+      (S.aiInsights[i] ? '<div class="insight"><span class="tag">* AI Insight</span>' + e2(S.aiInsights[i]) + '</div>' : '') +
+      (S.insights[i] ? '<div class="insight" style="margin-top:4px"><span class="tag">Your notes</span>' + e2(S.insights[i]) + '</div>' : '') +
+      '</div>';
+  }).filter(Boolean).join('');
 
-var povsHTML = [0,1,2].map(function(i) {
-if (!S.keyInterests[i]) return ‘’;
-return ‘<div class="pov"><h3>’ + e2(S.keyInterests[i]) + ‘</h3>’ +
-(S.aiPovs[i] ? ‘<div class="content">’ + e2(S.aiPovs[i]) + ‘</div>’ : ‘’) +
-(S.povs[i] ? ‘<div class="insight" style="margin-top:8px"><span class="tag">Your notes</span>’ + e2(S.povs[i]) + ‘</div>’ : ‘’) +
-‘</div>’;
-}).filter(Boolean).join(’’);
+  var povsHTML = [0,1,2].map(function(i) {
+    if (!S.keyInterests[i]) return '';
+    return '<div class="pov"><h3>' + e2(S.keyInterests[i]) + '</h3>' +
+      (S.aiPovs[i] ? '<div class="content">' + e2(S.aiPovs[i]) + '</div>' : '') +
+      (S.povs[i] ? '<div class="insight" style="margin-top:8px"><span class="tag">Your notes</span>' + e2(S.povs[i]) + '</div>' : '') +
+      '</div>';
+  }).filter(Boolean).join('');
 
-var actHTML = (S.aiActions ? ‘<div class="content">’ + e2(S.aiActions) + ‘</div>’ : ‘’) +
-(S.agreed.filter(Boolean).length ? ‘<h3>Agreed in Meeting</h3><ul>’ + S.agreed.filter(Boolean).map(function(a){ return ‘<li>’ + e2(a) + ‘</li>’; }).join(’’) + ‘</ul>’ : ‘’) +
-(S.actionOwners ? ‘<h3>Owners & Timeline</h3><div class="content">’ + e2(S.actionOwners) + ‘</div>’ : ‘’);
+  var actHTML = (S.aiActions ? '<div class="content">' + e2(S.aiActions) + '</div>' : '') +
+    (S.agreed.filter(Boolean).length ? '<h3>Agreed in Meeting</h3><ul>' + S.agreed.filter(Boolean).map(function(a){ return '<li>' + e2(a) + '</li>'; }).join('') + '</ul>' : '') +
+    (S.actionOwners ? '<h3>Owners & Timeline</h3><div class="content">' + e2(S.actionOwners) + '</div>' : '');
 
-var followupContent = [
-S.aiFollowUp ? e2(S.aiFollowUp) : ‘’,
-S.followUpNotes ? ‘\n\nYour notes:\n’ + e2(S.followUpNotes) : ‘’,
-].filter(Boolean).join(’’);
+  var followupContent = [
+    S.aiFollowUp ? e2(S.aiFollowUp) : '',
+    S.followUpNotes ? '\n\nYour notes:\n' + e2(S.followUpNotes) : '',
+  ].filter(Boolean).join('');
 
-return ‘<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">’ +
-‘<title>KPMG CEO Engagement — ’ + e2(ceo) + ‘</title>’ +
-‘<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">’ +
-‘<style>’ +
-‘:root{–gold:#b8960e;–dark:#1a1814;–txt:#2c2820}’ +
-‘*,*::before,*::after{box-sizing:border-box}’ +
-‘body{font-family:'DM Sans',sans-serif;color:var(–txt);background:#fff;max-width:860px;margin:0 auto;padding:36px 28px;font-size:14px;line-height:1.75}’ +
-‘.hdr{border-bottom:3px solid var(–gold);padding-bottom:20px;margin-bottom:30px}’ +
-‘.kpmg{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(–gold);font-weight:600;margin-bottom:6px}’ +
-‘h1{font-family:'DM Serif Display',serif;font-size:28px;font-weight:normal;color:var(–dark);margin-bottom:2px}’ +
-‘.sub{font-family:'DM Serif Display',serif;font-size:18px;color:var(–gold);font-style:italic}’ +
-‘.meta{font-size:11px;color:#999;margin-top:6px}’ +
-‘.section{margin-bottom:32px;page-break-inside:avoid}’ +
-‘h2{font-family:'DM Serif Display',serif;font-size:16px;font-weight:normal;color:var(–dark);border-left:3px solid var(–gold);padding-left:12px;margin-bottom:12px}’ +
-‘h3{font-size:12px;font-weight:600;color:var(–dark);text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px}’ +
-‘.content{white-space:pre-wrap;color:#3c3830;font-size:13.5px;line-height:1.75}’ +
-‘.qa{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:12px}’ +
-‘.q{font-family:'DM Serif Display',serif;font-style:italic;font-size:14px;color:var(–dark);margin-bottom:8px}’ +
-‘.a{font-size:13px;color:#3c3830;margin-bottom:6px;white-space:pre-wrap}’ +
-‘.insight{background:rgba(184,150,14,.08);border-left:2px solid var(–gold);padding:8px 12px;border-radius:0 5px 5px 0;font-size:12.5px;white-space:pre-wrap;margin-top:6px}’ +
-‘.tag{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(–gold);font-weight:600;margin-bottom:4px}’ +
-‘.pov{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:10px}’ +
-‘.followup-box{background:#fffdf5;border:1px solid #e8d88a;border-radius:8px;padding:18px;white-space:pre-wrap;font-size:13.5px;line-height:1.75}’ +
-‘.commit{background:#f9f8f5;border-radius:6px;padding:12px 16px;margin-bottom:8px}’ +
-‘.el{font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}’ +
-‘.line{border-bottom:1px solid #d8d0c0;min-height:24px;margin-bottom:5px}’ +
-‘ul{padding-left:16px} li{margin-bottom:4px}’ +
-‘@media print{body{padding:16px}.section,.qa,.pov{page-break-inside:avoid}}’ +
-‘</style></head><body>’ +
-‘<div class="hdr">’ +
-‘<div class="kpmg">KPMG Australia — Mining, Energy & Utilities</div>’ +
-‘<h1>CEO Engagement Brief</h1>’ +
-‘<div class="sub">’ + e2(ceo) + (org ? ’ — ’ + e2(org) : ‘’) + ‘</div>’ +
-‘<div class="meta">Meeting: ’ + date + ’  |  STRICTLY CONFIDENTIAL</div>’ +
-‘</div>’ +
-(S.exp.profile && S.aiResearch ? sec(‘Leader Background & Research’, e2(S.aiResearch)) : ‘’) +
-(S.exp.profile && S.profile ? sec(‘Additional Research Notes’, e2(S.profile)) : ‘’) +
-(S.exp.profile && S.preNotes ? sec(‘Pre-Meeting Context & Agenda’, e2(S.preNotes)) : ‘’) +
-(S.exp.questions && qAndA ? ‘<div class="section"><h2>Conversation — Questions & Responses</h2>’ + qAndA + ‘</div>’ : ‘’) +
-(S.exp.povs && povsHTML ? ‘<div class="section"><h2>Key Interest Areas — POVs & Probes</h2>’ + povsHTML + ‘</div>’ : ‘’) +
-(S.exp.povs && S.aiTrends ? sec(‘Future Trends Briefing’, e2(S.aiTrends)) : ‘’) +
-(S.exp.actions && actHTML ? ‘<div class="section"><h2>90-Day Strategic Actions</h2>’ + actHTML + ‘</div>’ : ‘’) +
-(S.exp.followup && followupContent ? ‘<div class="section"><h2>Follow-Up Strategy</h2><div class="followup-box">’ + followupContent + ‘</div></div>’ : ‘’) +
-‘<div class="section"><h2>Post-Meeting Commitments — For Completion</h2>’ +
-‘<p style="font-size:12px;color:#888;margin-bottom:14px">Complete within 24 hours of the meeting.</p>’ +
+  return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+'<title>KPMG CEO Engagement -- ' + e2(ceo) + '</title>' +
+'<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">' +
+'<style>' +
+':root{--gold:#b8960e;--dark:#1a1814;--txt:#2c2820}' +
+'*,*::before,*::after{box-sizing:border-box}' +
+'body{font-family:\'DM Sans\',sans-serif;color:var(--txt);background:#fff;max-width:860px;margin:0 auto;padding:36px 28px;font-size:14px;line-height:1.75}' +
+'.hdr{border-bottom:3px solid var(--gold);padding-bottom:20px;margin-bottom:30px}' +
+'.kpmg{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px}' +
+'h1{font-family:\'DM Serif Display\',serif;font-size:28px;font-weight:normal;color:var(--dark);margin-bottom:2px}' +
+'.sub{font-family:\'DM Serif Display\',serif;font-size:18px;color:var(--gold);font-style:italic}' +
+'.meta{font-size:11px;color:#999;margin-top:6px}' +
+'.section{margin-bottom:32px;page-break-inside:avoid}' +
+'h2{font-family:\'DM Serif Display\',serif;font-size:16px;font-weight:normal;color:var(--dark);border-left:3px solid var(--gold);padding-left:12px;margin-bottom:12px}' +
+'h3{font-size:12px;font-weight:600;color:var(--dark);text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px}' +
+'.content{white-space:pre-wrap;color:#3c3830;font-size:13.5px;line-height:1.75}' +
+'.qa{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:12px}' +
+'.q{font-family:\'DM Serif Display\',serif;font-style:italic;font-size:14px;color:var(--dark);margin-bottom:8px}' +
+'.a{font-size:13px;color:#3c3830;margin-bottom:6px;white-space:pre-wrap}' +
+'.insight{background:rgba(184,150,14,.08);border-left:2px solid var(--gold);padding:8px 12px;border-radius:0 5px 5px 0;font-size:12.5px;white-space:pre-wrap;margin-top:6px}' +
+'.tag{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:4px}' +
+'.pov{background:#f9f8f5;border-radius:8px;padding:14px 16px;margin-bottom:10px}' +
+'.followup-box{background:#fffdf5;border:1px solid #e8d88a;border-radius:8px;padding:18px;white-space:pre-wrap;font-size:13.5px;line-height:1.75}' +
+'.commit{background:#f9f8f5;border-radius:6px;padding:12px 16px;margin-bottom:8px}' +
+'.el{font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}' +
+'.line{border-bottom:1px solid #d8d0c0;min-height:24px;margin-bottom:5px}' +
+'ul{padding-left:16px} li{margin-bottom:4px}' +
+'@media print{body{padding:16px}.section,.qa,.pov{page-break-inside:avoid}}' +
+'</style></head><body>' +
+'<div class="hdr">' +
+  '<div class="kpmg">KPMG Australia -- Mining, Energy &amp; Utilities</div>' +
+  '<h1>CEO Engagement Brief</h1>' +
+  '<div class="sub">' + e2(ceo) + (org ? ' -- ' + e2(org) : '') + '</div>' +
+  '<div class="meta">Meeting: ' + date + ' &nbsp;|&nbsp; STRICTLY CONFIDENTIAL</div>' +
+'</div>' +
+(S.exp.profile && S.aiResearch ? sec('Leader Background &amp; Research', e2(S.aiResearch)) : '') +
+(S.exp.profile && S.profile ? sec('Additional Research Notes', e2(S.profile)) : '') +
+(S.exp.profile && S.preNotes ? sec('Pre-Meeting Context &amp; Agenda', e2(S.preNotes)) : '') +
+(S.exp.questions && qAndA ? '<div class="section"><h2>Conversation -- Questions &amp; Responses</h2>' + qAndA + '</div>' : '') +
+(S.exp.povs && povsHTML ? '<div class="section"><h2>Key Interest Areas -- POVs &amp; Probes</h2>' + povsHTML + '</div>' : '') +
+(S.exp.povs && S.aiTrends ? sec('Future Trends Briefing', e2(S.aiTrends)) : '') +
+(S.exp.actions && actHTML ? '<div class="section"><h2>90-Day Strategic Actions</h2>' + actHTML + '</div>' : '') +
+(S.exp.followup && followupContent ? '<div class="section"><h2>Follow-Up Strategy</h2><div class="followup-box">' + followupContent + '</div></div>' : '') +
+'<div class="section"><h2>Post-Meeting Commitments -- For Completion</h2>' +
+'<p style="font-size:12px;color:#888;margin-bottom:14px">Complete within 24 hours of the meeting.</p>' +
 [1,2,3,4].map(function(n){
-return ‘<div class="commit"><div class="el">Commitment ’ + n + ‘</div><div class="line"></div>’ +
-‘<div style="display:flex;gap:14px;margin-top:7px">’ +
-‘<div style="flex:1"><div class="el">Owner</div><div class="line"></div></div>’ +
-‘<div style="flex:1"><div class="el">Due Date</div><div class="line"></div></div>’ +
-‘</div></div>’;
-}).join(’’) +
-‘</div>’ +
-‘<div style="margin-top:36px;padding-top:14px;border-top:1px solid #ddd;font-size:11px;color:#bbb;text-align:center">’ +
-’KPMG Australia — Confidential  |  Mining, Energy & Utilities  |  ’ + date +
-‘</div></body></html>’;
+  return '<div class="commit"><div class="el">Commitment ' + n + '</div><div class="line"></div>' +
+    '<div style="display:flex;gap:14px;margin-top:7px">' +
+    '<div style="flex:1"><div class="el">Owner</div><div class="line"></div></div>' +
+    '<div style="flex:1"><div class="el">Due Date</div><div class="line"></div></div>' +
+    '</div></div>';
+}).join('') +
+'</div>' +
+'<div style="margin-top:36px;padding-top:14px;border-top:1px solid #ddd;font-size:11px;color:#bbb;text-align:center">' +
+'KPMG Australia -- Confidential &nbsp;|&nbsp; Mining, Energy &amp; Utilities &nbsp;|&nbsp; ' + date +
+'</div></body></html>';
 }
 
-// ── Export / Backup ──────────────────────────────────────────────────────────
+// -- Export / Backup ----------------------------------------------------------
 function downloadReport() {
-var html = buildReportHTML();
-var blob = new Blob([html], {type:‘text/html’});
-var url  = URL.createObjectURL(blob);
-var a    = document.createElement(‘a’);
-a.href   = url;
-a.download = ‘KPMG_CEO_’ + (S.ceoName||‘Brief’).replace(/\s+/g,’_’) + ‘.html’;
-a.click();
-URL.revokeObjectURL(url);
+  var html = buildReportHTML();
+  var blob = new Blob([html], {type:'text/html'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url;
+  a.download = 'KPMG_CEO_' + (S.ceoName||'Brief').replace(/\s+/g,'_') + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function previewReport() {
-var w = window.open(’’,’_blank’);
-w.document.write(buildReportHTML());
-w.document.close();
+  var w = window.open('','_blank');
+  w.document.write(buildReportHTML());
+  w.document.close();
 }
 
 function saveBackup() {
-syncAll();
-var blob = new Blob([JSON.stringify(S, null, 2)], {type:‘application/json’});
-var url  = URL.createObjectURL(blob);
-var a    = document.createElement(‘a’);
-a.href   = url;
-a.download = ‘KPMG_AI_Session_’ + (S.ceoName||‘session’).replace(/\s+/g,’_’) + ‘.json’;
-a.click();
-URL.revokeObjectURL(url);
+  syncAll();
+  var blob = new Blob([JSON.stringify(S, null, 2)], {type:'application/json'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url;
+  a.download = 'KPMG_AI_Session_' + (S.ceoName||'session').replace(/\s+/g,'_') + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function loadBackup(event) {
-var file = event.target.files[0];
-if (!file) return;
-var reader = new FileReader();
-reader.onload = function(ev) {
-try {
-var data = JSON.parse(ev.target.result);
-Object.assign(S, data);
-init();
-} catch(e) { alert(‘Invalid backup file.’); }
-};
-reader.readAsText(file);
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      Object.assign(S, data);
+      init();
+    } catch(e) { alert('Invalid backup file.'); }
+  };
+  reader.readAsText(file);
 }
 
 function syncAll() {
-[‘ceoName’,‘org’,‘meetingDate’,‘profile’,‘preNotes’,‘customQuestions’,‘tab2Notes’,‘actionOwners’,‘followUpNotes’].forEach(function(id) {
-var el = document.getElementById(id);
-if (el) S[id] = el.value;
-});
+  ['ceoName','org','meetingDate','profile','preNotes','customQuestions','tab2Notes','actionOwners','followUpNotes'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) S[id] = el.value;
+  });
 }
 
-// ── Utility ──────────────────────────────────────────────────────────────────
+// -- Utility ------------------------------------------------------------------
 function esc(s) {
-return (s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────────
+// -- Init ---------------------------------------------------------------------
 function init() {
-document.getElementById(‘tabs’).innerHTML = ‘’;
-buildTabs();
-buildQuestions();
-buildInterests();
-buildAgreed();
-buildExportToggles();
-bindFields();
-updateHeader();
-// Restore AI blocks
-if (S.aiResearch)   showAIResult(‘ai-profile’,  ‘RESEARCH BRIEFING’, S.aiResearch);
-if (S.aiTrends)     showAIResult(‘ai-trends’,   ‘TRENDS BRIEFING’,   S.aiTrends);
-if (S.aiActions)    showAIResult(‘ai-actions’,   ‘SUGGESTED ACTIONS’, S.aiActions);
-if (S.aiFollowUp)   showAIResult(‘ai-followup’,  ‘FOLLOW-UP STRATEGY’,S.aiFollowUp);
+  document.getElementById('tabs').innerHTML = '';
+  buildTabs();
+  buildQuestions();
+  buildInterests();
+  buildAgreed();
+  buildExportToggles();
+  bindFields();
+  updateHeader();
+  // Restore AI blocks
+  if (S.aiResearch)   showAIResult('ai-profile',  'RESEARCH BRIEFING', S.aiResearch);
+  if (S.aiTrends)     showAIResult('ai-trends',   'TRENDS BRIEFING',   S.aiTrends);
+  if (S.aiActions)    showAIResult('ai-actions',   'SUGGESTED ACTIONS', S.aiActions);
+  if (S.aiFollowUp)   showAIResult('ai-followup',  'FOLLOW-UP STRATEGY',S.aiFollowUp);
 }
 
 init();
 </script>
-
 </body>
 </html>
