@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BHP Campaign — Mandate Tracker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --ground:#15171C;--panel:#1C1F26;--panel-2:#22262F;--panel-3:#282D37;
+    --line:#2E333D;--ink:#E9E6DF;--ink-dim:#9AA1AD;--ink-faint:#6A707B;
+    --copper:#C77B47;--copper-bright:#E0935A;--copper-deep:#8A4F28;
+    --steel:#7E97AE;--sage:#8AA888;--amber:#CCA24E;--rust:#D08770;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--ground);color:var(--ink);font-family:var(--sans);line-height:1.5;padding:20px 16px 80px;max-width:880px;margin:0 auto}
+  @media(prefers-reduced-motion:no-preference){.reveal{animation:rise .4s cubic-bezier(.2,.7,.2,1) both}}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+  header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:20px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper);margin-bottom:10px}
+  h1{font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:1.15}
+  .thesis{margin-top:12px;font-size:14.5px;color:var(--ink-dim)}
+  .thesis b{color:var(--ink);font-weight:600}
+  .clock{margin-top:20px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px 18px}
+  .clock .num{font-family:var(--mono);font-size:38px;font-weight:600;color:var(--copper-bright);line-height:1}
+  .clock .lbl{font-size:13px;color:var(--ink-dim);max-width:230px}
+  .clock .lbl b{color:var(--ink)}
+  .clock .date{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:.08em;text-transform:uppercase}
+
+  .section-label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin:28px 0 12px;display:flex;align-items:center;justify-content:space-between}
+  .section-label .count{color:var(--copper)}
+
+  .phases{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .phase{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:11px;cursor:pointer;color:var(--ink-dim);transition:border-color .15s,background .15s;font-family:inherit}
+  .phase:hover{border-color:var(--copper-deep)}
+  .phase .pnum{font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:.1em}
+  .phase .pwk{font-family:var(--mono);font-size:10px;color:var(--copper);margin-top:2px}
+  .phase .ptitle{font-size:12.5px;margin-top:7px;line-height:1.35;color:inherit}
+  .phase.active{background:var(--panel-2);border-color:var(--copper);color:var(--ink)}
+  .phase.active .pnum{color:var(--copper)}
+  .phase:focus-visible{outline:2px solid var(--copper-bright);outline-offset:2px}
+  @media(max-width:620px){.phases{grid-template-columns:repeat(2,1fr)}}
+
+  .coach-bar{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  .btn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;background:transparent;border:1px solid var(--copper-deep);color:var(--copper-bright);padding:8px 13px;border-radius:6px;transition:background .15s}
+  .btn:hover{background:rgba(199,123,71,.12)}
+  .btn:focus-visible{outline:2px solid var(--copper-bright);outline-offset:2px}
+  .btn.solid{background:var(--copper);color:#15171C;border-color:var(--copper)}
+  .btn.solid:hover{background:var(--copper-bright)}
+  .btn.ghost{border-color:var(--line);color:var(--ink-dim)}
+  .btn.ghost:hover{background:var(--panel-2);color:var(--ink)}
+  .btn.danger{border-color:#5a382e;color:var(--rust)}
+  .btn.danger:hover{background:rgba(208,135,112,.1)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .thinking{font-family:var(--mono);font-size:11px;color:var(--copper);letter-spacing:.08em;animation:pulse 1.2s infinite}
+
+  .coach-out{background:var(--panel);border:1px solid var(--copper-deep);border-radius:10px;padding:16px 17px;margin-top:12px}
+  .coach-out .ch{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper);margin-bottom:6px}
+  .coach-out .read{font-size:14px;color:var(--ink);margin-bottom:14px}
+  .pivot{font-size:13px;color:var(--ink-dim);padding:6px 0 6px 16px;position:relative}
+  .pivot::before{content:"\25B8";position:absolute;left:0;color:var(--copper)}
+  .move{border-top:1px solid var(--line);padding:13px 0 4px;margin-top:10px}
+  .move .who{font-family:var(--mono);font-size:11px;color:var(--copper-bright);letter-spacing:.05em;text-transform:uppercase;margin-bottom:7px}
+  .move .msg{background:var(--panel-2);border-left:2px solid var(--copper-deep);border-radius:0 6px 6px 0;padding:10px 12px;font-size:13.5px;color:var(--ink);white-space:pre-wrap}
+  .move .act{font-size:13px;color:var(--ink-dim);margin-top:8px}
+  .move .act b{color:var(--copper);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:400}
+  .copy{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;background:none;border:none;color:var(--ink-faint);cursor:pointer;margin-top:6px}
+  .copy:hover{color:var(--copper)}
+  .err{font-size:13px;color:var(--rust)}
+
+  .contact{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+  .c-head{display:flex;align-items:center;gap:11px;padding:13px 15px;cursor:pointer;user-select:none}
+  .c-head:hover{background:var(--panel-2)}
+  .c-id{flex:1;min-width:0}
+  .c-name{font-size:15.5px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .c-role{font-family:var(--mono);font-size:10.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chip{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:4px;white-space:nowrap;border:1px solid}
+  .chip.primary{color:var(--copper-bright);border-color:var(--copper-deep);background:rgba(199,123,71,.1)}
+  .chip.gravity{color:var(--steel);border-color:#3a4a5a;background:rgba(126,151,174,.08)}
+  .chip.gatekeeper{color:var(--amber);border-color:#5a4d2a;background:rgba(204,162,78,.08)}
+  .chip.sponsor{color:var(--sage);border-color:#3d4f3c;background:rgba(138,168,136,.08)}
+  .chip.connector{color:#b58cc0;border-color:#4a3a52;background:rgba(181,140,192,.08)}
+  .chip.confirm{color:var(--rust);border-color:#5a382e;background:rgba(208,135,112,.1)}
+  .chip.watch{color:var(--ink-dim);border-color:var(--line)}
+  .chip.standard{color:var(--ink-faint);border-color:var(--line)}
+  .status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .status-incumbent{background:var(--steel)}
+  .status-incoming{background:var(--sage)}
+  .status-exiting{background:var(--rust)}
+  .status-prospective{background:var(--amber)}
+  .mini-pips{display:flex;gap:3px;flex-shrink:0}
+  .mini-pip{width:14px;height:4px;border-radius:2px;background:var(--line)}
+  .mini-pip.on{background:var(--copper)}
+  .caret{color:var(--ink-faint);font-size:12px;transition:transform .2s;flex-shrink:0}
+  .contact.open .caret{transform:rotate(90deg)}
+
+  .c-body{display:none;padding:0 15px 14px;border-top:1px solid var(--line)}
+  .contact.open .c-body{display:block}
+  .c-desc{font-size:13.5px;color:var(--ink-dim);margin-top:13px}
+
+  .field{margin-top:14px}
+  .flabel{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:6px}
+  .stage-name{font-family:var(--mono);font-size:11px;color:var(--copper-bright);letter-spacing:.06em;text-transform:uppercase}
+  .stage-pips{display:flex;gap:5px;margin-top:6px}
+  .pip{flex:1;height:6px;border-radius:3px;background:var(--line);cursor:pointer;border:none;padding:0;transition:background .15s}
+  .pip.on{background:var(--copper)}
+  .pip:hover{background:var(--copper-deep)}
+  .pip:focus-visible{outline:2px solid var(--copper-bright);outline-offset:2px}
+  .stage-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;color:var(--ink-faint);margin-top:5px;letter-spacing:.03em;text-transform:uppercase}
+
+  input,textarea,select{background:var(--panel-2);border:1px solid var(--line);border-radius:7px;color:var(--ink);font-family:inherit;font-size:13.5px;padding:9px 11px;width:100%}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--copper)}
+  textarea{resize:vertical;min-height:38px;line-height:1.4}
+  select{cursor:pointer;-webkit-appearance:none;appearance:none}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+
+  .conns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .conn{font-family:var(--mono);font-size:10.5px;color:var(--ink-dim);background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:4px 8px;display:flex;align-items:center;gap:7px}
+  .qlinks{display:flex;gap:16px;margin-top:9px}
+  .qlinks a{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--copper-bright);text-decoration:none}
+  .qlinks a:hover{text-decoration:underline}
+  .conn b{color:var(--copper)}
+  .conn button{background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:13px;padding:0}
+  .conn button:hover{color:var(--rust)}
+  .conn-add{display:grid;grid-template-columns:1fr 1fr auto;gap:7px;margin-top:8px}
+  .conn-add .btn{padding:8px 10px}
+
+  .touch-bar{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
+  .touch-toggle{background:none;border:none;color:var(--ink-dim);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;padding:4px 0}
+  .touch-toggle:hover{color:var(--ink)}
+  .touches{display:none;padding-top:6px}
+  .touches.open{display:block}
+  .touch{display:flex;gap:11px;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line)}
+  .touch:last-of-type{border-bottom:none}
+  .touch .td{font-family:var(--mono);font-size:10.5px;color:var(--copper);white-space:nowrap;padding-top:2px}
+  .touch .tn{color:var(--ink-dim);flex:1}
+  .touch .tx{background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:14px;padding:0 2px}
+  .touch .tx:hover{color:var(--rust)}
+  .add-touch{display:flex;gap:8px;margin-top:10px}
+  .empty-touch{font-size:12.5px;color:var(--ink-faint);font-style:italic;padding:4px 0}
+
+  .c-footer{display:flex;justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+
+  .addform{background:var(--panel);border:1px dashed var(--copper-deep);border-radius:10px;padding:16px;margin-bottom:14px;display:none}
+  .addform.open{display:block}
+  .addform .field{margin-top:10px}
+  .addform .field:first-child{margin-top:0}
+  .addform-actions{display:flex;gap:9px;margin-top:14px}
+
+  details.watchouts{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-top:24px;padding:0 16px}
+  details.watchouts summary{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--copper);cursor:pointer;padding:15px 0;list-style:none}
+  details.watchouts summary::-webkit-details-marker{display:none}
+  details.watchouts summary::before{content:"\25B8 ";color:var(--ink-faint)}
+  details.watchouts[open] summary::before{content:"\25BE ";color:var(--ink-faint)}
+  .wo{padding:11px 0;border-top:1px solid var(--line);font-size:13.5px}
+  .wo b{display:block;color:var(--ink);font-size:13px;margin-bottom:3px}
+  .wo span{color:var(--ink-dim)}
+  .wo:last-child{padding-bottom:16px}
+  .settings .set-block{padding:14px 0;border-top:1px solid var(--line)}
+  .settings .set-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:10px}
+  .settings .set-row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  .settings .set-row input[type=password]{flex:1;min-width:180px}
+  .settings .set-hint{font-size:12px;color:var(--ink-faint);margin-top:10px;line-height:1.45}
+  .settings .set-hint #keyState{color:var(--sage)}
+
+  footer{margin-top:26px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .saved{font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);letter-spacing:.08em;text-transform:uppercase}
+  .saved.flash{color:var(--sage)}
+  .discipline{font-family:var(--mono);font-size:11px;color:var(--ink-faint);text-align:center;margin-top:26px;letter-spacing:.04em}
+  .discipline b{color:var(--copper)}
+</style>
+</head>
+<body>
+<header class="reveal">
+  <div class="eyebrow">Personal sales campaign · BHP senior transformation role</div>
+  <h1>Mandate, not vacancy.</h1>
+  <p class="thesis">North star: <b>change from within</b> — not selling transformation from outside. The differentiator no internal candidate has: you've watched change land and stall at BHP from four delivery vantage points.</p>
+  <div class="clock">
+    <span class="num" id="clockNum">—</span>
+    <span class="lbl" id="clockLbl"></span>
+    <span class="date" id="todayDate"></span>
+  </div>
+</header>
+
+<div class="section-label">Campaign phase · tap to set where you are</div>
+<div class="phases" id="phases"></div>
+<div class="coach-bar">
+  <button class="btn solid" id="phaseCoachBtn">Coach this phase</button>
+  <span id="phaseCoachStatus"></span>
+</div>
+<div id="phaseCoachOut"></div>
+
+<div class="section-label">Senior leadership <span class="count" id="seniorCount"></span></div>
+<button class="btn ghost" id="addSeniorBtn" style="margin-bottom:12px">+ Add senior stakeholder</button>
+<div class="addform" id="addSenior"></div>
+<div id="seniorList"></div>
+
+<div class="section-label">Next level <span class="count" id="nextCount"></span></div>
+<button class="btn ghost" id="addNextBtn" style="margin-bottom:12px">+ Add next-level stakeholder</button>
+<div class="addform" id="addNext"></div>
+<div id="nextList"></div>
+
+<details class="watchouts">
+  <summary>Pitch watch-outs</summary>
+  <div class="wo"><b>The seniority trap</b><span>Open reqs pull you down a band. Keep it on the mandate gap — "where's the gap that doesn't have a role yet?"</span></div>
+  <div class="wo"><b>The vendor reflex</b><span>The moment you sound like a service pitch, you're re-filed as a supplier. Peer-frame: seek their read, offer a pattern.</span></div>
+  <div class="wo"><b>Capital-discipline scrutiny</b><span>Cost without a tonnes / EBITDA / risk line dies. Pre-load value.</span></div>
+  <div class="wo"><b>Transition ambiguity</b><span>"Let's revisit after July" is a real constraint, not a brush-off. Come back early in the new structure with something concrete.</span></div>
+  <div class="wo"><b>Over-naming</b><span>Don't drop names until identity and relevance are confirmed.</span></div>
+</details>
+
+<details class="watchouts settings">
+  <summary>Settings</summary>
+  <div class="set-block">
+    <div class="set-label">Data</div>
+    <div class="set-row">
+      <button class="btn" id="exportJsonBtn">Export JSON</button>
+      <button class="btn" id="importJsonBtn">Import JSON</button>
+      <button class="btn" id="exportPdfBtn">Export PDF</button>
+      <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+    </div>
+    <p class="set-hint">Export saves your whole board (contacts, stages, touches) to a file you can back up or move to another device. Import replaces the current board. PDF is a shareable snapshot. Your API key is never included in exports.</p>
+  </div>
+  <div class="set-block">
+    <div class="set-label">Anthropic API key</div>
+    <div class="set-row">
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-… (optional)" autocomplete="off">
+      <button class="btn solid" id="saveKeyBtn">Save</button>
+      <button class="btn ghost" id="clearKeyBtn">Clear</button>
+    </div>
+    <p class="set-hint">Leave blank inside Claude.ai — coaching is authenticated automatically. Only needed if you open this file directly in a browser elsewhere. Stored locally on this device, never shared in exports. <span id="keyState"></span></p>
+  </div>
+</details>
+
+<footer>
+  <span class="saved" id="savedFlag">loading…</span>
+  <button class="btn danger" id="resetBtn">Reset to seed</button>
+</footer>
+<p class="discipline">Every touch advances the <b>mandate</b>, never the vacancy.</p>
+
+<script>
+const STAGES=["Not started","Contacted","In dialogue","Sponsoring","Shaping role"];
+const TAGS=["standard","primary","gravity","gatekeeper","sponsor","connector","confirm","watch"];
+const TAGLABEL={standard:"Standard",primary:"Primary",gravity:"Align",gatekeeper:"Gatekeeper",sponsor:"Sponsor",connector:"Connector",confirm:"Confirm",watch:"Watch"};
+const STATUSES=["incumbent","incoming","exiting","prospective"];
+const STATUSLABEL={incumbent:"Incumbent",incoming:"Incoming",exiting:"Exiting",prospective:"Prospective"};
+const PHASES=[
+  {wk:"Wk 1\u20132",t:"Send Johan follow-up. Open the mandate conversation, not the vacancy."},
+  {wk:"Wk 3\u20136",t:"Map the new structure. Convert Johan to sponsor with a usable one-pager."},
+  {wk:"Wk 6\u201310",t:"Widen the base \u2014 peer conversations, same thesis, each seeking judgment."},
+  {wk:"Wk 10\u201314",t:"Crystallise and propose a shaped role \u2014 defined by outcome, not title."}
+];
+const TARGET={senior:10,next:20};
+
+const SEED={currentPhase:0,identityRev:3,contacts:[
+  {id:"johan",name:"Johan van Jaarsveld",role:"Chief Technical Officer / ELT",level:"senior",tag:"primary",status:"incumbent",movement:"",
+   desc:"Owns Technology, Innovation, Minerals Exploration, the Centres of Excellence, plus Ventures and Xplor. Public agenda IS your territory: AI from concept to operations, governed, 'biggest wins quickest'. PhD metallurgist + ex-Goldman/Blackstone \u2014 sell EBITDA and risk, never tooling. Your warm line in.",
+   connections:[],stage:1,
+   na:"Send the follow-up: lead with 'change from within' + ONE concrete transformation pattern (fill placeholder). Goal = a second conversation about the mandate gap.",touches:[]},
+  {id:"craig",name:"Brandon Craig",role:"CEO from 1 Jul 2026",level:"senior",tag:"gravity",status:"incoming",movement:"Becomes CEO 1 Jul 2026, from President Americas.",
+   desc:"Incoming CEO. Pillars: copper/potash delivery, operational excellence, capital discipline, social value. Default is organic growth ('take the resource and develop it'). Not an entry point \u2014 the field everything bends toward.",
+   connections:[],stage:0,
+   na:"Monitor first-100-days mandate signals; note priority language to mirror back.",touches:[]},
+  {id:"pant",name:"Vandita Pant",role:"Chief Financial Officer",level:"senior",tag:"gatekeeper",status:"exiting",movement:"Your read: may exit as Adrian moves into CFO.",
+   desc:"Capital-discipline gatekeeper. Every new mandate competes for the ~70% of capex going to copper + potash. Your business case must survive her lens.",
+   connections:[],stage:0,
+   na:"Pre-load tonnes / EBITDA / risk framing before anything reaches the CFO seat.",touches:[]},
+  {id:"wood",name:"Adrian Wood",role:"VP Capital Projects, Minerals Australia",level:"senior",tag:"gatekeeper",status:"prospective",movement:"Your read: expected to take CFO as Vandita exits.",
+   desc:"VP Capital Projects, Minerals Australia \u2014 owns exactly where transformation lands or stalls in project delivery, your home turf. You read him into the CFO seat, which would make him a future capital gatekeeper. Build now on capital-project delivery, before the CFO lens applies.",
+   connections:[{toId:"pant",label:"succeeding"}],stage:0,
+   na:"Engage on capital-project delivery transformation now \u2014 peer-framed, value in tonnes/EBITDA/risk. Become a known quantity before any CFO move.",touches:[]},
+  {id:"pres-am",name:"New President Americas",role:"TBD \u2014 Craig's vacated seat",level:"senior",tag:"watch",status:"incoming",movement:"Seat opens 1 Jul when Craig becomes CEO.",
+   desc:"The Americas is BHP's strategic core (Chile, Argentina/Vicuna, Canada/Jansen, US/Arizona). Whoever takes it owns the Americas transformation budget \u2014 a strong secondary sponsor target.",
+   connections:[],stage:0,
+   na:"Watch for the appointment after 1 Jul. Add name + read here when known.",touches:[]},
+  {id:"day",name:"Tim Day",role:"Asset President, WA Iron Ore",level:"senior",tag:"standard",status:"incumbent",movement:"",
+   desc:"Asset President of WA Iron Ore \u2014 BHP's cash engine and a vast transformation surface (RTP1 rail tech, automation, AI conveyor detection). An operational Asset President feels change land or stall first-hand: a high-value 'change from within' conversation and a potential operational sponsor.",
+   connections:[],stage:0,
+   na:"Line up a peer conversation framed around what makes change stick operationally in WAIO; surface his current delivery pain points.",touches:[]}
+]};
+
+const KEY="bhp-campaign-state-v2";
+const AKEY="bhp-api-key";
+let state=null,memFallback=false,apiKey="";
+const expanded=new Set();
+const coachCache={};
+let phaseCoach=null;
+
+const $=id=>document.getElementById(id);
+function todayISO(){return new Date().toISOString().slice(0,10);}
+function fmtDate(iso){const p=iso.split("-");const mon=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][(+p[1])-1];return p[2]+" "+mon;}
+function uid(){return "c"+Math.random().toString(36).slice(2,8);}
+function nameOf(id){const c=state.contacts.find(x=>x.id===id);return c?c.name:"(removed)";}
+function esc(s){return String(s==null?"":s).replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));}
+
+async function load(){
+  try{const r=await window.storage.get(KEY,false);state=r&&r.value?JSON.parse(r.value):structuredClone(SEED);}
+  catch(e){state=structuredClone(SEED);memFallback=true;}
+  state.contacts.forEach(c=>{c.connections=c.connections||[];c.touches=c.touches||[];c.movement=c.movement||"";c.status=c.status||"incumbent";c.tag=c.tag||"standard";c.level=c.level||"next";c.desc=c.desc||"";c.email=c.email||"";c.phone=c.phone||"";});
+  migrateIdentities();
+  renderAll();renderClock();
+}
+// One-time identity corrections for seeded cards; preserves user-entered stage/touches.
+function migrateIdentities(){
+  const REV=3;
+  if((state.identityRev||0)>=REV)return;
+  const seedMap={};SEED.contacts.forEach(s=>seedMap[s.id]=s);
+  ["wood","day"].forEach(id=>{
+    const c=state.contacts.find(x=>x.id===id),s=seedMap[id];
+    if(c&&s){c.name=s.name;c.role=s.role;c.desc=s.desc;c.tag=s.tag;c.status=s.status;c.level=s.level;c.movement=s.movement;
+      if(id==="wood"&&(!c.connections||!c.connections.length))c.connections=structuredClone(s.connections);}
+  });
+  state.identityRev=REV;
+  if(!memFallback){try{window.storage.set(KEY,JSON.stringify(state),false);}catch(e){}}
+}
+async function save(){
+  if(memFallback)return flash("in-memory only");
+  try{await window.storage.set(KEY,JSON.stringify(state),false);flash("saved");}
+  catch(e){memFallback=true;flash("in-memory only");}
+}
+function flash(t){const el=$("savedFlag");el.textContent=t;el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),900);}
+
+function renderClock(){
+  const days=Math.ceil((new Date("2026-07-01T00:00:00")-new Date())/86400000);
+  if(days>0){$("clockNum").textContent=days;$("clockLbl").innerHTML="days to the <b>CEO transition</b> (1 Jul). The window roles get shaped \u2014 not slotted.";}
+  else{$("clockNum").textContent="+"+Math.abs(days);$("clockLbl").innerHTML="days into the <b>new structure</b>. Prime time to propose a shaped mandate.";}
+  $("todayDate").textContent=fmtDate(todayISO());
+}
+function renderPhases(){
+  const w=$("phases");w.innerHTML="";
+  PHASES.forEach((p,i)=>{
+    const b=document.createElement("button");
+    b.className="phase"+(i===state.currentPhase?" active":"");
+    b.innerHTML="<div class='pnum'>PHASE "+(i+1)+"</div><div class='pwk'>"+p.wk+"</div><div class='ptitle'>"+esc(p.t)+"</div>";
+    b.onclick=()=>{state.currentPhase=i;renderPhases();save();};
+    w.appendChild(b);
+  });
+}
+function renderAll(){
+  renderPhases();
+  const sen=state.contacts.filter(c=>c.level==="senior");
+  const nxt=state.contacts.filter(c=>c.level==="next");
+  $("seniorCount").textContent=sen.length+" / "+TARGET.senior;
+  $("nextCount").textContent=nxt.length+" / "+TARGET.next;
+  const sl=$("seniorList");sl.innerHTML="";sen.forEach(c=>sl.appendChild(card(c)));
+  const nl=$("nextList");nl.innerHTML="";nxt.forEach(c=>nl.appendChild(card(c)));
+  if(phaseCoach)paintPhaseCoach();
+}
+
+function card(c){
+  const el=document.createElement("div");
+  el.className="contact"+(expanded.has(c.id)?" open":"")+" reveal";
+
+  const head=document.createElement("div");head.className="c-head";
+  head.innerHTML="<span class='status-dot status-"+c.status+"' title='"+STATUSLABEL[c.status]+"'></span>"+
+    "<div class='c-id'><div class='c-name'>"+esc(c.name)+"<span class='chip "+c.tag+"'>"+TAGLABEL[c.tag]+"</span></div><div class='c-role'>"+esc(c.role||"")+"</div></div>"+
+    "<div class='mini-pips'>"+[1,2,3,4].map(i=>"<span class='mini-pip"+(i<=c.stage?" on":"")+"'></span>").join("")+"</div>"+
+    "<span class='caret'>\u25B8</span>";
+  head.onclick=()=>{if(expanded.has(c.id))expanded.delete(c.id);else expanded.add(c.id);el.classList.toggle("open");};
+  el.appendChild(head);
+
+  const body=document.createElement("div");body.className="c-body";
+
+  if(c.desc){const d=document.createElement("p");d.className="c-desc";d.textContent=c.desc;body.appendChild(d);}
+
+  // contact details
+  const df=document.createElement("div");df.className="field";
+  df.innerHTML="<span class='flabel'>Email &amp; phone</span>";
+  const dr=document.createElement("div");dr.className="row2";
+  const emailI=document.createElement("input");emailI.type="email";emailI.placeholder="email";emailI.value=c.email||"";
+  const phoneI=document.createElement("input");phoneI.type="tel";phoneI.placeholder="phone";phoneI.value=c.phone||"";
+  dr.appendChild(emailI);dr.appendChild(phoneI);df.appendChild(dr);
+  const links=document.createElement("div");links.className="qlinks";df.appendChild(links);
+  function drawLinks(){
+    links.innerHTML="";
+    if(c.email){const a=document.createElement("a");a.href="mailto:"+c.email;a.textContent="\u2709 Email";links.appendChild(a);}
+    if(c.phone){const a=document.createElement("a");a.href="tel:"+c.phone.replace(/[^+\d]/g,"");a.textContent="\u260E Call";links.appendChild(a);}
+  }
+  emailI.oninput=()=>{c.email=emailI.value;};emailI.onblur=()=>{drawLinks();save();};
+  phoneI.oninput=()=>{c.phone=phoneI.value;};phoneI.onblur=()=>{drawLinks();save();};
+  drawLinks();body.appendChild(df);
+
+  // per-contact coach
+  const coachWrap=document.createElement("div");coachWrap.className="field";
+  const cbar=document.createElement("div");cbar.className="coach-bar";
+  const cbtn=document.createElement("button");cbtn.className="btn";cbtn.textContent="Coach this relationship";
+  const cstat=document.createElement("span");
+  cbar.appendChild(cbtn);cbar.appendChild(cstat);coachWrap.appendChild(cbar);
+  const cout=document.createElement("div");coachWrap.appendChild(cout);
+  function paintContactCoach(){
+    cout.innerHTML="";const r=coachCache[c.id];if(!r)return;
+    if(r.error){cout.innerHTML="<div class='coach-out'><div class='err'>"+esc(r.error)+"</div></div>";return;}
+    const box=document.createElement("div");box.className="coach-out";
+    box.innerHTML="<div class='ch'>Suggested message</div>"+
+      "<div class='move' style='border-top:none;padding-top:0'><div class='msg'>"+esc(r.message||"")+"</div>"+
+      "<button class='copy'>\u29C9 Copy message</button>"+
+      "<div class='act'><b>Next action</b> \u00B7 "+esc(r.action||"")+"</div>"+
+      (r.watch?"<div class='act' style='margin-top:6px'><b>Watch</b> \u00B7 "+esc(r.watch)+"</div>":"")+"</div>";
+    box.querySelector(".copy").onclick=()=>{try{navigator.clipboard.writeText(r.message||"");}catch(e){}};
+    cout.appendChild(box);
+  }
+  cbtn.onclick=async()=>{cbtn.disabled=true;cstat.innerHTML="<span class='thinking'>drafting\u2026</span>";coachCache[c.id]=await coachContact(c);cstat.innerHTML="";cbtn.disabled=false;paintContactCoach();};
+  paintContactCoach();body.appendChild(coachWrap);
+
+  // stage
+  const sf=document.createElement("div");sf.className="field";
+  sf.innerHTML="<span class='flabel'>Relationship stage</span><span class='stage-name'>"+STAGES[c.stage]+"</span>";
+  const pips=document.createElement("div");pips.className="stage-pips";
+  for(let i=1;i<STAGES.length;i++){
+    const p=document.createElement("button");p.className="pip"+(i<=c.stage?" on":"");p.setAttribute("aria-label","Set stage "+STAGES[i]);
+    p.onclick=()=>{c.stage=(c.stage===i?i-1:i);sf.querySelector(".stage-name").textContent=STAGES[c.stage];pips.querySelectorAll(".pip").forEach((pp,idx)=>pp.classList.toggle("on",idx+1<=c.stage));head.querySelectorAll(".mini-pip").forEach((mp,idx)=>mp.classList.toggle("on",idx+1<=c.stage));save();};
+    pips.appendChild(p);
+  }
+  sf.appendChild(pips);
+  const scale=document.createElement("div");scale.className="stage-scale";
+  scale.innerHTML="<span>Contacted</span><span>Dialogue</span><span>Sponsoring</span><span>Shaping</span>";
+  sf.appendChild(scale);body.appendChild(sf);
+
+  // next action
+  const naf=document.createElement("div");naf.className="field";
+  naf.innerHTML="<span class='flabel'>Next action</span>";
+  const ta=document.createElement("textarea");ta.rows=2;ta.value=c.na||"";
+  ta.oninput=()=>{c.na=ta.value;};ta.onblur=save;naf.appendChild(ta);body.appendChild(naf);
+
+  // org & movement
+  const mf=document.createElement("div");mf.className="field";
+  mf.innerHTML="<span class='flabel'>Org status &amp; movement</span>";
+  const r2=document.createElement("div");r2.className="row2";
+  const statSel=document.createElement("select");
+  STATUSES.forEach(s=>{const o=document.createElement("option");o.value=s;o.textContent=STATUSLABEL[s];if(s===c.status)o.selected=true;statSel.appendChild(o);});
+  statSel.onchange=()=>{c.status=statSel.value;head.querySelector(".status-dot").className="status-dot status-"+c.status;save();};
+  const tagSel=document.createElement("select");
+  TAGS.forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=TAGLABEL[t];if(t===c.tag)o.selected=true;tagSel.appendChild(o);});
+  tagSel.onchange=()=>{c.tag=tagSel.value;const ch=head.querySelector(".chip");ch.className="chip "+c.tag;ch.textContent=TAGLABEL[c.tag];save();};
+  r2.appendChild(statSel);r2.appendChild(tagSel);mf.appendChild(r2);
+  const lvlSel=document.createElement("select");lvlSel.style.marginTop="9px";
+  [["senior","Tier: Senior leadership"],["next","Tier: Next level"]].forEach(pair=>{const o=document.createElement("option");o.value=pair[0];o.textContent=pair[1];if(pair[0]===c.level)o.selected=true;lvlSel.appendChild(o);});
+  lvlSel.onchange=()=>{c.level=lvlSel.value;save();renderAll();};
+  mf.appendChild(lvlSel);
+  const mv=document.createElement("textarea");mv.rows=1;mv.placeholder="Movement note (e.g. expected to take CFO from Vandita)";mv.value=c.movement||"";mv.style.marginTop="9px";
+  mv.oninput=()=>{c.movement=mv.value;};mv.onblur=save;mf.appendChild(mv);
+
+  const conns=document.createElement("div");conns.className="conns";
+  function drawConns(){
+    conns.innerHTML="";
+    (c.connections||[]).forEach((cn,idx)=>{
+      const chip=document.createElement("span");chip.className="conn";
+      chip.innerHTML="<b>"+esc(cn.label)+"</b> "+esc(nameOf(cn.toId))+" <button aria-label='remove'>\u00D7</button>";
+      chip.querySelector("button").onclick=()=>{c.connections.splice(idx,1);drawConns();save();};
+      conns.appendChild(chip);
+    });
+  }
+  drawConns();mf.appendChild(conns);
+  const ca=document.createElement("div");ca.className="conn-add";
+  const lblIn=document.createElement("input");lblIn.placeholder="link (e.g. succeeding)";
+  const toSel=document.createElement("select");
+  const ph=document.createElement("option");ph.value="";ph.textContent="to\u2026";toSel.appendChild(ph);
+  state.contacts.filter(x=>x.id!==c.id).forEach(x=>{const o=document.createElement("option");o.value=x.id;o.textContent=x.name;toSel.appendChild(o);});
+  const addC=document.createElement("button");addC.className="btn";addC.textContent="Link";
+  addC.onclick=()=>{if(!toSel.value||!lblIn.value.trim())return;c.connections.push({toId:toSel.value,label:lblIn.value.trim()});lblIn.value="";toSel.value="";drawConns();save();};
+  ca.appendChild(lblIn);ca.appendChild(toSel);ca.appendChild(addC);mf.appendChild(ca);
+  body.appendChild(mf);
+
+  // touch log
+  const tb=document.createElement("div");tb.className="touch-bar";
+  const tg=document.createElement("button");tg.className="touch-toggle";tg.textContent="Touch log ("+c.touches.length+")";
+  const addBtn=document.createElement("button");addBtn.className="btn";addBtn.textContent="+ Log touch";
+  tb.appendChild(tg);tb.appendChild(addBtn);body.appendChild(tb);
+  const tl=document.createElement("div");tl.className="touches";
+  const addRow=document.createElement("div");addRow.className="add-touch";
+  const inp=document.createElement("input");inp.placeholder="What happened? (logged today)";
+  const go=document.createElement("button");go.className="btn";go.textContent="Add";
+  function drawTouches(){
+    [...tl.querySelectorAll(".touch,.empty-touch")].forEach(n=>n.remove());
+    if(c.touches.length===0){const e=document.createElement("div");e.className="empty-touch";e.textContent="No touches logged yet.";tl.insertBefore(e,addRow);}
+    else c.touches.forEach((t,idx)=>{
+      const row=document.createElement("div");row.className="touch";
+      row.innerHTML="<span class='td'>"+fmtDate(t.date)+"</span><span class='tn'></span><button class='tx' aria-label='delete'>\u00D7</button>";
+      row.querySelector(".tn").textContent=t.note;
+      row.querySelector(".tx").onclick=()=>{c.touches.splice(idx,1);drawTouches();tg.textContent="Touch log ("+c.touches.length+")";save();};
+      tl.insertBefore(row,addRow);
+    });
+  }
+  function commit(){const v=inp.value.trim();if(!v)return;c.touches.push({date:todayISO(),note:v});inp.value="";drawTouches();tg.textContent="Touch log ("+c.touches.length+")";save();}
+  go.onclick=commit;inp.onkeydown=e=>{if(e.key==="Enter")commit();};
+  addRow.appendChild(inp);addRow.appendChild(go);tl.appendChild(addRow);
+  drawTouches();
+  tg.onclick=()=>{tl.classList.toggle("open");if(tl.classList.contains("open"))inp.focus();};
+  addBtn.onclick=()=>{tl.classList.add("open");inp.focus();};
+  body.appendChild(tl);
+
+  const cf=document.createElement("div");cf.className="c-footer";
+  const rm=document.createElement("button");rm.className="btn danger";rm.textContent="Remove stakeholder";
+  rm.onclick=()=>{if(!confirm("Remove "+c.name+"? This also clears links pointing to them."))return;
+    state.contacts=state.contacts.filter(x=>x.id!==c.id);
+    state.contacts.forEach(x=>x.connections=(x.connections||[]).filter(cn=>cn.toId!==c.id));
+    expanded.delete(c.id);delete coachCache[c.id];renderAll();save();};
+  cf.appendChild(rm);body.appendChild(cf);
+
+  el.appendChild(body);
+  return el;
+}
+
+/* add forms */
+function field(label,node){const f=document.createElement("div");f.className="field";const l=document.createElement("span");l.className="flabel";l.textContent=label;f.appendChild(l);f.appendChild(node);return f;}
+function buildAddForm(level,container,btn){
+  container.innerHTML="";
+  const nameI=document.createElement("input");nameI.placeholder="Name";
+  const roleI=document.createElement("input");roleI.placeholder="Role / title";
+  const emailI=document.createElement("input");emailI.type="email";emailI.placeholder="email (optional)";
+  const phoneI=document.createElement("input");phoneI.type="tel";phoneI.placeholder="phone (optional)";
+  const descI=document.createElement("textarea");descI.rows=3;descI.placeholder="Description \u2014 who they are, why they matter to your campaign";
+  const acts=document.createElement("div");acts.className="addform-actions";
+  const saveB=document.createElement("button");saveB.className="btn solid";saveB.textContent="Add stakeholder";
+  const cancel=document.createElement("button");cancel.className="btn ghost";cancel.textContent="Cancel";
+  saveB.onclick=()=>{
+    if(!nameI.value.trim()){nameI.focus();return;}
+    const c={id:uid(),name:nameI.value.trim(),role:roleI.value.trim(),email:emailI.value.trim(),phone:phoneI.value.trim(),level:level,tag:"standard",status:"incumbent",movement:"",desc:descI.value.trim(),connections:[],stage:0,na:"",touches:[]};
+    state.contacts.push(c);expanded.add(c.id);container.classList.remove("open");nameI.value="";roleI.value="";emailI.value="";phoneI.value="";descI.value="";renderAll();save();
+  };
+  cancel.onclick=()=>container.classList.remove("open");
+  acts.appendChild(saveB);acts.appendChild(cancel);
+  const contactRow=document.createElement("div");contactRow.className="row2";contactRow.appendChild(emailI);contactRow.appendChild(phoneI);
+  container.appendChild(field("Name",nameI));container.appendChild(field("Role",roleI));container.appendChild(field("Email & phone",contactRow));container.appendChild(field("Description",descI));container.appendChild(acts);
+  btn.onclick=()=>{const open=container.classList.toggle("open");if(open)nameI.focus();};
+}
+
+/* Claude coaching */
+const COACH_SYSTEM="You are an executive job-search strategist coaching Brad, who is positioning for a SENIOR INTERNAL transformation role at BHP (the miner).\n\nBrad's edge: he has delivered transformation INTO BHP from four external provider firms over many years, so he has seen what makes change stick or stall from multiple angles \u2014 something no internal hire can replicate. His north-star message: 'drive change from within' vs 'keep selling it from outside.'\n\nBHP context (mid-2026): Brandon Craig becomes CEO on 1 July 2026 (from President Americas). Strategy = copper + potash growth (~70% of capex), operational excellence, capital discipline, social value. Johan van Jaarsveld (CTO, on the Executive Leadership Team) is Brad's warm entry; his public agenda is AI moving 'from concept to operations', governed, 'biggest wins quickest' \u2014 he thinks in EBITDA and risk, not tooling. The Americas (Chile, Argentina/Vicuna, Canada/Jansen, US/Arizona) is the strategic core. A leadership transition is underway, so senior roles can be SHAPED now, not just filled.\n\nCoaching principles:\n- Every touch advances the MANDATE conversation, never an existing vacancy.\n- Peer-framing beats pitching: seek their judgment, offer a pattern observation, embed value inside questions.\n- Tie value to tonnes / EBITDA / risk reduction (capital discipline).\n- Don't over-name people; never sound like a vendor.\n- Account for org movements (incoming/exiting roles, who succeeds whom) and timing/inflection points.\n- Messages: concise, confident, senior-peer register. No hedging, no flattery, no filler.";
+
+async function callClaude(userContent){
+  const headers={"Content-Type":"application/json"};
+  if(apiKey){headers["x-api-key"]=apiKey;headers["anthropic-version"]="2023-06-01";headers["anthropic-dangerous-direct-browser-access"]="true";}
+  const res=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",headers:headers,
+    body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,system:COACH_SYSTEM,messages:[{role:"user",content:userContent}]})
+  });
+  if(!res.ok)throw new Error("API "+res.status);
+  const data=await res.json();
+  return (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
+}
+function parseJSON(t){try{return JSON.parse(t.replace(/```json|```/g,"").trim());}catch(e){return null;}}
+function daysToTransition(){return Math.ceil((new Date("2026-07-01T00:00:00")-new Date())/86400000);}
+function snapshotContact(c){return {name:c.name,role:c.role,level:c.level,tag:TAGLABEL[c.tag],status:STATUSLABEL[c.status],movement:c.movement||"",links:(c.connections||[]).map(x=>x.label+" "+nameOf(x.toId)),stage:STAGES[c.stage],nextAction:c.na||"",recentTouches:(c.touches||[]).slice(-4).map(t=>t.date+": "+t.note)};}
+
+async function coachContact(c){
+  try{
+    const payload={daysToTransition:daysToTransition(),phase:PHASES[state.currentPhase].t,stakeholder:snapshotContact(c)};
+    const txt=await callClaude("Coach Brad's next move with this single stakeholder. Draft a concise, peer-framed outreach message he could send now (build on recentTouches if any), one next action, and one inflection/risk note to watch. Respond ONLY with JSON, no markdown:\n{\"message\":\"...\",\"action\":\"...\",\"watch\":\"...\"}\n\nDATA:\n"+JSON.stringify(payload));
+    return parseJSON(txt)||{message:txt,action:"",watch:""};
+  }catch(e){return {error:"Couldn't reach the coach ("+e.message+"). Try again."};}
+}
+async function coachPhase(){
+  try{
+    const payload={daysToTransition:daysToTransition(),currentPhase:{n:state.currentPhase+1,window:PHASES[state.currentPhase].wk,focus:PHASES[state.currentPhase].t},stakeholders:state.contacts.map(snapshotContact)};
+    const txt=await callClaude("Here is Brad's full campaign state. Give a crisp situational read of where the campaign stands; name up to 3 inflection points to act on NOW (given the 1 July transition and any role movements); then up to 4 specific moves prioritising the highest-leverage relationships. Keep each message under ~60 words. Respond ONLY with JSON, no markdown:\n{\"read\":\"...\",\"pivots\":[\"...\"],\"moves\":[{\"who\":\"...\",\"message\":\"...\",\"action\":\"...\"}]}\n\nDATA:\n"+JSON.stringify(payload));
+    return parseJSON(txt)||{read:txt,pivots:[],moves:[]};
+  }catch(e){return {error:"Couldn't reach the coach ("+e.message+"). Try again."};}
+}
+function paintPhaseCoach(){
+  const out=$("phaseCoachOut");out.innerHTML="";if(!phaseCoach)return;
+  if(phaseCoach.error){out.innerHTML="<div class='coach-out'><div class='err'>"+esc(phaseCoach.error)+"</div></div>";return;}
+  const box=document.createElement("div");box.className="coach-out reveal";
+  let h="<div class='ch'>Situational read \u00B7 Phase "+(state.currentPhase+1)+"</div><div class='read'>"+esc(phaseCoach.read||"")+"</div>";
+  if(phaseCoach.pivots&&phaseCoach.pivots.length){h+="<div class='ch'>Inflection points</div>"+phaseCoach.pivots.map(p=>"<div class='pivot'>"+esc(p)+"</div>").join("");}
+  box.innerHTML=h;
+  (phaseCoach.moves||[]).forEach(m=>{
+    const mv=document.createElement("div");mv.className="move";
+    mv.innerHTML="<div class='who'>"+esc(m.who||"")+"</div><div class='msg'>"+esc(m.message||"")+"</div><button class='copy'>\u29C9 Copy message</button><div class='act'><b>Action</b> \u00B7 "+esc(m.action||"")+"</div>";
+    mv.querySelector(".copy").onclick=()=>{try{navigator.clipboard.writeText(m.message||"");}catch(e){}};
+    box.appendChild(mv);
+  });
+  out.appendChild(box);
+}
+$("phaseCoachBtn").onclick=async()=>{const btn=$("phaseCoachBtn");btn.disabled=true;$("phaseCoachStatus").innerHTML="<span class='thinking'>reading your log\u2026</span>";phaseCoach=await coachPhase();$("phaseCoachStatus").innerHTML="";btn.disabled=false;paintPhaseCoach();};
+
+$("resetBtn").onclick=async()=>{
+  if(!confirm("Reset everything back to the seeded research? Your stakeholders, touches and edits will be cleared."))return;
+  state=structuredClone(SEED);expanded.clear();Object.keys(coachCache).forEach(k=>delete coachCache[k]);phaseCoach=null;$("phaseCoachOut").innerHTML="";renderAll();await save();
+};
+
+buildAddForm("senior",$("addSenior"),$("addSeniorBtn"));
+buildAddForm("next",$("addNext"),$("addNextBtn"));
+
+/* ---- settings: export / import / pdf / api key ---- */
+function download(filename,text,type){
+  const blob=new Blob([text],{type:type||"application/octet-stream"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+}
+$("exportJsonBtn").onclick=()=>{
+  download("bhp-campaign-"+todayISO()+".json",JSON.stringify(state,null,2),"application/json");
+};
+$("importJsonBtn").onclick=()=>$("importFile").click();
+$("importFile").onchange=e=>{
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    let data;try{data=JSON.parse(reader.result);}catch(err){alert("That file isn't valid JSON.");return;}
+    if(!data||!Array.isArray(data.contacts)){alert("That doesn't look like a campaign export (no contacts found).");return;}
+    if(!confirm("Import this board? It replaces your current contacts, stages and touches."))return;
+    state=data;
+    state.contacts.forEach(c=>{c.connections=c.connections||[];c.touches=c.touches||[];c.movement=c.movement||"";c.status=c.status||"incumbent";c.tag=c.tag||"standard";c.level=c.level||"next";c.desc=c.desc||"";c.email=c.email||"";c.phone=c.phone||"";});
+    expanded.clear();Object.keys(coachCache).forEach(k=>delete coachCache[k]);phaseCoach=null;$("phaseCoachOut").innerHTML="";
+    renderAll();save();
+  };
+  reader.readAsText(file);
+  e.target.value="";
+};
+$("exportPdfBtn").onclick=()=>exportPDF();
+function exportPDF(){
+  if(!window.jspdf||!window.jspdf.jsPDF){alert("PDF library didn't load. Check your connection and try again.");return;}
+  const doc=new window.jspdf.jsPDF({unit:"pt",format:"a4"});
+  const M=48,W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),RIGHT=W-M;
+  let y=M;
+  const COPPER=[199,123,71],DARK=[40,40,46],GREY=[110,116,123];
+  function room(n){if(y+n>H-M){doc.addPage();y=M;}}
+  function rule(){doc.setDrawColor(220);doc.setLineWidth(.5);doc.line(M,y,RIGHT,y);y+=14;}
+  function text(str,size,color,style,gap){
+    doc.setFont("helvetica",style||"normal");doc.setFontSize(size);doc.setTextColor(color[0],color[1],color[2]);
+    const lines=doc.splitTextToSize(String(str||""),RIGHT-M);
+    lines.forEach(ln=>{room(size+3);doc.text(ln,M,y);y+=size+3;});
+    if(gap)y+=gap;
+  }
+  function kv(label,val){if(!val)return;text(label.toUpperCase()+"  "+val,9,GREY,"normal",2);}
+  // header
+  text("BHP Campaign — Mandate Tracker",18,DARK,"bold",2);
+  const d=daysToTransition();
+  text((d>0?d+" days to CEO transition (1 Jul 2026)":Math.abs(d)+" days into the new structure")+"   ·   Phase "+(state.currentPhase+1)+": "+PHASES[state.currentPhase].wk,10,COPPER,"normal",4);
+  text("Exported "+fmtDate(todayISO()),9,GREY,"normal",6);
+  text(PHASES[state.currentPhase].t,10,DARK,"italic",8);
+  rule();
+  ["senior","next"].forEach(lvl=>{
+    const list=state.contacts.filter(c=>c.level===lvl);if(!list.length)return;
+    room(30);text(lvl==="senior"?"SENIOR LEADERSHIP":"NEXT LEVEL",11,COPPER,"bold",6);
+    list.forEach(c=>{
+      room(40);
+      text(c.name+(c.role?"  —  "+c.role:""),12,DARK,"bold",2);
+      text(TAGLABEL[c.tag]+"  ·  "+STATUSLABEL[c.status]+"  ·  Stage: "+STAGES[c.stage],9,GREY,"normal",3);
+      kv("Email",c.email);kv("Phone",c.phone);
+      if(c.movement)kv("Movement",c.movement);
+      if(c.connections&&c.connections.length)kv("Links",c.connections.map(x=>x.label+" "+nameOf(x.toId)).join("; "));
+      if(c.na){text("Next action: "+c.na,10,DARK,"normal",2);}
+      if(c.touches&&c.touches.length){
+        text("Touch log:",9,GREY,"bold",1);
+        c.touches.forEach(t=>text("• "+fmtDate(t.date)+" — "+t.note,9,GREY,"normal",0));
+      }
+      y+=8;room(1);
+    });
+    y+=4;
+  });
+  doc.save("bhp-campaign-"+todayISO()+".pdf");
+}
+// api key
+function refreshKeyState(){$("keyState").textContent=apiKey?"Key set.":"";}
+$("apiKeyInput").value="";
+$("saveKeyBtn").onclick=async()=>{
+  apiKey=$("apiKeyInput").value.trim();
+  try{await window.storage.set(AKEY,apiKey,false);}catch(e){}
+  $("apiKeyInput").value="";refreshKeyState();flash(apiKey?"key saved":"key cleared");
+};
+$("clearKeyBtn").onclick=async()=>{
+  apiKey="";$("apiKeyInput").value="";
+  try{await window.storage.delete(AKEY,false);}catch(e){}
+  refreshKeyState();flash("key cleared");
+};
+async function loadKey(){try{const r=await window.storage.get(AKEY,false);apiKey=r&&r.value?r.value:"";}catch(e){apiKey="";}refreshKeyState();}
+
+loadKey();
+load();
+</script>
+</body>
+</html>
