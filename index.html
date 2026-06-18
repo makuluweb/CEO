@@ -658,16 +658,15 @@ function exportPDF(){
   doc.save("bhp-campaign-"+todayISO()+".pdf");
 }
 // api key
-function refreshKeyState(){$("keyState").textContent=apiKey?"Key set.":"";}
-$("apiKeyInput").value="";
+function refreshKeyState(){$("apiKeyInput").value=apiKey;$("keyState").textContent=apiKey?"Key set \u2713":"";}
 $("saveKeyBtn").onclick=async()=>{
   apiKey=$("apiKeyInput").value.trim();
-  try{await window.storage.set(AKEY,apiKey,false);}catch(e){}
-  $("apiKeyInput").value="";refreshKeyState();flash(apiKey?"key saved":"key cleared");
+  try{if(!memFallback)await window.storage.set(AKEY,apiKey,false);}catch(e){}
+  refreshKeyState();flash(apiKey?"key saved":"key cleared");
 };
 $("clearKeyBtn").onclick=async()=>{
-  apiKey="";$("apiKeyInput").value="";
-  try{await window.storage.delete(AKEY,false);}catch(e){}
+  apiKey="";
+  try{if(!memFallback)await window.storage.delete(AKEY,false);}catch(e){}
   refreshKeyState();flash("key cleared");
 };
 async function loadKey(){try{const r=await window.storage.get(AKEY,false);apiKey=r&&r.value?r.value:"";}catch(e){apiKey="";}refreshKeyState();}
