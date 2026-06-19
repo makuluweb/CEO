@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0E0E10">
+<title>Tellhue — name any colour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E0E10;
+    --surface:#16161A;
+    --surface-2:#1E1E24;
+    --hair:#2C2C33;
+    --ink:#F5F5F2;
+    --muted:#8A8A92;
+    --muted-2:#5A5A62;
+    --focus:#FFFFFF;
+    --safe-top:env(safe-area-inset-top,0px);
+    --safe-bot:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Archivo",system-ui,sans-serif;
+    overflow:hidden;
+    display:flex;flex-direction:column;
+    height:100dvh;
+  }
+  /* ---------- header ---------- */
+  header{
+    flex:0 0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:calc(10px + var(--safe-top)) 16px 10px;
+    border-bottom:1px solid var(--hair);
+  }
+  .brand{display:flex;align-items:baseline;gap:8px;}
+  .brand b{font-weight:900;letter-spacing:-.02em;font-size:18px;}
+  .brand span{font-family:"Space Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.04em;}
+  .src{
+    font-family:"Space Mono",monospace;font-size:11px;color:var(--muted);
+    display:flex;align-items:center;gap:6px;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--muted-2);}
+  .dot.live{background:#fff;box-shadow:0 0 0 0 rgba(255,255,255,.6);animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.5);}70%{box-shadow:0 0 0 6px rgba(255,255,255,0);}100%{box-shadow:0 0 0 0 rgba(255,255,255,0);}}
+
+  /* ---------- stage ---------- */
+  .stage{
+    position:relative;flex:1 1 auto;min-height:0;
+    background:#000;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  video,#frame{
+    max-width:100%;max-height:100%;width:100%;height:100%;
+    object-fit:contain;display:block;
+  }
+  video{transform:scaleX(1);}
+  #frame{cursor:crosshair;}
+  .hidden{display:none !important;}
+
+  /* crosshair reticle */
+  .reticle{
+    position:absolute;left:50%;top:50%;width:64px;height:64px;
+    transform:translate(-50%,-50%);pointer-events:none;
+    border:2px solid rgba(255,255,255,.9);border-radius:50%;
+    box-shadow:0 0 0 2px rgba(0,0,0,.55), inset 0 0 0 2px rgba(0,0,0,.45);
+  }
+  .reticle::before,.reticle::after{
+    content:"";position:absolute;background:rgba(255,255,255,.9);
+    box-shadow:0 0 0 1px rgba(0,0,0,.5);
+  }
+  .reticle::before{left:50%;top:-10px;width:1px;height:14px;transform:translateX(-50%);}
+  .reticle::after{top:50%;left:-10px;height:1px;width:14px;transform:translateY(-50%);}
+  .reticle.frozen{border-color:rgba(255,255,255,.5);}
+
+  /* empty / prompt state */
+  .empty{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px;
+  }
+  .empty h2{font-weight:800;font-size:22px;margin:0;letter-spacing:-.01em;}
+  .empty p{color:var(--muted);font-size:14px;max-width:32ch;margin:0;line-height:1.5;}
+  .empty .ill{
+    width:54px;height:54px;border-radius:50%;
+    background:conic-gradient(#e7473c,#e7a23c,#e7e23c,#3ce760,#3cc7e7,#3c5fe7,#a83ce7,#e73cae,#e7473c);
+    filter:saturate(.9);
+  }
+
+  /* live readout chip over the stage */
+  .livechip{
+    position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
+    background:rgba(8,8,10,.78);backdrop-filter:blur(8px);
+    border:1px solid var(--hair);border-radius:999px;
+    padding:8px 14px;display:flex;align-items:center;gap:10px;
+    font-family:"Space Mono",monospace;font-size:12px;color:var(--ink);
+    pointer-events:none;white-space:nowrap;
+  }
+  .livechip .sw{width:16px;height:16px;border-radius:4px;border:1px solid rgba(255,255,255,.25);}
+  .livechip b{font-family:"Archivo";font-weight:800;letter-spacing:-.01em;font-size:13px;}
+
+  /* ---------- result sheet ---------- */
+  .result{
+    flex:0 0 auto;position:relative;
+    transition:background .25s ease;
+    border-top:1px solid var(--hair);
+  }
+  .result-inner{
+    padding:18px 18px calc(14px + var(--safe-bot));
+    display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:end;
+  }
+  .family{
+    grid-column:1/2;
+    font-weight:900;letter-spacing:-.02em;line-height:.92;
+    font-size:clamp(40px,13vw,76px);text-transform:lowercase;
+  }
+  .specific{
+    grid-column:1/2;
+    font-family:"Space Mono",monospace;font-size:13px;letter-spacing:.02em;
+    opacity:.85;margin-top:2px;
+  }
+  .specific .arrow{opacity:.5;}
+  .codes{
+    grid-column:2/3;grid-row:1/3;text-align:right;align-self:start;
+    font-family:"Space Mono",monospace;font-size:12px;line-height:1.7;
+    opacity:.85;white-space:nowrap;
+  }
+  .codes .k{opacity:.55;}
+  .placeholder .family{opacity:.25;}
+  .placeholder .specific,.placeholder .codes{opacity:.4;}
+
+  /* ---------- controls ---------- */
+  .controls{
+    flex:0 0 auto;display:flex;gap:8px;padding:12px 14px calc(14px + var(--safe-bot));
+    border-top:1px solid var(--hair);background:var(--surface);
+  }
+  .controls.with-result{border-top:none;}
+  button.btn{
+    flex:1;appearance:none;border:1px solid var(--hair);background:var(--surface-2);
+    color:var(--ink);font-family:"Archivo";font-weight:600;font-size:14px;
+    padding:13px 10px;border-radius:12px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    transition:background .15s,border-color .15s,transform .05s;
+  }
+  button.btn:hover{background:#26262d;}
+  button.btn:active{transform:translateY(1px);}
+  button.btn.primary{background:var(--ink);color:#0E0E10;border-color:var(--ink);font-weight:800;}
+  button.btn.primary:hover{background:#fff;}
+  button.btn:focus-visible{outline:3px solid var(--focus);outline-offset:2px;}
+  .btn svg{width:17px;height:17px;flex:0 0 auto;}
+
+  /* history */
+  .history{
+    flex:0 0 auto;display:flex;gap:8px;overflow-x:auto;
+    padding:0 14px 10px;scrollbar-width:none;
+  }
+  .history::-webkit-scrollbar{display:none;}
+  .history:empty{display:none;}
+  .hchip{
+    flex:0 0 auto;display:flex;align-items:center;gap:7px;
+    background:var(--surface-2);border:1px solid var(--hair);border-radius:999px;
+    padding:6px 11px 6px 7px;cursor:pointer;
+    font-family:"Space Mono",monospace;font-size:11px;color:var(--ink);
+  }
+  .hchip:hover{background:#26262d;}
+  .hchip .sw{width:15px;height:15px;border-radius:50%;border:1px solid rgba(255,255,255,.2);}
+  .hchip:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+  @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><b>Tellhue</b><span>colour, named</span></div>
+  <div class="src"><span class="dot" id="srcDot"></span><span id="srcLabel">no source</span></div>
+</header>
+
+<div class="stage" id="stage">
+  <video id="video" autoplay playsinline muted class="hidden"></video>
+  <canvas id="frame" class="hidden"></canvas>
+  <div class="reticle hidden" id="reticle"></div>
+  <div class="livechip hidden" id="livechip"><span class="sw" id="liveSw"></span><b id="liveName">—</b><span id="liveHex"></span></div>
+  <div class="empty" id="empty">
+    <div class="ill"></div>
+    <h2>Point, or pick a photo</h2>
+    <p>Open the camera and the crosshair reads whatever's in the middle. Tap the picture to lock a reading. No internet needed once loaded.</p>
+  </div>
+</div>
+
+<div class="result placeholder" id="result">
+  <div class="result-inner">
+    <div class="family" id="family">colour</div>
+    <div class="specific" id="specific"><span class="arrow">closest&nbsp;·&nbsp;</span><span id="specificName">aim at something</span></div>
+    <div class="codes" id="codes"><div><span class="k">HEX</span> ——————</div><div><span class="k">RGB</span> —, —, —</div></div>
+  </div>
+</div>
+
+<div class="history" id="history" aria-label="Recently locked colours"></div>
+
+<div class="controls" id="controls">
+  <button class="btn primary" id="camBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.5"/></svg>
+    <span id="camLabel">Camera</span>
+  </button>
+  <button class="btn" id="lockBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg>
+    <span>Lock</span>
+  </button>
+  <button class="btn" id="photoBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9.5" r="1.5"/></svg>
+    <span>Photo</span>
+  </button>
+</div>
+
+<input type="file" id="fileIn" accept="image/*" capture="environment" class="sr">
+
+<canvas id="work" class="sr"></canvas>
+
+<script>
+/* ============================================================
+   COLOUR SCIENCE
+   sRGB -> linear -> XYZ (D65) -> CIELAB, matched with CIEDE2000.
+   Plain RGB distance doesn't match how we see; Lab + dE2000 does.
+   ============================================================ */
+function srgbToLin(c){c/=255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);}
+function rgbToXyz(r,g,b){
+  r=srgbToLin(r);g=srgbToLin(g);b=srgbToLin(b);
+  return [
+    (r*0.4124564+g*0.3575761+b*0.1804375)*100,
+    (r*0.2126729+g*0.7151522+b*0.0721750)*100,
+    (r*0.0193339+g*0.1191920+b*0.9503041)*100
+  ];
+}
+function xyzToLab(x,y,z){
+  const xn=95.047,yn=100,zn=108.883;
+  const f=t=>t>0.008856?Math.cbrt(t):(7.787*t+16/116);
+  const fx=f(x/xn),fy=f(y/yn),fz=f(z/zn);
+  return [116*fy-16,500*(fx-fy),200*(fy-fz)];
+}
+function rgbToLab(r,g,b){const[x,y,z]=rgbToXyz(r,g,b);return xyzToLab(x,y,z);}
+
+function ciede2000(l1,a1,b1,l2,a2,b2){
+  const rad=Math.PI/180,deg=180/Math.PI;
+  const avgL=(l1+l2)/2;
+  const c1=Math.hypot(a1,b1),c2=Math.hypot(a2,b2);
+  const avgC=(c1+c2)/2;
+  const g=0.5*(1-Math.sqrt(Math.pow(avgC,7)/(Math.pow(avgC,7)+Math.pow(25,7))));
+  const a1p=a1*(1+g),a2p=a2*(1+g);
+  const c1p=Math.hypot(a1p,b1),c2p=Math.hypot(a2p,b2);
+  const avgCp=(c1p+c2p)/2;
+  let h1p=Math.atan2(b1,a1p)*deg;if(h1p<0)h1p+=360;
+  let h2p=Math.atan2(b2,a2p)*deg;if(h2p<0)h2p+=360;
+  const dLp=l2-l1,dCp=c2p-c1p;
+  let dhp;
+  if(c1p*c2p===0)dhp=0;
+  else{dhp=h2p-h1p;if(dhp>180)dhp-=360;else if(dhp<-180)dhp+=360;}
+  const dHp=2*Math.sqrt(c1p*c2p)*Math.sin((dhp*rad)/2);
+  let avghp;
+  if(c1p*c2p===0)avghp=h1p+h2p;
+  else{
+    if(Math.abs(h1p-h2p)>180)avghp=(h1p+h2p+360)/2;
+    else avghp=(h1p+h2p)/2;
+  }
+  const t=1-0.17*Math.cos((avghp-30)*rad)+0.24*Math.cos((2*avghp)*rad)
+          +0.32*Math.cos((3*avghp+6)*rad)-0.20*Math.cos((4*avghp-63)*rad);
+  const dTheta=30*Math.exp(-Math.pow((avghp-275)/25,2));
+  const rc=2*Math.sqrt(Math.pow(avgCp,7)/(Math.pow(avgCp,7)+Math.pow(25,7)));
+  const sl=1+(0.015*Math.pow(avgL-50,2))/Math.sqrt(20+Math.pow(avgL-50,2));
+  const sc=1+0.045*avgCp;
+  const sh=1+0.015*avgCp*t;
+  const rt=-Math.sin(2*dTheta*rad)*rc;
+  return Math.sqrt(
+    Math.pow(dLp/sl,2)+Math.pow(dCp/sc,2)+Math.pow(dHp/sh,2)
+    +rt*(dCp/sc)*(dHp/sh)
+  );
+}
+
+/* Broad family — the thing colour-blind eyes actually need.
+   Derived from HSL of the live pixel, with brown/pink handled explicitly. */
+function rgbToHsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;
+  let h=0;
+  if(d){
+    if(mx===r)h=((g-b)/d)%6;
+    else if(mx===g)h=(b-r)/d+2;
+    else h=(r-g)/d+4;
+    h*=60;if(h<0)h+=360;
+  }
+  const l=(mx+mn)/2;
+  const s=d===0?0:d/(1-Math.abs(2*l-1));
+  return [h,s,l];
+}
+function familyOf(r,g,b){
+  const [h,s,l]=rgbToHsl(r,g,b);
+  if(s<0.12||l<0.06||l>0.96){
+    if(l<0.18)return "black";
+    if(l>0.82)return "white";
+    return "grey";
+  }
+  // pale warm neutrals (cream, wheat, beige)
+  if(h>=20&&h<70&&l>0.78)return "beige";
+  // brown = dark / muted orange-red
+  if(h>=10&&h<=48&&l<0.5&&s<0.95)return "brown";
+  if(h<10||h>=345){
+    return (l>0.75)?"pink":"red";
+  }
+  if(h<48)return l<0.35?"brown":"orange";
+  if(h<70)return "yellow";
+  if(h<160)return "green";
+  if(h<200)return "teal";
+  if(h<255)return "blue";
+  if(h<290)return "purple";
+  if(h<345)return (l>0.7)?"pink":"magenta";
+  return "red";
+}
+
+/* Specific shade names. Each maps to a hex; nearest by dE2000 wins. */
+const NAMES=[
+["snow","#FFFAFA"],["ivory","#FFFFF0"],["white","#FFFFFF"],["off-white","#F4F1EA"],
+["eggshell","#F0EAD6"],["cream","#FFFDD0"],["bone","#E3DAC9"],["beige","#F5F5DC"],
+["silver","#C0C0C0"],["light grey","#D3D3D3"],["grey","#808080"],["slate grey","#708090"],
+["gunmetal","#2A3439"],["charcoal","#36454F"],["dim grey","#696969"],["black","#000000"],
+["jet","#0A0A0A"],
+["crimson","#DC143C"],["red","#E0231F"],["scarlet","#FF2400"],["fire-engine red","#CE2029"],
+["brick red","#9C2A2A"],["maroon","#800000"],["wine","#722F37"],["cherry","#B0152B"],
+["rose","#FF007F"],["salmon","#FA8072"],["coral","#FF7F50"],["tomato","#FF6347"],
+["pink","#FFC0CB"],["hot pink","#FF69B4"],["bubblegum","#FFA6C9"],["blush","#DE6FA1"],
+["fuchsia","#FF00FF"],["magenta","#D0008E"],["raspberry","#E30B5C"],["mauve","#E0B0FF"],
+["orange","#FF7B1A"],["tangerine","#F28500"],["pumpkin","#FF7518"],["amber","#FFBF00"],
+["apricot","#FBCEB1"],["peach","#FFDAB9"],["rust","#B7410E"],["burnt orange","#CC5500"],
+["terracotta","#C26A4A"],["copper","#B87333"],["bronze","#A97142"],
+["gold","#FFD700"],["mustard","#E1AD01"],["yellow","#FFE800"],["lemon","#FFF44F"],
+["canary","#FFEF00"],["khaki","#BDB76B"],["olive","#808000"],["chartreuse","#7FFF00"],
+["lime","#BFFF00"],["pear","#D1E231"],
+["brown","#7A4B2B"],["chocolate","#5C3A21"],["coffee","#6F4E37"],["chestnut","#954535"],
+["tan","#D2B48C"],["caramel","#AF6E4D"],["sand","#C2B280"],["taupe","#8B8589"],
+["green","#22A532"],["forest green","#228B22"],["emerald","#28A745"],["kelly green","#4CBB17"],
+["sea green","#2E8B57"],["mint","#98FF98"],["sage","#9CAF88"],["pine","#01796F"],
+["jade","#00A86B"],["grass green","#3F9B0B"],["moss","#8A9A5B"],["hunter green","#355E3B"],
+["teal","#008080"],["turquoise","#40E0D0"],["aquamarine","#7FFFD4"],["cyan","#00CED1"],
+["sky blue","#87CEEB"],["powder blue","#B0E0E6"],["cerulean","#2A52BE"],["azure","#007FFF"],
+["blue","#1E5FE0"],["royal blue","#1F45FC"],["cobalt","#0047AB"],["navy","#1A2A52"],
+["midnight blue","#191970"],["steel blue","#4682B4"],["denim","#3B5998"],["periwinkle","#CCCCFF"],
+["indigo","#4B0082"],["violet","#7F00FF"],["purple","#7D3CC1"],["amethyst","#9966CC"],
+["lavender","#B57EDC"],["lilac","#C8A2C8"],["plum","#8E4585"],["orchid","#DA70D6"],
+["eggplant","#3D0734"]
+];
+const LIB=NAMES.map(([n,hex])=>{
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  const [L,A,B]=rgbToLab(r,g,b);
+  return {name:n,hex,L,A,B};
+});
+function nearestName(r,g,b){
+  const [L,A,B]=rgbToLab(r,g,b);
+  let best=null,bd=Infinity;
+  for(const c of LIB){
+    const d=ciede2000(L,A,B,c.L,c.A,c.B);
+    if(d<bd){bd=d;best=c;}
+  }
+  return best;
+}
+function hex(r,g,b){return "#"+[r,g,b].map(v=>v.toString(16).padStart(2,"0")).join("").toUpperCase();}
+function textOn(r,g,b){ // auto-contrast: black or white over a swatch
+  const lum=0.2126*srgbToLin(r)+0.7152*srgbToLin(g)+0.0722*srgbToLin(b);
+  return lum>0.36?"#0E0E10":"#FFFFFF";
+}
+
+/* ============================================================
+   APP
+   ============================================================ */
+const $=id=>document.getElementById(id);
+const video=$("video"),frame=$("frame"),work=$("work");
+const fctx=frame.getContext("2d",{willReadFrequently:true});
+const wctx=work.getContext("2d",{willReadFrequently:true});
+const reticle=$("reticle"),livechip=$("livechip");
+const REGION=11; // px box averaged around the point
+
+let stream=null,raf=null,frozen=false,mode="none"; // none|camera|photo
+let lastReading=null;
+
+function avgAt(ctx,cx,cy){
+  const half=(REGION-1)/2;
+  const x=Math.max(0,Math.round(cx-half)),y=Math.max(0,Math.round(cy-half));
+  let data;
+  try{data=ctx.getImageData(x,y,REGION,REGION).data;}catch(e){return null;}
+  let r=0,g=0,b=0,n=0;
+  for(let i=0;i<data.length;i+=4){r+=data[i];g+=data[i+1];b+=data[i+2];n++;}
+  return [Math.round(r/n),Math.round(g/n),Math.round(b/n)];
+}
+
+function render(rgb,{live=false}={}){
+  if(!rgb)return;
+  const [r,g,b]=rgb;
+  const fam=familyOf(r,g,b);
+  const near=nearestName(r,g,b);
+  const hx=hex(r,g,b);
+  if(live){
+    $("liveSw").style.background=hx;
+    $("liveName").textContent=fam;
+    $("liveHex").textContent=hx;
+    return;
+  }
+  lastReading={r,g,b,fam,near:near.name,hx};
+  const res=$("result");res.classList.remove("placeholder");
+  res.style.background=hx;
+  const ink=textOn(r,g,b),soft=ink==="#FFFFFF"?"rgba(255,255,255,.78)":"rgba(14,14,16,.72)";
+  $("family").style.color=ink;$("family").textContent=fam;
+  $("specific").style.color=soft;
+  $("specificName").textContent=near.name;
+  $("specific").querySelector(".arrow").textContent="closest · ";
+  $("codes").style.color=soft;
+  $("codes").innerHTML=`<div><span class="k">HEX</span> ${hx}</div><div><span class="k">RGB</span> ${r}, ${g}, ${b}</div>`;
+  $("controls").classList.add("with-result");
+}
+
+function loopCamera(){
+  if(mode!=="camera"||frozen)return;
+  if(video.videoWidth){
+    if(frame.width!==video.videoWidth){frame.width=video.videoWidth;frame.height=video.videoHeight;}
+    fctx.drawImage(video,0,0);
+    const rgb=avgAt(fctx,frame.width/2,frame.height/2);
+    if(rgb)render(rgb,{live:true});
+  }
+  raf=requestAnimationFrame(loopCamera);
+}
+
+async function startCamera(){
+  stopAll();
+  $("empty").classList.add("hidden");
+  $("camLabel").textContent="Switch off";
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
+    video.srcObject=stream;video.classList.remove("hidden");frame.classList.add("hidden");
+    reticle.classList.remove("hidden","frozen");livechip.classList.remove("hidden");
+    mode="camera";frozen=false;
+    $("srcDot").className="dot live";$("srcLabel").textContent="live camera";
+    $("camLabel").textContent="Stop";
+    await video.play();
+    loopCamera();
+  }catch(err){
+    $("empty").classList.remove("hidden");
+    $("empty").querySelector("h2").textContent="Camera unavailable here";
+    $("empty").querySelector("p").textContent="This preview may block the camera. It works once the page is on a real site (e.g. GitHub Pages) and on phones. Meanwhile, use Photo.";
+    $("camLabel").textContent="Camera";mode="none";
+    $("srcDot").className="dot";$("srcLabel").textContent="no source";
+  }
+}
+
+function freezeCamera(){
+  // snapshot the current frame into the canvas so you can tap precisely
+  frame.width=video.videoWidth;frame.height=video.videoHeight;
+  fctx.drawImage(video,0,0);
+  video.classList.add("hidden");frame.classList.remove("hidden");
+  frozen=true;reticle.classList.add("frozen");
+  $("srcLabel").textContent="frozen — tap to read";
+  $("srcDot").className="dot";
+  const rgb=avgAt(fctx,frame.width/2,frame.height/2);
+  render(rgb);
+}
+
+function loadPhoto(file){
+  stopAll();
+  const img=new Image();
+  img.onload=()=>{
+    $("empty").classList.add("hidden");
+    video.classList.add("hidden");frame.classList.remove("hidden");
+    reticle.classList.add("hidden");livechip.classList.add("hidden");
+    // size canvas to the displayed image
+    const stage=$("stage").getBoundingClientRect();
+    let w=img.width,h=img.height;
+    const scale=Math.min(stage.width/w,stage.height/h,1);
+    frame.width=Math.round(w*scale);frame.height=Math.round(h*scale);
+    fctx.drawImage(img,0,0,frame.width,frame.height);
+    mode="photo";frozen=true;
+    $("srcDot").className="dot";$("srcLabel").textContent="photo — tap to read";
+    $("camLabel").textContent="Camera";
+    render(avgAt(fctx,frame.width/2,frame.height/2));
+    URL.revokeObjectURL(img.src);
+  };
+  img.src=URL.createObjectURL(file);
+}
+
+function tapFrame(ev){
+  if(frame.classList.contains("hidden"))return;
+  const rect=frame.getBoundingClientRect();
+  const pt=ev.touches?ev.touches[0]:ev;
+  const sx=frame.width/rect.width,sy=frame.height/rect.height;
+  const x=(pt.clientX-rect.left)*sx,y=(pt.clientY-rect.top)*sy;
+  // move reticle to the tap (only meaningful for frozen/photo)
+  if(!livechip.classList.contains("hidden")||mode==="photo"){
+    reticle.style.left=((pt.clientX-rect.left)/rect.width*100)+"%";
+    reticle.style.top=((pt.clientY-rect.top)/rect.height*100)+"%";
+  }
+  render(avgAt(fctx,x,y));
+}
+
+function pushHistory(){
+  if(!lastReading)return;
+  const {hx,fam,near,r,g,b}=lastReading;
+  const chip=document.createElement("button");
+  chip.className="hchip";chip.title=`${fam} (${near}) ${hx}`;
+  chip.innerHTML=`<span class="sw" style="background:${hx}"></span>${fam}`;
+  chip.onclick=()=>render([r,g,b]);
+  const h=$("history");h.insertBefore(chip,h.firstChild);
+  while(h.children.length>10)h.removeChild(h.lastChild);
+  save();
+}
+function save(){
+  const items=[...$("history").children].map(c=>c.title);
+  try{localStorage.setItem("tellhue.history",JSON.stringify(items));}catch(e){}
+}
+function restore(){
+  let raw;try{raw=localStorage.getItem("tellhue.history");}catch(e){return;}
+  if(!raw)return;
+  let items;try{items=JSON.parse(raw);}catch(e){return;}
+  for(const t of items.reverse()){
+    const m=t.match(/(#[0-9A-F]{6})$/i);if(!m)continue;
+    const hx=m[1];const fam=t.split(" (")[0];
+    const r=parseInt(hx.slice(1,3),16),g=parseInt(hx.slice(3,5),16),b=parseInt(hx.slice(5,7),16);
+    const chip=document.createElement("button");
+    chip.className="hchip";chip.title=t;
+    chip.innerHTML=`<span class="sw" style="background:${hx}"></span>${fam}`;
+    chip.onclick=()=>render([r,g,b]);
+    $("history").insertBefore(chip,$("history").firstChild);
+  }
+}
+
+function stopAll(){
+  if(raf)cancelAnimationFrame(raf);raf=null;
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+  video.classList.add("hidden");
+}
+
+/* wiring */
+$("camBtn").onclick=()=>{ if(mode==="camera"){stopAll();mode="none";reticle.classList.add("hidden");livechip.classList.add("hidden");$("camLabel").textContent="Camera";$("srcDot").className="dot";$("srcLabel").textContent="no source";$("empty").classList.remove("hidden");} else startCamera(); };
+$("lockBtn").onclick=()=>{
+  if(mode==="camera"&&!frozen){freezeCamera();}
+  pushHistory();
+};
+$("photoBtn").onclick=()=>$("fileIn").click();
+$("fileIn").onchange=e=>{if(e.target.files[0])loadPhoto(e.target.files[0]);};
+frame.addEventListener("click",tapFrame);
+frame.addEventListener("touchstart",e=>{e.preventDefault();tapFrame(e);},{passive:false});
+
+restore();
+</script>
+</body>
+</html>
