@@ -187,6 +187,39 @@
   .libline .lv b{color:var(--text)}
   @media(max-width:480px){.libline{grid-template-columns:1fr;gap:3px}}
   @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  /* ---- prep / engineer the conclusion ---- */
+  #prep .set-card input[type=text],#prep .set-card select,#prep .set-card textarea{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:"Inter";padding:12px;margin-bottom:10px}
+  .prep-panel{border:1px solid var(--line);border-left:3px solid var(--freedom);background:var(--panel);border-radius:0 14px 14px 0;padding:18px;margin:14px 0 4px}
+  .prep-idea{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+  .prep-idea .lbl{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--freedom);margin-bottom:4px}
+  .prep-idea .txt{font-family:"Fraunces",serif;font-size:18px;font-weight:500;line-height:1.3}
+  .lego{border:1px solid var(--line);border-radius:12px;padding:14px 15px;margin-bottom:10px;position:relative;border-top:3px solid var(--accent)}
+  .lego .ln{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .lego .lever{float:right;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);background:var(--accent);border-radius:999px;padding:3px 9px}
+  .lego .lt{font-size:15px;margin:7px 0 6px;font-weight:500}
+  .lego .lw{font-size:13.5px;color:var(--muted)}
+  .prep-sec{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+  .prep-sec .lbl{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--freedom);margin-bottom:5px}
+  .prep-sec.warn .lbl{color:#d98a7e}
+  .prep-sec p{font-size:14px;margin:4px 0 0}
+  .rife-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  @media(max-width:480px){.rife-grid{grid-template-columns:1fr}}
+  .rife-cell{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .rife-cell .rk{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+  .rife-cell .rv{font-size:13.5px;margin-top:3px}
+  .calib{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .calib .pill{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.04em;border:1px solid var(--line);border-radius:999px;padding:8px 13px}
+  .calib .pill b{color:var(--freedom)}
+
+  /* ---- PCP sequence ---- */
+  .seq{border-top:1px solid var(--line);margin:0 20px;padding:16px 0 6px}
+  .seq-h{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+  .seq-intro{font-size:13px;color:var(--muted);margin:7px 0 12px}
+  .seq-step{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:start;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+  .seq-step:first-of-type{border-top:0}
+  .seq-step .sn{width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--ink);font-family:"Space Mono",monospace;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .seq-step b{color:var(--text)}
+
   /* ---- settings ---- */
   .set-card{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:18px;margin:14px 0}
   .set-note{font-size:13.5px;color:var(--muted);margin:0 0 12px}
@@ -269,6 +302,7 @@
     <button id="tab-engage" aria-pressed="false" onclick="setMode('engage')">Engage</button>
     <button id="tab-drawout" aria-pressed="false" onclick="setMode('drawout')">Draw out</button>
     <button id="tab-people" aria-pressed="false" onclick="setMode('people')">People</button>
+    <button id="tab-prep" aria-pressed="false" onclick="setMode('prep')">Prep</button>
     <button id="tab-library" aria-pressed="false" onclick="setMode('library')">Archetypes</button>
     <button id="tab-settings" aria-pressed="false" onclick="setMode('settings')">Settings</button>
   </div>
@@ -332,6 +366,36 @@
     <p class="center-q" style="margin:30px 0 4px">The twelve, in detail.</p>
     <p class="sub">The full picture of each archetype — what drives it, its gift and its shadow, and how it shows up in a real person. Tap any to open.</p>
     <div id="liblist"></div>
+  </section>
+
+  <!-- PREP -->
+  <section id="prep">
+    <p class="center-q" style="margin:30px 0 4px">Engineer the conclusion</p>
+    <p class="sub">Don't hand someone your conclusion — place two true ideas on the table and let them connect the dots, so the decision becomes theirs. Define the person and the outcome; AI shapes the pieces.</p>
+
+    <div class="set-card">
+      <div class="field-label" style="margin-top:0">Who</div>
+      <select id="prep-person" onchange="onPrepPerson()"><option value="">— Pick a saved person, or enter below —</option></select>
+      <input id="prep-name" type="text" placeholder="Name" />
+      <input id="prep-role" type="text" placeholder="Role / context (e.g. NMP Consulting)" />
+
+      <div class="field-label">Their archetype</div>
+      <select id="prep-arche"><option value="">Not sure — infer it from context</option></select>
+
+      <div class="field-label">The outcome you want</div>
+      <textarea id="prep-outcome" rows="3" placeholder="What should they conclude — as if it were their own idea? e.g. “He needs to protect me for the long-term sustainability of the firm.”"></textarea>
+
+      <div class="field-label">Context <span style="text-transform:none;letter-spacing:0;color:var(--muted)">(optional, sharpens it)</span></div>
+      <textarea id="prep-context" rows="3" placeholder="Your relationship, what they already believe, constraints, what's at stake for them."></textarea>
+
+      <div class="set-row" style="margin-top:14px">
+        <button id="prep-btn" class="ai-btn" onclick="runPrep()">✦ Build the prep</button>
+      </div>
+      <p id="prep-status" class="set-status"></p>
+    </div>
+
+    <div id="prep-result"></div>
+    <p class="seq-intro" style="margin-top:6px">Pieces must be <b>true</b>. This frames an honest case so they reason their way there — it is not a licence to fabricate or pressure.</p>
   </section>
 
   <!-- SETTINGS -->
@@ -627,6 +691,25 @@ const ARCHE_DETAIL = {
     eg:"Google, the Smithsonian, the BBC."}
 };
 
+const PCP = {
+  order:{
+    perception:"Frame the situation as a standard or risk in play: \u201Chere's where quality or control is exposed.\u201D Make them see something that needs governing properly.",
+    context:"Position acting as the responsible, in-control move \u2014 the properly-run path, not a gamble. The decision protects the standard.",
+    permission:"Hand them a clean, owned decision: \u201Cyour call \u2014 here's the recommended standard.\u201D They green-light it as exercising proper authority."},
+  belong:{
+    perception:"Frame it around people: who's affected, who's in this together. Make them see the relationship at stake, not just the task.",
+    context:"Make acting the move that strengthens the group. Build warmth and shared ground first; agreement should feel like belonging.",
+    permission:"Permission comes from \u201Cwe\u201D \u2014 peers already on board, no one left out. Togetherness and social proof unlock the yes."},
+  mastery:{
+    perception:"Frame a challenge or a win on offer \u2014 or something broken that's worth beating. Make them see the mountain.",
+    context:"Position acting as the bold, game-changing move. Raise the stakes until the safe option looks like losing.",
+    permission:"Permission is the chance to prove it, be first, plant a flag. Give them a win to claim and they grant themselves the go."},
+  freedom:{
+    perception:"Lead with the honest \u201Cwhy\u201D and a sharp insight that reframes. Give them the real picture \u2014 no spin they can smell.",
+    context:"Frame acting as their own reasoned conclusion and an open path, never a corner. Keep their autonomy visible.",
+    permission:"Permission must feel self-granted. Offer options and room to decide; the moment it feels like a push, you lose them."}
+};
+
 const QUESTIONS = [
   {q:"What irritates them?",hint:"Involuntary — the violated value showing its underside. The single best tell.",key:"irritation"},
   {q:"What do they want credit for?",hint:"Where they chase status reveals what they think is worth being.",key:"credit"},
@@ -656,12 +739,113 @@ const OPENERS = [
 ];
 
 function setMode(m){
-  ['diagnose','engage','drawout','people','library','settings'].forEach(x=>{
+  ['diagnose','engage','drawout','people','prep','library','settings'].forEach(x=>{
     document.getElementById(x).classList.toggle('live', x===m);
     document.getElementById('tab-'+x).setAttribute('aria-pressed', x===m);
   });
   if(m==='people'){showList();}
   if(m==='settings'){loadSettingsUI();}
+  if(m==='prep'){setupPrep();}
+}
+
+/* ---------- Prep: engineer the conclusion ---------- */
+let prepPersonId=null;
+function setupPrep(){
+  const sel=document.getElementById('prep-person');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">\u2014 Pick a saved person, or enter below \u2014</option>'+
+    PEOPLE.map(p=>`<option value="${p.id}">${esc(p.name)||'Untitled'}</option>`).join('');
+  sel.value=cur;
+  const asel=document.getElementById('prep-arche');
+  if(asel.options.length<=1){
+    asel.innerHTML='<option value="">Not sure \u2014 infer it from context</option>'+
+      ARCHE_NAMES.map(a=>`<option value="${a}">${a} \u00B7 ${DRIVERS[ARCHE[a].d].name}</option>`).join('');
+  }
+}
+function onPrepPerson(){
+  const id=document.getElementById('prep-person').value;
+  prepPersonId=id||null;
+  const p=getP(id);
+  if(!p)return;
+  document.getElementById('prep-name').value=p.name||'';
+  document.getElementById('prep-role').value=p.role||'';
+  if(p.archetype)document.getElementById('prep-arche').value=p.archetype;
+  const ctx=document.getElementById('prep-context');
+  if(!ctx.value){
+    const bits=[p.notes?('Read: '+p.notes):'',
+      p.openers&&p.openers.friction?('Frustrated by: '+p.openers.friction):'',
+      p.aiRead?('AI read: '+p.aiRead.read):''].filter(Boolean);
+    if(bits.length)ctx.value=bits.join('\n');
+  }
+  if(p.prep){renderPrepResult(p.prep.result, p.prep.outcome);}
+  else{document.getElementById('prep-result').innerHTML='';}
+}
+async function runPrep(){
+  const key=getKey();
+  const st=document.getElementById('prep-status');
+  if(!key){st.textContent='Add your API key in Settings to use Prep.';st.className='set-status err';return;}
+  const name=document.getElementById('prep-name').value.trim();
+  const role=document.getElementById('prep-role').value.trim();
+  const arche=document.getElementById('prep-arche').value;
+  const outcome=document.getElementById('prep-outcome').value.trim();
+  const context=document.getElementById('prep-context').value.trim();
+  if(!outcome){st.textContent='Define the outcome you want them to reach first.';st.className='set-status err';return;}
+  const btn=document.getElementById('prep-btn');
+  btn.disabled=true;btn.innerHTML='<span class="ai-spin"></span> Building\u2026';
+  st.textContent='';st.className='set-status';
+
+  const drv=arche?DRIVERS[ARCHE[arche].d].name:'';
+  const facts=[
+    name?`Person: ${name}`:'Person: (unnamed)',
+    role?`Role / context: ${role}`:'',
+    arche?`Archetype: ${arche} (${drv} driver)`:'Archetype: unknown \u2014 infer the most likely one',
+    `Outcome I want them to reach (as their own idea): ${outcome}`,
+    context?`Context: ${context}`:''
+  ].filter(Boolean).join('\n');
+
+  const sys=`You are an expert in ethical influence and executive communication. You use the 12-archetype / 4-driver model and three tools:
+1. The Lego-pieces technique: instead of stating your conclusion, you place two true premises/observations on the table so the person assembles the target conclusion themselves and feels ownership of it.
+2. RIFE motivation levers: Reward (what they gain), Ideology (their values/identity), Fee (the cost or friction to them \u2014 minimise it), Ego (how it makes them look and feel about themselves).
+3. Behavioural distance/time calibration: how far the desired decision is from this person's behavioural norm (distance), and therefore whether it lands in one conversation, must be staged over a few, or is a long game (timing).
+Drivers and their archetypes: Order = Ruler, Caregiver, Creator. Belonging = Lover, Jester, Every Person. Mastery = Hero, Rebel, Magician. Freedom = Explorer, Sage, Innocent.
+CRITICAL ETHICS: the pieces must be TRUE, defensible premises grounded in the real situation described \u2014 never fabricated facts, false flattery, or covert pressure. The aim is to frame an honest case so the person reasons to a sound conclusion themselves. If the outcome is not honestly supportable from the context, say so plainly in the "avoid" field.
+Reply with ONLY a JSON object, no markdown:
+{"theirIdea":"the target conclusion phrased the way the person would say it to themselves, in their voice","pieces":[{"piece":"a true idea/observation to place on the table","lever":"Reward|Ideology|Fee|Ego","why":"why this piece lands for this archetype"}],"placement":"how and in what order to lay the pieces down so they connect them \u2014 follow perception then context then permission; never state the conclusion yourself","rife":{"reward":"","ideology":"","fee":"","ego":""},"distance":"low|medium|high","timing":"one conversation|stage over a few|long game","avoid":"what NOT to do or say, especially stating the conclusion outright or anything that triggers reactance"}
+Provide exactly 2 pieces (3 only if truly needed). Keep every field tight.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:getModel(),max_tokens:1100,system:sys,messages:[{role:'user',content:facts}]})
+    });
+    if(!resp.ok){let d=resp.status;try{const e=await resp.json();d=(e.error&&e.error.message)||d;}catch(_){}throw new Error(d);}
+    const data=await resp.json();
+    const text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();
+    const out=JSON.parse(text);
+    btn.disabled=false;btn.innerHTML='\u2726 Build the prep';
+    renderPrepResult(out, outcome);
+    if(prepPersonId){const p=getP(prepPersonId);if(p){p.prep={outcome,result:out,at:Date.now()};savePeople();st.textContent='Saved to '+(p.name||'this person')+'\u2019s profile.';st.className='set-status ok';}}
+  }catch(err){
+    btn.disabled=false;btn.innerHTML='\u2726 Build the prep';
+    st.textContent='Prep failed: '+err.message;st.className='set-status err';
+  }
+}
+function renderPrepResult(out, outcome){
+  const host=document.getElementById('prep-result');
+  if(!out){host.innerHTML='';return;}
+  const pieces=(out.pieces||[]).map((pc,i)=>`<div class="lego"><span class="lever">${esc(pc.lever||'')}</span><span class="ln">Piece ${i+1}</span><div class="lt">${esc(pc.piece||'')}</div><div class="lw">${esc(pc.why||'')}</div></div>`).join('');
+  const rife=out.rife||{};
+  const rcell=(k,v)=>v?`<div class="rife-cell"><div class="rk">${k}</div><div class="rv">${esc(v)}</div></div>`:'';
+  const rifeBlock=[rcell('Reward',rife.reward),rcell('Ideology',rife.ideology),rcell('Fee',rife.fee),rcell('Ego',rife.ego)].filter(Boolean).join('');
+  host.innerHTML=`<div class="prep-panel">
+    <div class="prep-idea"><div class="lbl">Their conclusion, in their voice</div><div class="txt">\u201C${esc(out.theirIdea||outcome||'')}\u201D</div></div>
+    <div class="prep-sec" style="border-top:0;padding-top:0"><div class="lbl">The pieces \u2014 place these, don't state the conclusion</div>${pieces}</div>
+    ${out.placement?`<div class="prep-sec"><div class="lbl">How to place them</div><p>${esc(out.placement)}</p></div>`:''}
+    ${rifeBlock?`<div class="prep-sec"><div class="lbl">RIFE levers</div><div class="rife-grid">${rifeBlock}</div></div>`:''}
+    <div class="prep-sec"><div class="lbl">Calibration</div><div class="calib"><span class="pill">Distance from their norm: <b>${esc(out.distance||'?')}</b></span><span class="pill">Timing: <b>${esc(out.timing||'?')}</b></span></div></div>
+    ${out.avoid?`<div class="prep-sec warn"><div class="lbl">Avoid</div><p>${esc(out.avoid)}</p></div>`:''}
+  </div>`;
 }
 
 /* ---------- settings: API key + model ---------- */
@@ -889,6 +1073,17 @@ function buildStations(){
   });
 }
 
+function seqHTML(k){
+  const s=PCP[k]; if(!s)return '';
+  return `<div class="seq">
+    <div class="seq-h">Sequence \u00B7 move them in order</div>
+    <p class="seq-intro">Resonate, don't direct \u2014 acknowledge their current view before offering a new one, then walk them through these three.</p>
+    <div class="seq-step"><span class="sn">P</span><div><b>Perception.</b> ${s.perception}</div></div>
+    <div class="seq-step"><span class="sn">C</span><div><b>Context.</b> ${s.context}</div></div>
+    <div class="seq-step"><span class="sn">P</span><div><b>Permission.</b> ${s.permission}</div></div>
+  </div>`;
+}
+
 function rowsHTML(d){
   const lang = d.language.map(w=>`\u201C${w}\u201D`).join(', ');
   return `
@@ -917,7 +1112,8 @@ function selectDriver(k,btn){
     </div>
     <div class="chips">${chips}</div>
     <div class="refine" id="refine">Tap an archetype to sharpen the whole playbook \u2014 same driver, different way of pursuing it.</div>
-    <div class="rows" id="rows">${rowsHTML(d)}</div>`;
+    <div class="rows" id="rows">${rowsHTML(d)}</div>
+    ${seqHTML(k)}`;
   play.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
