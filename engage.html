@@ -439,11 +439,11 @@
     </div>
   </section>
 
-  <!-- PRINT AREA (hidden on screen, shown only when printing) -->
-  <div id="print-area" aria-hidden="true"></div>
-
   <footer>Built for the room before you walk in. Flex the delivery, never the substance.</footer>
 </div>
+
+<!-- PRINT AREA: must live OUTSIDE .wrap so it survives when .wrap is hidden in print -->
+<div id="print-area" aria-hidden="true"></div>
 
 <script>
 const DRIVERS = {
@@ -834,13 +834,13 @@ Drivers and their archetypes: Order = Ruler, Caregiver, Creator. Belonging = Lov
 CRITICAL ETHICS: the pieces must be TRUE, defensible premises grounded in the real situation described \u2014 never fabricated facts, false flattery, or covert pressure. The aim is to frame an honest case so the person reasons to a sound conclusion themselves. If the outcome is not honestly supportable from the context, say so plainly in the "avoid" field.
 Reply with ONLY a JSON object, no markdown:
 {"theirIdea":"the target conclusion phrased the way the person would say it to themselves, in their voice","pieces":[{"piece":"a true idea/observation to place on the table","lever":"Reward|Ideology|Fee|Ego","why":"why this piece lands for this archetype"}],"placement":"how and in what order to lay the pieces down so they connect them \u2014 follow perception then context then permission; never state the conclusion yourself","rife":{"reward":"","ideology":"","fee":"","ego":""},"distance":"low|medium|high","timing":"one conversation|stage over a few|long game","avoid":"what NOT to do or say, especially stating the conclusion outright or anything that triggers reactance"}
-Provide exactly 2 pieces (3 only if truly needed). Keep every field tight.`;
+Provide exactly 2 pieces (3 only if truly needed). Keep every field tight. Respond with the JSON object only \u2014 begin with { and end with } and include no other text.`;
 
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:getModel(),max_tokens:1500,system:sys,messages:[{role:'user',content:facts},{role:'assistant',content:'{'}]})
+      body:JSON.stringify({model:getModel(),max_tokens:1500,system:sys,messages:[{role:'user',content:facts}]})
     });
     if(!resp.ok){let d=resp.status;try{const e=await resp.json();d=(e.error&&e.error.message)||d;}catch(_){}throw new Error(d);}
     const data=await resp.json();
@@ -1037,13 +1037,14 @@ async function runAiRead(id){
 - Freedom (truth/autonomy): Explorer, Sage, Innocent
 Read the evidence about a real person and infer their most likely archetype. Weigh involuntary tells (what irritates them, the role they cast themselves in) above curated self-presentation. Cite specifics from the evidence. Be decisive but honest about confidence given limited data.
 Reply with ONLY a JSON object, no markdown, no preamble:
-{"driver":"order|belong|mastery|freedom","archetype":"one of: ${ARCHE_NAMES.join(', ')}","confidence":"low|medium|high","read":"2-3 sentences, specific, quoting/citing the evidence","engage":"1-2 sentences on how to open and what language to use with this person","caution":"one short watch-out, or empty string"}`;
+{"driver":"order|belong|mastery|freedom","archetype":"one of: ${ARCHE_NAMES.join(', ')}","confidence":"low|medium|high","read":"2-3 sentences, specific, quoting/citing the evidence","engage":"1-2 sentences on how to open and what language to use with this person","caution":"one short watch-out, or empty string"}
+Respond with the JSON object only \u2014 begin with { and end with } and include no other text.`;
 
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:getModel(),max_tokens:900,system:sys,messages:[{role:'user',content:'Evidence:\n'+facts},{role:'assistant',content:'{'}]})
+      body:JSON.stringify({model:getModel(),max_tokens:900,system:sys,messages:[{role:'user',content:'Evidence:\n'+facts}]})
     });
     if(!resp.ok){
       let detail=resp.status;
