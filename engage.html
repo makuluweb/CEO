@@ -409,8 +409,8 @@
       <input id="set-key" type="password" placeholder="sk-ant-…" autocomplete="off" />
       <div class="set-row">
         <select id="set-model">
-          <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (balanced)</option>
           <option value="claude-opus-4-8">Claude Opus 4.8 (deepest)</option>
+          <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (balanced)</option>
           <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (fastest)</option>
         </select>
         <button class="set-btn" onclick="saveSettings()">Save</button>
@@ -750,6 +750,13 @@ function setMode(m){
 
 /* ---------- Prep: engineer the conclusion ---------- */
 let prepPersonId=null;
+function gotoPrepFor(id){
+  setMode('prep');
+  const sel=document.getElementById('prep-person');
+  sel.value=id; onPrepPerson();
+  document.getElementById('prep-outcome').focus();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 function setupPrep(){
   const sel=document.getElementById('prep-person');
   const cur=sel.value;
@@ -762,6 +769,21 @@ function setupPrep(){
       ARCHE_NAMES.map(a=>`<option value="${a}">${a} \u00B7 ${DRIVERS[ARCHE[a].d].name}</option>`).join('');
   }
 }
+function normalizePreps(p){
+  if(!p)return [];
+  if(!Array.isArray(p.preps)){
+    p.preps = p.prep ? [{id:'pr'+(p.prep.at||Date.now()),at:p.prep.at||Date.now(),outcome:p.prep.outcome,result:p.prep.result}] : [];
+    if(p.prep)delete p.prep;
+  }
+  return p.preps;
+}
+function delPrep(personId,prepId){
+  const p=getP(personId); if(!p)return;
+  normalizePreps(p);
+  p.preps=p.preps.filter(x=>x.id!==prepId);
+  savePeople(); showDetail(personId);
+}
+
 function onPrepPerson(){
   const id=document.getElementById('prep-person').value;
   prepPersonId=id||null;
@@ -777,7 +799,8 @@ function onPrepPerson(){
       p.aiRead?('AI read: '+p.aiRead.read):''].filter(Boolean);
     if(bits.length)ctx.value=bits.join('\n');
   }
-  if(p.prep){renderPrepResult(p.prep.result, p.prep.outcome);}
+  const preps=normalizePreps(p);
+  if(preps.length){renderPrepResult(preps[0].result, preps[0].outcome);}
   else{document.getElementById('prep-result').innerHTML='';}
 }
 async function runPrep(){
@@ -817,41 +840,53 @@ Provide exactly 2 pieces (3 only if truly needed). Keep every field tight.`;
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:getModel(),max_tokens:1100,system:sys,messages:[{role:'user',content:facts}]})
+      body:JSON.stringify({model:getModel(),max_tokens:1500,system:sys,messages:[{role:'user',content:facts},{role:'assistant',content:'{'}]})
     });
     if(!resp.ok){let d=resp.status;try{const e=await resp.json();d=(e.error&&e.error.message)||d;}catch(_){}throw new Error(d);}
     const data=await resp.json();
-    const text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();
-    const out=JSON.parse(text);
+    const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const out=parseModelJSON(raw);
     btn.disabled=false;btn.innerHTML='\u2726 Build the prep';
     renderPrepResult(out, outcome);
-    if(prepPersonId){const p=getP(prepPersonId);if(p){p.prep={outcome,result:out,at:Date.now()};savePeople();st.textContent='Saved to '+(p.name||'this person')+'\u2019s profile.';st.className='set-status ok';}}
+    if(prepPersonId){const p=getP(prepPersonId);if(p){normalizePreps(p);p.preps.unshift({id:'pr'+Date.now(),at:Date.now(),outcome,result:out});savePeople();st.textContent='Logged to '+(p.name||'this person')+'\u2019s profile.';st.className='set-status ok';}}
   }catch(err){
     btn.disabled=false;btn.innerHTML='\u2726 Build the prep';
     st.textContent='Prep failed: '+err.message;st.className='set-status err';
   }
 }
-function renderPrepResult(out, outcome){
-  const host=document.getElementById('prep-result');
-  if(!out){host.innerHTML='';return;}
+function prepInner(out, outcome){
   const pieces=(out.pieces||[]).map((pc,i)=>`<div class="lego"><span class="lever">${esc(pc.lever||'')}</span><span class="ln">Piece ${i+1}</span><div class="lt">${esc(pc.piece||'')}</div><div class="lw">${esc(pc.why||'')}</div></div>`).join('');
   const rife=out.rife||{};
   const rcell=(k,v)=>v?`<div class="rife-cell"><div class="rk">${k}</div><div class="rv">${esc(v)}</div></div>`:'';
   const rifeBlock=[rcell('Reward',rife.reward),rcell('Ideology',rife.ideology),rcell('Fee',rife.fee),rcell('Ego',rife.ego)].filter(Boolean).join('');
-  host.innerHTML=`<div class="prep-panel">
+  return `
     <div class="prep-idea"><div class="lbl">Their conclusion, in their voice</div><div class="txt">\u201C${esc(out.theirIdea||outcome||'')}\u201D</div></div>
     <div class="prep-sec" style="border-top:0;padding-top:0"><div class="lbl">The pieces \u2014 place these, don't state the conclusion</div>${pieces}</div>
     ${out.placement?`<div class="prep-sec"><div class="lbl">How to place them</div><p>${esc(out.placement)}</p></div>`:''}
     ${rifeBlock?`<div class="prep-sec"><div class="lbl">RIFE levers</div><div class="rife-grid">${rifeBlock}</div></div>`:''}
     <div class="prep-sec"><div class="lbl">Calibration</div><div class="calib"><span class="pill">Distance from their norm: <b>${esc(out.distance||'?')}</b></span><span class="pill">Timing: <b>${esc(out.timing||'?')}</b></span></div></div>
-    ${out.avoid?`<div class="prep-sec warn"><div class="lbl">Avoid</div><p>${esc(out.avoid)}</p></div>`:''}
-  </div>`;
+    ${out.avoid?`<div class="prep-sec warn"><div class="lbl">Avoid</div><p>${esc(out.avoid)}</p></div>`:''}`;
+}
+function renderPrepResult(out, outcome){
+  const host=document.getElementById('prep-result');
+  if(!out){host.innerHTML='';return;}
+  host.innerHTML=`<div class="prep-panel">${prepInner(out,outcome)}</div>`;
 }
 
 /* ---------- settings: API key + model ---------- */
 const KEY_LS='theRead.apiKey.v1', MODEL_LS='theRead.model.v1';
 function getKey(){try{return localStorage.getItem(KEY_LS)||'';}catch(e){return '';}}
-function getModel(){try{return localStorage.getItem(MODEL_LS)||'claude-sonnet-4-6';}catch(e){return 'claude-sonnet-4-6';}}
+function getModel(){try{return localStorage.getItem(MODEL_LS)||'claude-opus-4-8';}catch(e){return 'claude-opus-4-8';}}
+function parseModelJSON(raw){
+  let t=(raw||'').replace(/```json/gi,'').replace(/```/g,'').trim();
+  const cands=[t, '{'+t];                 // handle assistant-prefill continuations
+  for(const c of cands){ try{return JSON.parse(c);}catch(e){} }
+  for(const c of cands){                  // last resort: extract first {...last}
+    const s=c.indexOf('{'), e=c.lastIndexOf('}');
+    if(s>=0&&e>s){ try{return JSON.parse(c.slice(s,e+1).replace(/,(\s*[}\]])/g,'$1'));}catch(e){} }
+  }
+  throw new Error('the model didn\u2019t return clean JSON \u2014 try again');
+}
 function loadSettingsUI(){
   const k=getKey();
   document.getElementById('set-key').value=k;
@@ -943,6 +978,21 @@ function buildPrintHTML(p){
   if(p.aiRead){
     body+=`<div class="p-sec"><div class="p-lbl">AI read</div><div>${esc(p.aiRead.read)}</div></div>`;
   }
+  const preps=normalizePreps(p);
+  if(preps.length){
+    body+=`<div class="p-sec"><div class="p-lbl">Prep log</div>`+
+      preps.map(pr=>{
+        const r=pr.result||{};
+        const pieces=(r.pieces||[]).map((pc,i)=>`<div class="p-row"><span class="pk">Piece ${i+1}${pc.lever?' \u00B7 '+esc(pc.lever):''}</span><span>${esc(pc.piece||'')}</span></div>`).join('');
+        const ds=pr.at?new Date(pr.at-(new Date()).getTimezoneOffset()*60000).toISOString().slice(0,10):'';
+        return `<div class="p-mtg"><span class="pd">${ds}${pr.outcome?' \u2014 '+esc(pr.outcome):''}</span>`+
+          (r.theirIdea?`<div style="margin:3px 0"><i>\u201C${esc(r.theirIdea)}\u201D</i></div>`:'')+
+          pieces+
+          ((r.distance||r.timing)?`<div class="p-row"><span class="pk">Calibration</span><span>distance ${esc(r.distance||'?')} \u00B7 timing ${esc(r.timing||'?')}</span></div>`:'')+
+          (r.avoid?`<div class="p-row"><span class="pk">Avoid</span><span>${esc(r.avoid)}</span></div>`:'')+
+          `</div>`;
+      }).join('')+`</div>`;
+  }
   if(p.meetings&&p.meetings.length){
     body+=`<div class="p-sec"><div class="p-lbl">Meeting log</div>`+
       p.meetings.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(m=>
@@ -993,7 +1043,7 @@ Reply with ONLY a JSON object, no markdown, no preamble:
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:getModel(),max_tokens:700,system:sys,messages:[{role:'user',content:'Evidence:\n'+facts}]})
+      body:JSON.stringify({model:getModel(),max_tokens:900,system:sys,messages:[{role:'user',content:'Evidence:\n'+facts},{role:'assistant',content:'{'}]})
     });
     if(!resp.ok){
       let detail=resp.status;
@@ -1001,8 +1051,8 @@ Reply with ONLY a JSON object, no markdown, no preamble:
       throw new Error(detail);
     }
     const data=await resp.json();
-    const text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();
-    const out=JSON.parse(text);
+    const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const out=parseModelJSON(raw);
     if(!ARCHE_NAMES.includes(out.archetype))throw new Error('unexpected archetype in response');
     p.aiRead={driver:out.driver,archetype:out.archetype,confidence:out.confidence||'',read:out.read||'',engage:out.engage||'',caution:out.caution||'',at:Date.now()};
     savePeople();
@@ -1246,6 +1296,18 @@ function showDetail(id){
     `<div class="meeting"><button class="mdel" title="Delete" onclick="delMeeting('${id}','${mtg.id}')">\u00D7</button><span class="mdate">${mtg.date||''}</span><div class="mtxt">${esc(mtg.note)}</div></div>`
   ).join('');
   const today=(()=>{const n=new Date();return new Date(n.getTime()-n.getTimezoneOffset()*60000).toISOString().slice(0,10);})();
+  const prepList=normalizePreps(p);
+  const prepEntries = prepList.length ? prepList.map(pr=>{
+    const ds=pr.at?new Date(pr.at-(new Date()).getTimezoneOffset()*60000).toISOString().slice(0,10):'';
+    return `<div class="qcard" style="border-left:3px solid var(--freedom)">
+      <button aria-expanded="false" onclick="this.parentNode.classList.toggle('open');this.setAttribute('aria-expanded',this.parentNode.classList.contains('open'))">
+        <span class="qtext" style="font-size:15px">${esc(pr.outcome)||'Prep'}<span class="qtag" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">${ds}</span></span>
+      </button>
+      <div class="decoder"><div class="prep-panel" style="margin:0;border:0;border-left:0;border-radius:0;padding:0;background:transparent">${prepInner(pr.result,pr.outcome)}</div>
+        <button class="set-btn ghost" style="min-height:38px;padding:9px 12px;margin-top:10px" onclick="delPrep('${id}','${pr.id}')">Delete this prep</button>
+      </div>
+    </div>`;
+  }).join('') : '<p class="opener-q" style="margin-top:0">No prep logged yet.</p>';
   host.style.setProperty('--accent', d?`var(${d.varc})`:'var(--order)');
   document.documentElement.style.setProperty('--accent', d?`var(${d.varc})`:'var(--order)');
   host.innerHTML=`
@@ -1271,6 +1333,10 @@ function showDetail(id){
     <textarea rows="2" oninput="updateOpener('${id}','friction',this.value)">${esc(p.openers.friction)}</textarea>
     <p class="opener-q"><b>How they got here?</b></p>
     <textarea rows="2" oninput="updateOpener('${id}','origin',this.value)">${esc(p.openers.origin)}</textarea>
+
+    <div class="field-label">Prep log</div>
+    <button class="ai-btn" onclick="gotoPrepFor('${id}')">\u2726 Build a prep</button>
+    <div style="margin-top:10px">${prepEntries}</div>
 
     <div class="field-label">Meeting log</div>
     <div class="m-add">
