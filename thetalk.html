@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#12161d" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="The Read" />
+<title>The Read — archetype field instrument</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#12161d;
+    --panel:#1a2029;
+    --panel-2:#212834;
+    --line:rgba(236,231,221,.10);
+    --text:#ECE7DD;
+    --muted:#8b94a3;
+    --order:#5B8DBE;
+    --belong:#E0A458;
+    --mastery:#C75D52;
+    --freedom:#5BA890;
+    --accent:var(--order);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--ink);color:var(--text);
+    font-family:"Inter",system-ui,sans-serif;line-height:1.55;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+    background-image:radial-gradient(120% 80% at 50% -10%, rgba(91,141,190,.10), transparent 60%);
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) calc(72px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left))}
+  .eyebrow{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(34px,8vw,54px);line-height:1.02;margin:10px 0 8px;letter-spacing:-.01em}
+  .lede{color:var(--muted);max-width:46ch;margin:0 0 24px;font-size:15px}
+
+  /* mode toggle */
+  .toggle{display:flex;flex-wrap:wrap;gap:4px;border:1px solid var(--line);border-radius:999px;padding:4px;background:var(--panel)}
+  .toggle button{
+    font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;
+    border:0;background:transparent;color:var(--muted);padding:11px 17px;border-radius:999px;cursor:pointer;transition:.2s;min-height:44px;flex:1 0 auto
+  }
+  .toggle button[aria-pressed="true"]{background:var(--text);color:var(--ink)}
+  .toggle button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  @media(max-width:560px){
+    .toggle{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-radius:14px;scroll-snap-type:x proximity}
+    .toggle::-webkit-scrollbar{display:none}
+    .toggle button{flex:0 0 auto;scroll-snap-align:center;padding:11px 15px}
+  }
+
+  section{display:none}
+  section.live{display:block}
+
+  .center-q{font-family:"Fraunces",serif;font-size:clamp(20px,4.5vw,26px);font-weight:500;margin:30px 0 4px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 22px}
+
+  /* driver stations */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  .station{
+    text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:14px;
+    padding:18px 18px 16px;cursor:pointer;color:var(--text);position:relative;overflow:hidden;transition:.18s;
+    border-left:4px solid var(--c)
+  }
+  .station:hover{transform:translateY(-2px);background:var(--panel-2)}
+  .station:focus-visible{outline:2px solid var(--c);outline-offset:3px}
+  .station[aria-pressed="true"]{background:var(--panel-2);box-shadow:0 0 0 1px var(--c) inset}
+  .station .tag{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--c)}
+  .station .name{font-family:"Fraunces",serif;font-size:22px;font-weight:500;margin:6px 0 4px}
+  .station .want{color:var(--muted);font-size:13.5px}
+  .station .types{margin-top:10px;font-size:12px;color:var(--muted);font-family:"Space Mono",monospace;letter-spacing:.02em}
+
+  /* detail playbook */
+  .play{margin-top:18px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+  .play .head{padding:20px 20px 14px;border-bottom:1px solid var(--line);border-top:4px solid var(--accent)}
+  .play .head .tag{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+  .play .head h2{font-family:"Fraunces",serif;font-weight:500;font-size:28px;margin:6px 0 4px}
+  .play .head p{margin:0;color:var(--muted);font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;padding:14px 20px 4px}
+  .chip{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.04em;border:1px solid var(--line);background:transparent;color:var(--muted);padding:7px 12px;border-radius:999px;cursor:pointer;transition:.15s}
+  .chip:hover{color:var(--text);border-color:var(--accent)}
+  .chip[aria-pressed="true"]{background:var(--accent);color:var(--ink);border-color:var(--accent)}
+  .chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .refine{padding:6px 20px 0;color:var(--muted);font-size:13.5px;min-height:0;transition:.2s}
+  .refine b{color:var(--text);font-weight:600}
+
+  .rows{padding:8px 20px 20px}
+  .row{padding:14px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:96px 1fr;gap:14px}
+  .row:first-child{border-top:0}
+  .row .k{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);padding-top:2px}
+  .row .v{font-size:14.5px}
+  .row.warn .k{color:#d98a7e}
+  .row.draw .k{color:var(--accent)}
+  .row.draw .v{font-style:italic;color:var(--text)}
+  .row.draw{background:linear-gradient(90deg, color-mix(in srgb, var(--accent) 9%, transparent), transparent);border-radius:8px}
+  @media(max-width:480px){.row{grid-template-columns:1fr;gap:4px}}
+
+  /* diagnose view */
+  .qcard{border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-bottom:12px;overflow:hidden}
+  .qcard > button{width:100%;text-align:left;background:transparent;border:0;color:var(--text);cursor:pointer;padding:18px 18px;display:flex;gap:14px;align-items:flex-start}
+  .qcard > button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  .qnum{font-family:"Space Mono",monospace;font-size:12px;color:var(--muted);padding-top:3px}
+  .qtext{font-family:"Fraunces",serif;font-size:19px;font-weight:500;line-height:1.25}
+  .qhint{display:block;font-family:"Inter";font-size:13px;color:var(--muted);font-weight:400;margin-top:4px}
+  .decoder{display:none;padding:0 18px 16px}
+  .qcard.open .decoder{display:block}
+  .dline{display:grid;grid-template-columns:90px 1fr;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:14px;align-items:start}
+  .dkey{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding-top:2px}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle}
+  footer{margin-top:30px;color:var(--muted);font-size:12.5px;font-family:"Space Mono",monospace;letter-spacing:.03em}
+
+  /* listening card */
+  .listen-card{border:1px solid var(--line);border-radius:14px;background:var(--panel-2);padding:18px 18px 16px;margin-top:14px}
+  .listen-card ul{margin:12px 0 0;padding:0;list-style:none}
+  .listen-card li{font-size:14px;color:var(--muted);padding:7px 0;border-top:1px solid var(--line)}
+  .listen-card li:first-child{border-top:0}
+  .listen-card li b{color:var(--text);font-weight:600}
+  .caveat{margin:14px 0 0;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+
+  /* draw-out list */
+  .dgroup{margin-bottom:22px}
+  .dgroup h3{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--c);margin:0 0 8px;display:flex;align-items:center;gap:8px}
+  .dgroup h3 .bar{display:inline-block;width:22px;height:3px;border-radius:2px;background:var(--c)}
+  .ditem{border:1px solid var(--line);border-left:3px solid var(--c);background:var(--panel);border-radius:0 12px 12px 0;padding:14px 16px;margin-bottom:8px}
+  .ditem .an{font-family:"Fraunces",serif;font-size:18px;font-weight:500;margin:0 0 3px}
+  .ditem .am{font-size:14px;color:var(--muted)}
+
+  /* people / dossier */
+  .people-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 14px}
+  .filters{display:inline-flex;gap:6px}
+  .filt{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);background:transparent;color:var(--muted);padding:8px 13px;border-radius:999px;cursor:pointer}
+  .filt[aria-pressed="true"]{background:var(--text);color:var(--ink);border-color:var(--text)}
+  .filt:focus-visible,.add-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .add-btn{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.06em;border:1px solid var(--accent);background:transparent;color:var(--accent);padding:9px 15px;border-radius:999px;cursor:pointer;transition:.15s}
+  .add-btn:hover{background:var(--accent);color:var(--ink)}
+  .empty{color:var(--muted);font-size:14px;text-align:center;padding:34px 10px;border:1px dashed var(--line);border-radius:14px}
+  .empty.hide{display:none}
+
+  .pcard{display:flex;align-items:center;gap:12px;border:1px solid var(--line);background:var(--panel);border-radius:13px;padding:14px 14px;margin-bottom:9px;cursor:pointer;transition:.15s;border-left:4px solid var(--c,var(--line))}
+  .pcard:hover{background:var(--panel-2)}
+  .pcard .pmain{flex:1;min-width:0}
+  .pcard .pname{font-family:"Fraunces",serif;font-size:19px;font-weight:500;line-height:1.15}
+  .pcard .prole{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pcard .ptag{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--c,var(--muted));margin-top:3px}
+  .pcard .pstar{font-size:20px;line-height:1;background:none;border:0;cursor:pointer;color:var(--muted);padding:4px}
+  .pcard .pstar.on{color:var(--belong)}
+
+  /* detail */
+  .back-btn{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.06em;background:none;border:0;color:var(--muted);cursor:pointer;padding:6px 0;margin:24px 0 12px}
+  .back-btn:hover{color:var(--text)}
+  .d-name{font-family:"Fraunces",serif;font-size:30px;font-weight:500;background:transparent;border:0;border-bottom:1px solid var(--line);color:var(--text);width:100%;padding:4px 0;margin-bottom:8px}
+  .d-role{font-family:"Inter";font-size:14px;background:transparent;border:0;color:var(--muted);width:100%;padding:2px 0;margin-bottom:14px}
+  .d-name:focus,.d-role:focus,textarea:focus,.d-mnote:focus{outline:0;border-color:var(--accent)}
+  .field-label{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:20px 0 8px}
+  .driver-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+  .dp{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.04em;border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:11px 4px;border-radius:10px;cursor:pointer;border-top:3px solid var(--c)}
+  .dp[aria-pressed="true"]{background:var(--panel-2);color:var(--text);box-shadow:0 0 0 1px var(--c) inset}
+  .dp:focus-visible,.d-arche:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+  textarea,.d-mnote{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:"Inter";font-size:14px;padding:11px 12px;resize:vertical}
+  .opener-q{font-size:13px;color:var(--muted);margin:12px 0 5px}
+  .opener-q b{color:var(--text);font-weight:500}
+  .meeting{border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:8px;background:var(--panel)}
+  .meeting .mdate{font-family:"Space Mono",monospace;font-size:11px;color:var(--accent);letter-spacing:.06em}
+  .meeting .mtxt{font-size:14px;margin-top:4px;white-space:pre-wrap}
+  .meeting .mdel{float:right;background:none;border:0;color:var(--muted);cursor:pointer;font-size:16px;line-height:1}
+  .meeting .mkv{display:grid;grid-template-columns:82px 1fr;gap:10px;padding:6px 0 0;font-size:13px;align-items:start}
+  .meeting .mkv .mk{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+  .m-add{display:flex;gap:8px;align-items:flex-start;margin-top:6px;flex-wrap:wrap}
+  .m-add input[type=date]{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:"Space Mono",monospace;font-size:12px;padding:10px;color-scheme:dark}
+  .m-add .d-mnote{flex:1;min-width:160px}
+  .m-add button{font-family:"Space Mono",monospace;font-size:12px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:10px 14px;cursor:pointer}
+  .m-add button:hover{background:var(--accent);color:var(--ink)}
+  .m-more{display:grid;gap:8px;margin-top:8px;width:100%}
+  .del-person{margin-top:26px;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.08em;background:none;border:1px solid var(--line);color:#d98a7e;border-radius:10px;padding:10px 14px;cursor:pointer}
+  .del-person:hover{border-color:#d98a7e}
+  .peg-play{margin-top:8px;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}
+
+  /* compass — plot for THIS meeting */
+  .cq-who{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:10px 0 6px}
+  .cq-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .cq{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.02em;border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:11px 10px;border-radius:10px;cursor:pointer;text-align:left;min-height:44px}
+  .cq b{display:block;font-family:"Inter";font-size:13px;color:var(--text);font-weight:600;letter-spacing:0;margin-bottom:1px}
+  .cq[aria-pressed="true"]{background:var(--panel-2);box-shadow:0 0 0 1px var(--accent) inset}
+  .cq:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .compass-note{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;background:var(--panel-2);padding:11px 13px;font-size:13.5px;margin-top:10px;color:var(--muted)}
+  .compass-note b{color:var(--text)}
+
+  /* callbacks — threads left open */
+  .cb-card{border:1px solid var(--line);border-left:3px solid var(--belong);border-radius:0 12px 12px 0;background:var(--panel);padding:14px 15px;margin:14px 0 4px}
+  .cb-card .cb-h{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--belong);margin-bottom:2px}
+  .cb-card .cb-sub{font-size:12.5px;color:var(--muted);margin:0 0 6px}
+  .cb{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+  .cb:first-of-type{border-top:0}
+  .cb button{min-width:34px;min-height:34px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;font-size:14px;line-height:1;flex:0 0 auto}
+  .cb button:hover{border-color:var(--belong);color:var(--belong)}
+  .cb.done span{color:var(--muted);text-decoration:line-through}
+  .cb .cb-d{font-family:"Space Mono",monospace;font-size:10px;color:var(--muted);display:block;margin-top:2px;text-decoration:none}
+
+  /* room card — the glanceable */
+  .room{border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:16px;background:var(--panel);padding:22px 20px 18px;margin-top:14px}
+  .room .r-peg{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+  .room h2{font-family:"Fraunces",serif;font-weight:500;font-size:30px;margin:6px 0 2px}
+  .room .r-role{color:var(--muted);font-size:14px;margin:0 0 10px}
+  .r-sec{padding:13px 0;border-top:1px solid var(--line)}
+  .r-sec .r-lbl{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+  .r-sec p{margin:0;font-size:15px}
+  .r-sec .r-lang{font-family:"Space Mono",monospace;font-size:13px;color:var(--muted)}
+  .r-q{font-family:"Fraunces",serif;font-size:18px;font-weight:500;line-height:1.35;padding:7px 0}
+  .r-q .r-why{display:block;font-family:"Inter";font-size:12.5px;color:var(--muted);font-weight:400;margin-top:2px}
+  .r-rule{border:1px solid var(--line);border-left:3px solid #d98a7e;border-radius:0 10px 10px 0;background:var(--panel-2);padding:11px 13px;font-size:13.5px;margin-top:14px}
+  .r-rule b{color:#d98a7e;font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:3px}
+  .room-launch{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.06em;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:11px 15px;cursor:pointer;min-height:44px;margin:4px 8px 2px 0;display:inline-flex;align-items:center;gap:7px}
+  .room-launch:hover{background:var(--accent);color:var(--ink)}
+
+  /* library */
+  .qcard .qtag{display:block;font-family:"Inter";font-size:13px;color:var(--muted);font-weight:400;margin-top:4px}
+  .lib-essence{font-size:14.5px;color:var(--text);padding:2px 0 10px;border-bottom:1px solid var(--line);margin-bottom:6px}
+  .libline{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:14px;align-items:start}
+  .libline:first-of-type{border-top:0}
+  .libline .lk{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--c);padding-top:3px}
+  .libline.shadow .lk{color:#d98a7e}
+  .libline .lv b{color:var(--text)}
+  @media(max-width:480px){.libline{grid-template-columns:1fr;gap:3px}}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  /* ---- prep / engineer the conclusion ---- */
+  #prep .set-card input[type=text],#prep .set-card select,#prep .set-card textarea{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:"Inter";padding:12px;margin-bottom:10px}
+  .prep-panel{border:1px solid var(--line);border-left:3px solid var(--freedom);background:var(--panel);border-radius:0 14px 14px 0;padding:18px;margin:14px 0 4px}
+  .prep-idea{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+  .prep-idea .lbl{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--freedom);margin-bottom:4px}
+  .prep-idea .txt{font-family:"Fraunces",serif;font-size:18px;font-weight:500;line-height:1.3}
+  .lego{border:1px solid var(--line);border-radius:12px;padding:14px 15px;margin-bottom:10px;position:relative;border-top:3px solid var(--accent)}
+  .lego .ln{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .lego .lever{float:right;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);background:var(--accent);border-radius:999px;padding:3px 9px}
+  .lego .lt{font-size:15px;margin:7px 0 6px;font-weight:500}
+  .lego .lw{font-size:13.5px;color:var(--muted)}
+  .prep-sec{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+  .prep-sec .lbl{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--freedom);margin-bottom:5px}
+  .prep-sec.warn .lbl{color:#d98a7e}
+  .prep-sec p{font-size:14px;margin:4px 0 0}
+  .rife-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  @media(max-width:480px){.rife-grid{grid-template-columns:1fr}}
+  .rife-cell{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .rife-cell .rk{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+  .rife-cell .rv{font-size:13.5px;margin-top:3px}
+  .calib{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .calib .pill{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.04em;border:1px solid var(--line);border-radius:999px;padding:8px 13px}
+  .calib .pill b{color:var(--freedom)}
+
+  /* ---- PCP sequence ---- */
+  .seq{border-top:1px solid var(--line);margin:0 20px;padding:16px 0 6px}
+  .seq-h{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+  .seq-intro{font-size:13px;color:var(--muted);margin:7px 0 12px}
+  .seq-step{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:start;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+  .seq-step:first-of-type{border-top:0}
+  .seq-step .sn{width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--ink);font-family:"Space Mono",monospace;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .seq-step b{color:var(--text)}
+
+  /* ---- settings ---- */
+  .set-card{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:18px;margin:14px 0}
+  .set-note{font-size:13.5px;color:var(--muted);margin:0 0 12px}
+  .set-card input[type=password],.set-card select{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:"Inter";padding:12px;margin-bottom:10px}
+  .set-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .set-row select{flex:1;min-width:150px;margin-bottom:0}
+  .set-btn{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.06em;border:1px solid var(--accent);background:var(--accent);color:var(--ink);border-radius:10px;padding:12px 16px;cursor:pointer;min-height:44px}
+  .set-btn.ghost{background:transparent;color:var(--accent)}
+  .set-btn:hover{opacity:.9}
+  .set-status{font-family:"Space Mono",monospace;font-size:12px;margin:10px 0 0;min-height:14px}
+  .set-status.ok{color:var(--freedom)}
+  .set-status.err{color:#d98a7e}
+
+  /* ---- AI read panel ---- */
+  .ai-btn{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.06em;border:1px solid var(--freedom);background:transparent;color:var(--freedom);border-radius:10px;padding:11px 15px;cursor:pointer;min-height:44px;margin:4px 0 2px;display:inline-flex;align-items:center;gap:7px}
+  .ai-btn:hover{background:var(--freedom);color:var(--ink)}
+  .ai-btn[disabled]{opacity:.55;cursor:default}
+  .ai-panel{border:1px solid var(--line);border-left:3px solid var(--freedom);background:var(--panel-2);border-radius:0 12px 12px 0;padding:15px 16px;margin:10px 0 4px}
+  .ai-panel .ai-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .ai-panel .ai-peg{font-family:"Fraunces",serif;font-size:19px;font-weight:500}
+  .ai-panel .ai-conf{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .ai-panel p{font-size:14px;margin:9px 0 0}
+  .ai-panel .ai-lbl{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--freedom)}
+  .ai-panel .ai-cau{color:#d8b07e}
+  .ai-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+  .ai-acts button{font-family:"Space Mono",monospace;font-size:11px;border-radius:9px;padding:10px 13px;cursor:pointer;min-height:40px;border:1px solid var(--line);background:transparent;color:var(--text)}
+  .ai-acts .apply{border-color:var(--freedom);background:var(--freedom);color:var(--ink)}
+  .ai-spin{display:inline-block;width:13px;height:13px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ---- print area ---- */
+  #print-area{display:none}
+  @media print{
+    body{background:#fff;color:#16181d;background-image:none}
+    .wrap{display:none !important}
+    #print-area{display:block !important;padding:0;color:#16181d}
+    #print-area h2{font-family:"Fraunces",serif;font-size:26px;margin:0 0 2px}
+    #print-area .p-role{color:#555;margin:0 0 4px}
+    #print-area .p-peg{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#333;margin-bottom:14px}
+    #print-area .p-sec{margin-top:14px}
+    #print-area .p-lbl{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#888;margin-bottom:3px}
+    #print-area .p-row{border-top:1px solid #e2e2e2;padding:7px 0;font-size:13px;display:grid;grid-template-columns:90px 1fr;gap:10px}
+    #print-area .p-row .pk{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#777;padding-top:2px}
+    #print-area .p-mtg{border-top:1px solid #e2e2e2;padding:7px 0;font-size:13px}
+    #print-area .p-mtg .pd{font-family:"Space Mono",monospace;font-size:11px;color:#777}
+    @page{margin:16mm}
+  }
+
+  /* ---- iOS / touch tuning ---- */
+  /* 16px on all text fields stops iOS auto-zoom on focus */
+  input, textarea, select, .d-mnote{font-size:16px}
+  .d-role{font-size:15px}
+  .m-add input[type=date]{font-size:15px}
+  /* finger-sized tap targets (>=44px) */
+  .chip, .filt{min-height:44px;display:inline-flex;align-items:center}
+  .pstar{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0}
+  .add-btn{min-height:44px;display:inline-flex;align-items:center}
+  .meeting .mdel{min-width:40px;min-height:40px;margin:-6px -6px 0 0;display:inline-flex;align-items:center;justify-content:center}
+  .m-add button,.del-person{min-height:44px}
+  /* driver picker: 2x2 on narrow so labels never clip */
+  @media(max-width:400px){
+    .driver-pick{grid-template-columns:1fr 1fr}
+    .dp{padding:13px 4px}
+  }
+  /* decoder rows stack on very narrow screens */
+  @media(max-width:360px){
+    .dline{grid-template-columns:1fr;gap:2px}
+    .dline .dkey{padding-top:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">12 archetypes · 4 drivers · field instrument</p>
+  <h1>The&nbsp;Read</h1>
+  <p class="lede">Read what a person fundamentally <em>wants</em>, then meet them in their own language — open, close, and the lines to avoid.</p>
+
+  <div class="toggle" role="group" aria-label="Mode">
+    <button id="tab-diagnose" aria-pressed="true" onclick="setMode('diagnose')">Diagnose</button>
+    <button id="tab-engage" aria-pressed="false" onclick="setMode('engage')">Engage</button>
+    <button id="tab-drawout" aria-pressed="false" onclick="setMode('drawout')">Draw out</button>
+    <button id="tab-people" aria-pressed="false" onclick="setMode('people')">People</button>
+    <button id="tab-prep" aria-pressed="false" onclick="setMode('prep')">Prep</button>
+    <button id="tab-library" aria-pressed="false" onclick="setMode('library')">Archetypes</button>
+    <button id="tab-settings" aria-pressed="false" onclick="setMode('settings')">Settings</button>
+  </div>
+
+  <!-- DIAGNOSE -->
+  <section id="diagnose" class="live">
+    <p class="center-q">Ask these first. Listen to the shape, not the content.</p>
+    <p class="sub">Open questions with no right answer — so they have to choose what to foreground, and the choice is the tell. Tap one for the four-way decode.</p>
+    <div id="openers"></div>
+
+    <div class="listen-card">
+      <span class="eyebrow">What to clock — not the content</span>
+      <ul>
+        <li><b>What they foreground first.</b> The opening clause is the unfiltered priority.</li>
+        <li><b>The pronoun.</b> “I” leans Mastery / Order · “we” leans Belonging · “you just figure it out” leans Freedom.</li>
+        <li><b>The verb.</b> built, ran, protected → Order · brought together, helped → Belonging · won, beat, drove → Mastery · explored, learned, questioned → Freedom.</li>
+      </ul>
+      <p class="caveat">One answer is a hypothesis — carry two or three; the next confirms or breaks the first. Polished people <em>perform</em> the proud question, so the friction question is your tiebreaker.</p>
+    </div>
+
+    <p class="center-q" style="margin-top:34px">Past the small talk: surface the agenda.</p>
+    <p class="sub">Vector questions for senior people — they probe motion, not state. “What are you moving towards” beats “what's on your mind.” The decode doubles as archetype signal: how they answer tells you who they are.</p>
+    <div id="vectorqs"></div>
+
+    <div class="listen-card">
+      <span class="eyebrow">The discipline — what makes these land</span>
+      <ul>
+        <li><b>Follow up before you bridge.</b> One genuine follow-up on their answer before your agenda. A question you abandon reads, retroactively, as a setup.</li>
+        <li><b>Their answer is the map.</b> What they foreground first is the live agenda — pull that thread, not your prepared next question.</li>
+        <li><b>Never leave a ZQ.</b> If you asked nothing, you learned nothing and signalled less.</li>
+      </ul>
+      <p class="caveat">These climb the pyramid: small talk → tailored talk → the thing only the two of you could discuss today. You can always come back to a topic — stagnating is the bigger risk than switching.</p>
+    </div>
+
+    <p class="center-q" style="margin-top:34px">Then run these in your head.</p>
+    <p class="sub">The passive tells — listen for an involuntary signal. Each answer points to a driver. Triangulate two or three and you rarely miss.</p>
+    <div id="questions"></div>
+  </section>
+
+  <!-- DRAW OUT -->
+  <section id="drawout">
+    <p class="center-q">Draw them out.</p>
+    <p class="sub">The fastest way to open someone up isn't a clever question — it's going first in their currency. Offer the shape of story their driver craves and they fill it.</p>
+    <div id="drawlist"></div>
+  </section>
+
+  <!-- ENGAGE -->
+  <section id="engage">
+    <p class="center-q">What drives them?</p>
+    <p class="sub">Pick the driver you read. You'll get the playbook — then refine by the specific archetype inside it.</p>
+    <div class="grid" id="stations"></div>
+    <div class="play" id="play" hidden></div>
+  </section>
+
+  <!-- PEOPLE -->
+  <section id="people">
+    <div id="people-list-view">
+      <p class="center-q" style="margin:30px 0 4px">Your dossier</p>
+      <p class="sub">Saved reads on the people who move your situation. Lives in this browser only.</p>
+      <div class="people-bar">
+        <div class="filters" id="filters">
+          <button class="filt" data-f="all" aria-pressed="true" onclick="setFilter('all',this)">All</button>
+          <button class="filt" data-f="star" aria-pressed="false" onclick="setFilter('star',this)">Watchlist ★</button>
+        </div>
+        <button class="add-btn" onclick="newPerson()">+ Add person</button>
+      </div>
+      <div id="people-list"></div>
+      <p id="people-empty" class="empty"></p>
+    </div>
+    <div id="people-detail-view" hidden></div>
+  </section>
+
+  <!-- LIBRARY -->
+  <section id="library">
+    <p class="center-q" style="margin:30px 0 4px">The twelve, in detail.</p>
+    <p class="sub">The full picture of each archetype — what drives it, its gift and its shadow, and how it shows up in a real person. Tap any to open.</p>
+    <div id="liblist"></div>
+  </section>
+
+  <!-- PREP -->
+  <section id="prep">
+    <p class="center-q" style="margin:30px 0 4px">Engineer the conclusion</p>
+    <p class="sub">Don't hand someone your conclusion — place two true ideas on the table and let them connect the dots, so the decision becomes theirs. Define the person and the outcome; AI shapes the pieces, the topics, and the questions.</p>
+
+    <div class="set-card">
+      <div class="field-label" style="margin-top:0">Who</div>
+      <select id="prep-person" onchange="onPrepPerson()"><option value="">— Pick a saved person, or enter below —</option></select>
+      <input id="prep-name" type="text" placeholder="Name" />
+      <input id="prep-role" type="text" placeholder="Role / context (e.g. NMP Consulting)" />
+
+      <div class="field-label">Their archetype</div>
+      <select id="prep-arche"><option value="">Not sure — infer it from context</option></select>
+
+      <div class="field-label">The outcome you want</div>
+      <textarea id="prep-outcome" rows="3" placeholder="What should they conclude — as if it were their own idea? e.g. “He needs to protect me for the long-term sustainability of the firm.”"></textarea>
+
+      <div class="field-label">Context <span style="text-transform:none;letter-spacing:0;color:var(--muted)">(optional, sharpens it)</span></div>
+      <textarea id="prep-context" rows="3" placeholder="Your relationship, what they already believe, constraints, what's at stake for them. Open threads from your last capture are pulled in automatically."></textarea>
+
+      <div class="set-row" style="margin-top:14px">
+        <button id="prep-btn" class="ai-btn" onclick="runPrep()">✦ Build the prep</button>
+      </div>
+      <p id="prep-status" class="set-status"></p>
+    </div>
+
+    <div id="prep-result"></div>
+    <p class="seq-intro" style="margin-top:6px">Pieces must be <b>true</b>. This frames an honest case so they reason their way there — it is not a licence to fabricate or pressure.</p>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="settings">
+    <p class="center-q" style="margin:30px 0 4px">Settings</p>
+    <p class="sub">AI reads, backups, and PDF export. Everything here stays on this device.</p>
+
+    <div class="set-card">
+      <div class="field-label" style="margin-top:0">AI — Anthropic API key</div>
+      <p class="set-note">Powers the <b>AI read</b> in a person's profile. The key is stored only in this browser and is sent directly from your device to Anthropic when you run a read — it never passes through any other server.</p>
+      <input id="set-key" type="password" placeholder="sk-ant-…" autocomplete="off" />
+      <div class="set-row">
+        <select id="set-model">
+          <option value="claude-opus-4-8">Claude Opus 4.8 (deepest)</option>
+          <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (balanced)</option>
+          <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (fastest)</option>
+        </select>
+        <button class="set-btn" onclick="saveSettings()">Save</button>
+      </div>
+      <p id="set-key-status" class="set-status"></p>
+    </div>
+
+    <div class="set-card">
+      <div class="field-label" style="margin-top:0">Backup &amp; restore</div>
+      <p class="set-note">Export your whole dossier as a JSON file, or import one to merge it back in. Backups do <b>not</b> include your API key.</p>
+      <div class="set-row">
+        <button class="set-btn" onclick="exportJSON()">Export JSON</button>
+        <button class="set-btn ghost" onclick="document.getElementById('import-file').click()">Import JSON</button>
+        <input id="import-file" type="file" accept="application/json,.json" style="display:none" onchange="importJSON(event)" />
+      </div>
+      <p id="backup-status" class="set-status"></p>
+    </div>
+
+    <div class="set-card">
+      <div class="field-label" style="margin-top:0">Print / PDF a person</div>
+      <p class="set-note">Pick one person and print a clean one-page read — on iPhone, choose <b>Save to PDF</b> in the print sheet.</p>
+      <div class="set-row">
+        <select id="print-select"><option value="">Select a person…</option></select>
+        <button class="set-btn" onclick="printPerson()">Print</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>Built for the room before you walk in. Flex the delivery, never the substance.</footer>
+</div>
+
+<!-- PRINT AREA: must live OUTSIDE .wrap so it survives when .wrap is hidden in print -->
+<div id="print-area" aria-hidden="true"></div>
+<script>
+const DRIVERS = {
+  order: {
+    name:"Order", varc:"--order", tag:"Control · Structure",
+    want:"Make the world stable, safe, and well-built.",
+    types:["Ruler","Caregiver","Creator"],
+    diagnose:{
+      irritation:"incompetence, chaos, things done sloppily or off-process",
+      credit:"holding the standard and keeping it together",
+      role:"the steward — the one in charge, the one who fixes it",
+      vacuum:"imposes structure: a plan, an agenda, a list"
+    },
+    open:"Lead with competence and the standard you'll hold. Show you've done the work before you open your mouth.",
+    close:"End on a clear next step — owner and date. Leave nothing loose; loose ends read as risk.",
+    language:["framework","standard","process","accountable","reliable","quality","on track"],
+    stories:"Order restored from chaos. A system built that endured. High standards that protected people.",
+    drawOut:"Hand them a real-but-flawed plan and ask how they'd run it. Order types reveal themselves by fixing what's in front of them.",
+    avoid:"Winging it, vagueness, surprises, over-emotional appeals, leaving the decision open."
+  },
+  belong: {
+    name:"Belonging", varc:"--belong", tag:"Connection · Trust",
+    want:"Be part of the group — relationships come first.",
+    types:["Lover","Jester","Every Person"],
+    diagnose:{
+      irritation:"coldness, exclusion, status games, being treated as a transaction",
+      credit:"being liked and trusted — central to the group",
+      role:"the connector — the loyal one, the one who lightens the room",
+      vacuum:"reaches for people: small talk, a joke, a check-in on how everyone feels"
+    },
+    open:"Lead with warmth and shared ground. Acknowledge the relationship before the agenda.",
+    close:"Reaffirm the relationship, not just the task. \u201CGood to do this together\u201D lands harder than a summary.",
+    language:["we","together","the team","how's everyone","no worries","feel"],
+    stories:"Belonging found. Loyalty rewarded. The outsider welcomed in. Shared wins, not solo ones.",
+    drawOut:"Open up first \u2014 share something human and a little vulnerable. Belonging types reciprocate warmth, never interrogation.",
+    avoid:"Cold efficiency, talking past them, correcting them in public, making it all business."
+  },
+  mastery: {
+    name:"Mastery", varc:"--mastery", tag:"Impact · Leaving a mark",
+    want:"Win, prove it, change things.",
+    types:["Hero","Rebel","Magician"],
+    diagnose:{
+      irritation:"excuses, weakness, passivity, the status quo defended for its own sake",
+      credit:"being the one who made it happen — who changed the game",
+      role:"the champion, the disruptor, the transformer",
+      vacuum:"looks for the challenge: what's the mountain, what needs breaking"
+    },
+    open:"Lead with the challenge and the win on offer. Raise the stakes early.",
+    close:"End on the bold next move and a vivid picture of what victory looks like.",
+    language:["win","edge","game-changer","break","transform","first","bold"],
+    stories:"Against-the-odds wins. Breaking a broken system. The transformation, before and after.",
+    drawOut:"Ask about the hardest thing they've pulled off. Mastery types light up recounting the climb \u2014 the war story draws out who they are.",
+    avoid:"Timidity, hedging, \u201Clet's wait and see,\u201D process for its own sake, thinking small."
+  },
+  freedom: {
+    name:"Freedom", varc:"--freedom", tag:"Truth · Autonomy",
+    want:"Understand, stay authentic, keep room to move.",
+    types:["Explorer","Sage","Innocent"],
+    diagnose:{
+      irritation:"being boxed in, spin, sloppy thinking, being managed or sold to",
+      credit:"being right, original, or genuinely independent",
+      role:"the truth-teller, the seeker, the independent mind",
+      vacuum:"asks a question, follows a tangent, or eyes the exit"
+    },
+    open:"Lead with the honest \u201Cwhy\u201D and the real picture. Give them room — don't corner them.",
+    close:"Offer options and space to decide. A hard push reads as manipulation and costs you trust.",
+    language:["why","actually","the truth is","explore","it depends","interesting"],
+    stories:"Discovery. Hard truths faced squarely. Integrity held under pressure. Independence kept.",
+    drawOut:"Pose a real, unresolved question and give them room. Freedom types draw themselves out chasing a good problem.",
+    avoid:"Hard-sell, false certainty, removing their options, spin they can smell a mile off."
+  }
+};
+
+const ARCHE = {
+  "Ruler":{d:"order",how:"controls through authority and standards",irk:"disorder and being undercut",role:"the one in charge",
+    open:"Come in with the answer and the credentials behind it. Demonstrate command before you ask for anything.",
+    close:"Give a clean decision \u2014 who owns what, by when. Rulers close loops; hand them a closed one.",
+    language:["decision","standard","accountable","my call","track record","run it properly"],
+    stories:"A leader who held the line on quality when folding was easier \u2014 and was vindicated.",
+    drawOut:"Ask how they'd have run it. Rulers can't resist correcting a flawed plan \u2014 frame yours as a draft and they'll take ownership of fixing it.",
+    avoid:"Undercutting them in front of others, half-formed ideas, treating their authority as up for debate."},
+  "Caregiver":{d:"order",how:"controls through care and protection",irk:"selfishness and neglect",role:"the protector",
+    open:"Lead with who this helps and who's looked after. Show you've thought about the people, not just the plan.",
+    close:"Confirm nobody gets dropped. Caregivers sign off once they trust the cost won't land on someone vulnerable.",
+    language:["support","look after","make sure they're okay","take care of","the team's wellbeing"],
+    stories:"Someone who quietly carried a struggling colleague through a hard stretch \u2014 and it paid back tenfold.",
+    drawOut:"Mention something you're carrying or worried about. Caregivers lean in to help the instant they sense a need \u2014 and open up while doing it.",
+    avoid:"Cold cost-benefit talk, sacrificing people for numbers, dismissing the human impact."},
+  "Creator":{d:"order",how:"orders the world by building it",irk:"mediocrity and limits on the craft",role:"the maker",
+    open:"Bring the half-built thing, not the finished pitch. Creators engage with the making, not the conclusion.",
+    close:"Leave the door open to improve it. A locked-down final answer kills interest; an iteration invites them in.",
+    language:["build","craft","prototype","what if we","make it better","the details"],
+    stories:"A maker who sweated an unseen detail nobody asked for \u2014 and it became the thing everyone remembered.",
+    drawOut:"Show them something unfinished and ask what they'd change. Creators light up improving things \u2014 they'll redesign it out loud.",
+    avoid:"Praising mediocrity, rushing the craft, \u201Cgood enough,\u201D taking credit for their build."},
+  "Lover":{d:"belong",how:"connects through intimacy and devotion",irk:"coldness and being overlooked",role:"the devoted one",
+    open:"Make it personal and present. Lovers read whether you actually care before they hear a word of content.",
+    close:"End on the relationship and what it means to you. The bond is the real deliverable.",
+    language:["I really value","means a lot","close","passionate about","between us"],
+    stories:"A devotion that held when walking away was easier \u2014 loyalty as its own reward.",
+    drawOut:"Share what you genuinely care about. Lovers mirror sincerity \u2014 open your heart a crack and they'll open theirs.",
+    avoid:"Transactional tone, treating them as a means to an end, public distance, indifference."},
+  "Jester":{d:"belong",how:"connects through play and levity",irk:"stiffness and self-importance",role:"the one who breaks tension",
+    open:"Open light. A little warmth or humour signals you're safe and not self-important.",
+    close:"Close on an upbeat note. Jesters remember how it felt, not the action items.",
+    language:["honestly","let's have some fun","no drama","keep it real","that's brilliant"],
+    stories:"A moment of levity that broke unbearable tension and let everyone get the real work done.",
+    drawOut:"Be willing to be lightly self-deprecating. Jesters relax and say what they really think once they know you won't take yourself too seriously.",
+    avoid:"Stiffness, self-importance, killing the mood, making everything heavy and earnest."},
+  "Every Person":{d:"belong",how:"connects by being relatable and loyal",irk:"pretension and exclusion",role:"one of us",
+    open:"Be plain and human. Drop the polish \u2014 Every Persons trust the ordinary over the impressive.",
+    close:"Close like a peer, not a superior. \u201CWe're in this together\u201D beats any flourish.",
+    language:["no fuss","down to earth","fair","one of us","keep it simple","real"],
+    stories:"An ordinary person who stayed loyal and did the right thing without needing the spotlight.",
+    drawOut:"Admit something un-impressive about yourself. Every Persons open up to peers, not performers \u2014 level the ground first.",
+    avoid:"Showing off, pretension, talking down, making them feel like the odd one out."},
+  "Hero":{d:"mastery",how:"masters through courage and effort",irk:"excuses and cowardice",role:"the champion",
+    open:"Name the hard thing and the stakes. Heroes lean in when there's a real mountain to climb.",
+    close:"End on the bold commitment and the win it unlocks. Give them a flag to plant.",
+    language:["take it on","rise to it","earn it","no excuses","go for it","prove it"],
+    stories:"Someone who took the harder path when they could've coasted \u2014 and won because of it.",
+    drawOut:"Ask about the toughest thing they've ever pulled off. Heroes love recounting the climb \u2014 the war story draws out exactly who they are.",
+    avoid:"Excuses, hedging, lowering the bar, making it sound easy or safe."},
+  "Rebel":{d:"mastery",how:"masters by breaking the rules",irk:"conformity and hollow authority",role:"the disruptor",
+    open:"Name what's broken about the current way. Rebels switch on when you're against something, not just for it.",
+    close:"Frame the move as breaking from the herd. Conventional \u201Cbest practice\u201D is a turn-off.",
+    language:["break the playbook","everyone else is wrong","blow it up","different","the establishment"],
+    stories:"Someone who ignored the rulebook everyone followed \u2014 and was proven right while the crowd was wrong.",
+    drawOut:"Ask what convention they think is nonsense. Rebels can't resist tearing into a sacred cow \u2014 and reveal their whole worldview doing it.",
+    avoid:"\u201CBecause that's the standard,\u201D appeals to authority, conformity, playing it safe."},
+  "Magician":{d:"mastery",how:"masters by transforming what exists",irk:"stagnation and \u201Cwe've always done it this way\u201D",role:"the transformer",
+    open:"Open with the before-and-after. Magicians want the vision of what could be, not the incremental step.",
+    close:"Close on the transformation, not the task. Paint the new reality they'll have built.",
+    language:["transform","reimagine","what if","a whole new","shift","possibility"],
+    stories:"A stuck, messy situation reframed into something entirely new \u2014 the moment the impossible became obvious.",
+    drawOut:"Ask what they'd change if there were no constraints. Magicians come alive painting the transformed world \u2014 let them run.",
+    avoid:"Small thinking, \u201Cjust tweak it,\u201D defending the status quo, killing the vision with logistics too early."},
+  "Explorer":{d:"freedom",how:"seeks through movement and new ground",irk:"confinement and routine",role:"the pioneer",
+    open:"Open with the new territory or the unknown in play. Explorers tune in to what hasn't been mapped yet.",
+    close:"Leave room to roam. A boxed-in conclusion makes them restless; offer a path, not a cage.",
+    language:["explore","try it","see where it goes","new ground","independent","figure it out"],
+    stories:"Someone who left the safe road to chart their own \u2014 and found something nobody else had.",
+    drawOut:"Ask where they'd go if nothing held them back. Explorers narrate journeys eagerly \u2014 the question opens the map.",
+    avoid:"Confinement, rigid process, \u201Cthis is the only way,\u201D micromanaging the path."},
+  "Sage":{d:"freedom",how:"seeks through understanding and teaching",irk:"sloppiness and being wrong",role:"the one who knows",
+    open:"Open with a sharp question or a counter-intuitive fact. Sages engage with the puzzle before the pitch.",
+    close:"Close by inviting their read. Let them be the one who knows \u2014 they sign on once they've reasoned to it themselves.",
+    language:["why","the evidence","it's more nuanced","actually","let me think","interesting"],
+    stories:"Someone who refused the easy answer, dug for the real one, and was right when everyone else was lazy.",
+    drawOut:"Pose an unresolved question in their domain. Sages can't resist teaching \u2014 hand them a puzzle and they'll think out loud for ten minutes.",
+    avoid:"Oversimplifying, false certainty, sloppy facts, telling them rather than letting them reason."},
+  "Innocent":{d:"freedom",how:"seeks through optimism and simplicity",irk:"cynicism and needless complication",role:"the believer",
+    open:"Open clean and hopeful. Innocents recoil from cynicism and clutter; keep it simple and good-faith.",
+    close:"Close on the positive and the straightforward. Reassure that it's not as tangled as it looks.",
+    language:["simple","do the right thing","it'll work out","clean","honest","good"],
+    stories:"Someone who kept faith and did the simple right thing while everyone else overcomplicated it \u2014 and it worked.",
+    drawOut:"Ask what it'd look like if it just went right. Innocents open up around hope \u2014 they'll share the vision they're quietly protecting.",
+    avoid:"Cynicism, scheming, needless complexity, making good faith sound naive."}
+};
+
+const ARCHE_DETAIL = {
+  "Ruler":{tag:"Authority, order, control",
+    essence:"The Ruler creates order out of chaos. They take responsibility, set the standard, and carry the weight of the outcome \u2014 leadership not as a perk but as a duty. Where others see a mess, the Ruler sees something to be governed properly.",
+    desire:"Control, stability, a well-run domain.",fear:"Chaos, being overthrown or undermined.",
+    gift:"Stewardship, decisiveness, the spine to own the result.",
+    shadow:"Turns authoritarian and rigid. Can't delegate or be questioned; mistakes control for leadership and hoards the call.",
+    work:"Takes charge instinctively, sets the bar, owns the room and the result. You feel safe with them in command \u2014 until you disagree.",
+    eg:"Mercedes-Benz, Rolex, British Airways."},
+  "Caregiver":{tag:"Service, protection, generosity",
+    essence:"The Caregiver is moved by others' needs before their own. Their compass is who's looked after and who might get hurt. Strength expressed as nurture \u2014 they hold things together so others don't fall.",
+    desire:"To protect and care for others.",fear:"Selfishness, ingratitude, harm coming to those they look after.",
+    gift:"Compassion, generosity, steadfast reliability.",
+    shadow:"Slides into martyrdom \u2014 self-sacrifice to the point of depletion, or care that smothers and quietly controls through guilt.",
+    work:"The one who mentors, shields the team, notices who's struggling. Loyalty flows to them, but they burn out absorbing everyone's load.",
+    eg:"Dove, Johnson & Johnson, Heinz."},
+  "Creator":{tag:"Imagination, craft, building",
+    essence:"The Creator must make something of enduring value. They live in the work itself \u2014 the prototype, the detail, the next iteration \u2014 and measure life by what they bring into being. Self-expression through craft.",
+    desire:"To create something real and lasting.",fear:"Mediocrity, the mundane, a vision poorly executed.",
+    gift:"Imagination, craftsmanship, the drive to build.",
+    shadow:"Perfectionism that never ships. Precious about the work, paralysed by the gap between the vision and the possible.",
+    work:"Happiest making, not concluding. Brings ideas and prototypes; resents 'good enough' and being rushed off the craft.",
+    eg:"LEGO, Pinterest, Adobe."},
+  "Every Person":{tag:"Belonging, realism, loyalty",
+    essence:"The Every Person just wants to belong \u2014 no airs, no pedestal. They trust the ordinary over the impressive and prize fairness, decency and being one of the group. The quiet glue that holds people together.",
+    desire:"To connect and belong.",fear:"Standing out, exclusion, pretension.",
+    gift:"Relatability, empathy, level-headed loyalty.",
+    shadow:"Loses themselves to fit in. Plays small, resents ambition in others, mistakes blandness for virtue.",
+    work:"Down-to-earth and trusted by everyone. Reads pretension instantly and deflates it; the peer people actually confide in.",
+    eg:"IKEA, Target, Julia Roberts."},
+  "Explorer":{tag:"Freedom, discovery, autonomy",
+    essence:"The Explorer needs room to move. They're pulled toward the unmapped \u2014 new ground, new experience, the next horizon \u2014 and feel caged by routine. Authenticity found out there, not in here.",
+    desire:"Freedom and discovery; to find themselves through the journey.",fear:"Entrapment, conformity, inner emptiness.",
+    gift:"Independence, pioneering ambition, self-direction.",
+    shadow:"Aimless wandering. Can't commit or be pinned down; mistakes restlessness for purpose and bolts when things get real.",
+    work:"First to try the untested path, allergic to red tape. Brilliant at opening new ground, harder to hold to the long grind.",
+    eg:"NASA, Jeep, Patagonia."},
+  "Hero":{tag:"Courage, mastery, the win",
+    essence:"The Hero proves their worth through courageous, difficult action. They want the hard thing \u2014 the mountain, the fight worth having \u2014 and rise to it through discipline and will. Mastery earned, never given.",
+    desire:"To prove worth through brave, competent action.",fear:"Weakness, cowardice, being seen as soft.",
+    gift:"Courage, competence, discipline under pressure.",
+    shadow:"Arrogance, and a need for a battle that never ends. Makes everything a war, burns out, wins at others' cost.",
+    work:"Steps up when stakes are highest and delivers. Inspiring in a crisis, exhausting in peacetime \u2014 they'll manufacture a fight if none exists.",
+    eg:"Nike, Nelson Mandela, Duracell."},
+  "Innocent":{tag:"Optimism, simplicity, faith",
+    essence:"The Innocent believes things can be good and simple. They lead with optimism and good faith, recoil from cynicism and clutter, and want to do the right thing. Hope as a stance, not a naivety.",
+    desire:"Happiness, simplicity, to be good and do right.",fear:"Doing wrong, corruption, being punished or blamed.",
+    gift:"Optimism, honesty, clarity, faith in people.",
+    shadow:"Denial and naivety. Looks away from hard truths, oversimplifies, mistakes wishful thinking for principle.",
+    work:"Keeps faith and keeps it simple when others spiral into politics. Refreshing, but can underweight real risk and complexity.",
+    eg:"Coca-Cola, Innocent drinks, Dove."},
+  "Jester":{tag:"Play, levity, the moment",
+    essence:"The Jester lives in the now and finds the joke. They use humour to puncture self-importance, break tension, and remind everyone not to take it all so seriously. Lightness as a form of truth-telling.",
+    desire:"To enjoy the moment and lighten the room.",fear:"Boredom \u2014 and being boring.",
+    gift:"Humour, perspective, the knack for defusing tension.",
+    shadow:"Frivolity and deflection. Hides behind jokes, dodges the serious, and can wound under cover of 'just kidding'.",
+    work:"Breaks deadlocks with a well-timed line and keeps morale alive. But they'll joke past the hard conversation that actually needs having.",
+    eg:"GEICO, Doritos, Old Spice."},
+  "Lover":{tag:"Intimacy, passion, devotion",
+    essence:"The Lover is driven by connection \u2014 intimacy, beauty, devotion. They want to be wanted and to give themselves fully to people, causes, and craft. Presence and sincerity are everything; they feel coldness instantly.",
+    desire:"Intimacy, connection, to love and be loved.",fear:"Being alone, unwanted, or overlooked.",
+    gift:"Devotion, warmth, an eye for beauty and quality.",
+    shadow:"Loses identity in others; jealousy and people-pleasing. Defines self-worth entirely through being chosen.",
+    work:"Builds deep, loyal relationships and lifts the aesthetic and emotional quality of everything. Can take distance personally and over-invest.",
+    eg:"Tiffany & Co., Chanel, Godiva."},
+  "Magician":{tag:"Vision, transformation, possibility",
+    essence:"The Magician turns one thing into another. They see the gap between what is and what could be, and they live to close it \u2014 reframing the stuck situation until a new reality becomes obvious. Catalysts, not caretakers.",
+    desire:"To transform reality and make the vision real.",fear:"Stagnation, and transformation gone wrong.",
+    gift:"Vision, reframing, the power to make change feel inevitable.",
+    shadow:"Grandiosity and manipulation. Floats above the detail, over-promises the magic, loses the thread to reality.",
+    work:"Reframes a dead-end into a breakthrough and pulls people into the future they paint. Watch the gap between the vision and the logistics.",
+    eg:"Disney, Oprah, Dyson."},
+  "Rebel":{tag:"Disruption, liberation, defiance",
+    essence:"The Rebel exists to overturn what isn't working. They define themselves against the broken status quo, prize authenticity over approval, and will break the rule everyone else obeys. Liberation through disruption.",
+    desire:"To overturn what doesn't work; freedom from hollow rules.",fear:"Powerlessness, conformity, being ordinary.",
+    gift:"Courage to challenge, authenticity, the nerve to break ranks.",
+    shadow:"Destruction for its own sake. Contrarian by reflex, burns bridges, crosses lines and calls it principle.",
+    work:"Says the unsayable and breaks the rule that needed breaking. A force for change, a hazard when defiance becomes the whole identity.",
+    eg:"Virgin, Richard Branson, Harley-Davidson."},
+  "Sage":{tag:"Truth, wisdom, understanding",
+    essence:"The Sage is driven to understand \u2014 and then to teach. They distrust easy answers, dig for what's actually true, and convert understanding into something they can hand to others. Clarity is the whole project.",
+    desire:"Truth, knowledge, to understand the world and share it.",fear:"Ignorance, being deceived, being wrong.",
+    gift:"Wisdom, analysis, the ability to make the complex legible.",
+    shadow:"Analysis paralysis and detachment. Lectures, over-thinks, mistakes more understanding for progress, and never quite acts.",
+    work:"The one who sees clearly and explains it best. Invaluable for judgment \u2014 but can stall in the library while the moment passes.",
+    eg:"Google, the Smithsonian, the BBC."}
+};
+
+const PCP = {
+  order:{
+    perception:"Frame the situation as a standard or risk in play: \u201Chere's where quality or control is exposed.\u201D Make them see something that needs governing properly.",
+    context:"Position acting as the responsible, in-control move \u2014 the properly-run path, not a gamble. The decision protects the standard.",
+    permission:"Hand them a clean, owned decision: \u201Cyour call \u2014 here's the recommended standard.\u201D They green-light it as exercising proper authority."},
+  belong:{
+    perception:"Frame it around people: who's affected, who's in this together. Make them see the relationship at stake, not just the task.",
+    context:"Make acting the move that strengthens the group. Build warmth and shared ground first; agreement should feel like belonging.",
+    permission:"Permission comes from \u201Cwe\u201D \u2014 peers already on board, no one left out. Togetherness and social proof unlock the yes."},
+  mastery:{
+    perception:"Frame a challenge or a win on offer \u2014 or something broken that's worth beating. Make them see the mountain.",
+    context:"Position acting as the bold, game-changing move. Raise the stakes until the safe option looks like losing.",
+    permission:"Permission is the chance to prove it, be first, plant a flag. Give them a win to claim and they grant themselves the go."},
+  freedom:{
+    perception:"Lead with the honest \u201Cwhy\u201D and a sharp insight that reframes. Give them the real picture \u2014 no spin they can smell.",
+    context:"Frame acting as their own reasoned conclusion and an open path, never a corner. Keep their autonomy visible.",
+    permission:"Permission must feel self-granted. Offer options and room to decide; the moment it feels like a push, you lose them."}
+};
+
+const QUESTIONS = [
+  {q:"What irritates them?",hint:"Involuntary — the violated value showing its underside. The single best tell.",key:"irritation"},
+  {q:"What do they want credit for?",hint:"Where they chase status reveals what they think is worth being.",key:"credit"},
+  {q:"What role do they cast themselves as?",hint:"Listen to how they narrate their own stories.",key:"role"},
+  {q:"What do they reach for in a vacuum?",hint:"Unstructured time, an awkward silence — the default surfaces.",key:"vacuum"}
+];
+
+const OPENERS = [
+  {q:"What are you most proud of lately?",
+   hint:"Natural and disarming. The answer sorts cleanly \u2014 but polished people perform this one.",
+   map:{order:"a standard upheld, a mess cleaned up, something run properly",
+        belong:"a team win or a relationship \u2014 says \u201Cwe,\u201D credits others",
+        mastery:"a result, a hard thing beaten \u2014 says \u201CI,\u201D leads with the outcome",
+        freedom:"something they figured out, learned, or did their own way"}},
+  {q:"What's been driving you up the wall lately?",
+   hint:"Your strongest single tell \u2014 irritation is involuntary. Stiff room? \u201CWhat's been the friction lately?\u201D",
+   map:{order:"chaos, sloppiness, people not following through",
+        belong:"tension, feeling unappreciated, people not aligned",
+        mastery:"being slowed down, excuses, no progress",
+        freedom:"being boxed in, red tape, spin they can smell"}},
+  {q:"How did you end up doing what you do?",
+   hint:"The origin story reveals the role they cast themselves in.",
+   map:{order:"built it step by step, earned each rung",
+        belong:"people opened doors \u2014 mentors, fell in with the right crowd",
+        mastery:"chased a challenge, proved something, climbed",
+        freedom:"followed curiosity, wanted room, wandered into it"}}
+];
+
+/* Vector questions — surface the agenda past small talk. Decode = how each driver answers. */
+const VECTORQ = [
+  {cat:"Direction",q:"What are you deliberately walking away from this year?",
+   hint:"More revealing than \u201Cmoving towards\u201D \u2014 executives are rarely asked what they're killing.",
+   map:{order:"commitments that became unmanageable \u2014 retiring risk, tightening scope",
+        belong:"ventures or ties that turned sour \u2014 told reluctantly, with feeling",
+        mastery:"whatever isn't winning \u2014 cut fast, zero sentiment",
+        freedom:"anything that boxed them in \u2014 obligations, legacy positions, the party line"}},
+  {cat:"Change",q:"What's changed recently that outsiders haven't noticed yet?",
+   hint:"Invites them to share the inside view \u2014 flattering, and it maps the terrain shifting under them.",
+   map:{order:"risk profile, governance, who's now accountable for what",
+        belong:"alliances \u2014 who's in, who's drifted, where trust moved",
+        mastery:"the competitive board \u2014 a new opening worth attacking",
+        freedom:"their own read \u2014 an assumption they've quietly revised"}},
+  {cat:"Forces",q:"Whose agenda are you having to plan around right now?",
+   hint:"Your \u201Cperson X\u201D question \u2014 surfaces the stakeholders acting on their planning.",
+   map:{order:"the board, the regulator, the auditor \u2014 whoever sets the standard",
+        belong:"names actual people \u2014 speaks warmly of allies, wounded about the rest",
+        mastery:"rivals \u2014 frames it as a contest to be won",
+        freedom:"bristles slightly at the premise \u2014 then names whoever constrains them"}},
+  {cat:"Trade-offs",q:"What are you being asked to do simultaneously that's actually in tension?",
+   hint:"Senior roles are bundles of contradictions \u2014 naming that earns instant credibility.",
+   map:{order:"grow fast and stay safe \u2014 speed versus control",
+        belong:"protect people and hit the number \u2014 loyalty versus performance",
+        mastery:"two wins that can't both be had \u2014 they hate having to choose",
+        freedom:"their view versus the official line \u2014 autonomy versus alignment"}},
+  {cat:"Success",q:"Twelve months out, what does \u201Cthis went well\u201D look like to your board?",
+   hint:"Their answer hands you the end-in-mind \u2014 the definition of success you should be prepping against.",
+   map:{order:"delivered as promised, nothing blew up, the house in order",
+        belong:"the team intact and rated well \u2014 success taken together",
+        mastery:"the number beaten, the market moved, the win on record",
+        freedom:"proven right \u2014 the thesis they argued for, validated"}}
+];
+
+/* Compass quadrants — plot goals for THIS meeting, not the personality */
+const QUAD = {
+  verify:{n:"Decide & verify",d:"high info \u00B7 low relational"},
+  ally:{n:"Advise & ally",d:"high info \u00B7 high relational"},
+  ritual:{n:"Ritual & rapport",d:"low info \u00B7 low relational"},
+  bond:{n:"Bond & trust",d:"low info \u00B7 high relational"}
+};
+const QUAD_ORDER = ['verify','ally','ritual','bond'];
+
+function setMode(m){
+  ['diagnose','engage','drawout','people','prep','library','settings'].forEach(x=>{
+    document.getElementById(x).classList.toggle('live', x===m);
+    document.getElementById('tab-'+x).setAttribute('aria-pressed', x===m);
+  });
+  if(m==='people'){showList();}
+  if(m==='settings'){loadSettingsUI();}
+  if(m==='prep'){setupPrep();}
+}
+
+/* ---------- Prep: engineer the conclusion ---------- */
+let prepPersonId=null;
+function gotoPrepFor(id){
+  setMode('prep');
+  const sel=document.getElementById('prep-person');
+  sel.value=id; onPrepPerson();
+  document.getElementById('prep-outcome').focus();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function setupPrep(){
+  const sel=document.getElementById('prep-person');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">\u2014 Pick a saved person, or enter below \u2014</option>'+
+    PEOPLE.map(p=>`<option value="${p.id}">${esc(p.name)||'Untitled'}</option>`).join('');
+  sel.value=cur;
+  const asel=document.getElementById('prep-arche');
+  if(asel.options.length<=1){
+    asel.innerHTML='<option value="">Not sure \u2014 infer it from context</option>'+
+      ARCHE_NAMES.map(a=>`<option value="${a}">${a} \u00B7 ${DRIVERS[ARCHE[a].d].name}</option>`).join('');
+  }
+}
+function normalizePreps(p){
+  if(!p)return [];
+  if(!Array.isArray(p.preps)){
+    p.preps = p.prep ? [{id:'pr'+(p.prep.at||Date.now()),at:p.prep.at||Date.now(),outcome:p.prep.outcome,result:p.prep.result}] : [];
+    if(p.prep)delete p.prep;
+  }
+  return p.preps;
+}
+function delPrep(personId,prepId){
+  const p=getP(personId); if(!p)return;
+  normalizePreps(p);
+  p.preps=p.preps.filter(x=>x.id!==prepId);
+  savePeople(); showDetail(personId);
+}
+
+function onPrepPerson(){
+  const id=document.getElementById('prep-person').value;
+  prepPersonId=id||null;
+  const p=getP(id);
+  if(!p)return;
+  document.getElementById('prep-name').value=p.name||'';
+  document.getElementById('prep-role').value=p.role||'';
+  if(p.archetype)document.getElementById('prep-arche').value=p.archetype;
+  const ctx=document.getElementById('prep-context');
+  if(!ctx.value){
+    const threads=openThreads(p).filter(t=>!t.done).map(t=>t.t);
+    const lastM=(p.meetings||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+    const bits=[p.notes?('Read: '+p.notes):'',
+      p.openers&&p.openers.friction?('Frustrated by: '+p.openers.friction):'',
+      p.aiRead?('AI read: '+p.aiRead.read):'',
+      threads.length?('Open threads from last capture: '+threads.join('; ')):'',
+      lastM&&lastM.direction?('Their stated direction: '+lastM.direction):'',
+      lastM&&lastM.pressures?('Pressures/stakeholders they named: '+lastM.pressures):''].filter(Boolean);
+    if(bits.length)ctx.value=bits.join('\n');
+  }
+  const preps=normalizePreps(p);
+  if(preps.length){renderPrepResult(preps[0].result, preps[0].outcome);}
+  else{document.getElementById('prep-result').innerHTML='';}
+}
+async function runPrep(){
+  const key=getKey();
+  const st=document.getElementById('prep-status');
+  if(!key){st.textContent='Add your API key in Settings to use Prep.';st.className='set-status err';return;}
+  const name=document.getElementById('prep-name').value.trim();
+  const role=document.getElementById('prep-role').value.trim();
+  const arche=document.getElementById('prep-arche').value;
+  const outcome=document.getElementById('prep-outcome').value.trim();
+  const context=document.getElementById('prep-context').value.trim();
+  if(!outcome){st.textContent='Define the outcome you want them to reach first.';st.className='set-status err';return;}
+  const btn=document.getElementById('prep-btn');
+  btn.disabled=true;btn.innerHTML='<span class="ai-spin"></span> Building\u2026';
+  st.textContent='';st.className='set-status';
+
+  const drv=arche?DRIVERS[ARCHE[arche].d].name:'';
+  const facts=[
+    name?`Person: ${name}`:'Person: (unnamed)',
+    role?`Role / context: ${role}`:'',
+    arche?`Archetype: ${arche} (${drv} driver)`:'Archetype: unknown \u2014 infer the most likely one',
+    `Outcome I want them to reach (as their own idea): ${outcome}`,
+    context?`Context: ${context}`:''
+  ].filter(Boolean).join('\n');
+
+  const sys=`You are an expert in ethical influence and executive communication. You use the 12-archetype / 4-driver model and four tools:
+1. The Lego-pieces technique: instead of stating your conclusion, you place two true premises/observations on the table so the person assembles the target conclusion themselves and feels ownership of it.
+2. RIFE motivation levers: Reward (what they gain), Ideology (their values/identity), Fee (the cost or friction to them \u2014 minimise it), Ego (how it makes them look and feel about themselves).
+3. Behavioural distance/time calibration: how far the desired decision is from this person's behavioural norm (distance), and therefore whether it lands in one conversation, must be staged over a few, or is a long game (timing).
+4. TALK conversation architecture (Alison Wood Brooks): prepare 1-2 opening topics; then transition questions that probe MOTION not state \u2014 direction (what they're moving toward or walking away from), change (what's shifted that outsiders haven't noticed), forces (whose agenda they're planning around), trade-offs (what they're asked to do simultaneously that's in tension), success framing (what "went well" looks like to their board). Tune the phrasing to the archetype. Follow-up discipline is mandatory: at least one genuine follow-up on their answer before bridging to any agenda or placing a piece \u2014 a question immediately followed by the asker's own point reads as insincere (boomerasking) and poisons the setup.
+Drivers and their archetypes: Order = Ruler, Caregiver, Creator. Belonging = Lover, Jester, Every Person. Mastery = Hero, Rebel, Magician. Freedom = Explorer, Sage, Innocent.
+CRITICAL ETHICS: the pieces must be TRUE, defensible premises grounded in the real situation described \u2014 never fabricated facts, false flattery, or covert pressure. The aim is to frame an honest case so the person reasons to a sound conclusion themselves. If the outcome is not honestly supportable from the context, say so plainly in the "avoid" field.
+Reply with ONLY a JSON object, no markdown:
+{"theirIdea":"the target conclusion phrased the way the person would say it to themselves, in their voice","topics":["1-2 prepared opening topics that come across as natural care, tuned to this person"],"questions":[{"q":"a transition question that surfaces their agenda \u2014 motion, not state \u2014 phrased for this archetype","why":"what it surfaces and why this phrasing lands for them"}],"pieces":[{"piece":"a true idea/observation to place on the table","lever":"Reward|Ideology|Fee|Ego","why":"why this piece lands for this archetype"}],"placement":"how and in what order to lay the pieces down so they connect them \u2014 follow perception then context then permission; weave the questions in first so their answers open the ground for the pieces; never state the conclusion yourself","rife":{"reward":"","ideology":"","fee":"","ego":""},"distance":"low|medium|high","timing":"one conversation|stage over a few|long game","avoid":"what NOT to do or say, especially stating the conclusion outright, boomerasking your own questions, or anything that triggers reactance"}
+Provide exactly 2 pieces (3 only if truly needed) and exactly 3 questions. Keep every field tight. Respond with the JSON object only \u2014 begin with { and end with } and include no other text.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:getModel(),max_tokens:2000,system:sys,messages:[{role:'user',content:facts}]})
+    });
+    if(!resp.ok){let d=resp.status;try{const e=await resp.json();d=(e.error&&e.error.message)||d;}catch(_){}throw new Error(d);}
+    const data=await resp.json();
+    const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const out=parseModelJSON(raw);
+    btn.disabled=false;btn.innerHTML='\u2726 Build the prep';
+    renderPrepResult(out, outcome);
+    if(prepPersonId){const p=getP(prepPersonId);if(p){normalizePreps(p);p.preps.unshift({id:'pr'+Date.now(),at:Date.now(),outcome,result:out});savePeople();st.textContent='Logged to '+(p.name||'this person')+'\u2019s profile.';st.className='set-status ok';}}
+  }catch(err){
+    btn.disabled=false;btn.innerHTML='\u2726 Build the prep';
+    st.textContent='Prep failed: '+err.message;st.className='set-status err';
+  }
+}
+function prepInner(out, outcome){
+  const topics=(out.topics||[]).map(t=>`<span class="pill">${esc(t)}</span>`).join('');
+  const qs=(out.questions||[]).map(q=>`<div class="lego" style="border-top-color:var(--freedom)"><span class="ln">Ask</span><div class="lt">${esc(q.q||'')}</div><div class="lw">${esc(q.why||'')}</div></div>`).join('');
+  const pieces=(out.pieces||[]).map((pc,i)=>`<div class="lego"><span class="lever">${esc(pc.lever||'')}</span><span class="ln">Piece ${i+1}</span><div class="lt">${esc(pc.piece||'')}</div><div class="lw">${esc(pc.why||'')}</div></div>`).join('');
+  const rife=out.rife||{};
+  const rcell=(k,v)=>v?`<div class="rife-cell"><div class="rk">${k}</div><div class="rv">${esc(v)}</div></div>`:'';
+  const rifeBlock=[rcell('Reward',rife.reward),rcell('Ideology',rife.ideology),rcell('Fee',rife.fee),rcell('Ego',rife.ego)].filter(Boolean).join('');
+  return `
+    <div class="prep-idea"><div class="lbl">Their conclusion, in their voice</div><div class="txt">\u201C${esc(out.theirIdea||outcome||'')}\u201D</div></div>
+    ${topics?`<div class="prep-sec" style="border-top:0;padding-top:0"><div class="lbl">Open \u2014 prepared topics</div><div class="calib">${topics}</div></div>`:''}
+    ${qs?`<div class="prep-sec"><div class="lbl">Surface \u2014 transition questions</div>${qs}</div>`:''}
+    <div class="prep-sec"><div class="lbl">Place \u2014 the pieces, never the conclusion</div>${pieces}</div>
+    ${out.placement?`<div class="prep-sec"><div class="lbl">How to place them</div><p>${esc(out.placement)}</p></div>`:''}
+    <div class="prep-sec warn"><div class="lbl">Discipline</div><p>One genuine follow-up on their answer before you bridge or place a piece. A question you abandon for your own agenda reads as a setup \u2014 and poisons the pieces that follow.</p></div>
+    ${rifeBlock?`<div class="prep-sec"><div class="lbl">RIFE levers</div><div class="rife-grid">${rifeBlock}</div></div>`:''}
+    <div class="prep-sec"><div class="lbl">Calibration</div><div class="calib"><span class="pill">Distance from their norm: <b>${esc(out.distance||'?')}</b></span><span class="pill">Timing: <b>${esc(out.timing||'?')}</b></span></div></div>
+    ${out.avoid?`<div class="prep-sec warn"><div class="lbl">Avoid</div><p>${esc(out.avoid)}</p></div>`:''}`;
+}
+function renderPrepResult(out, outcome){
+  const host=document.getElementById('prep-result');
+  if(!out){host.innerHTML='';return;}
+  host.innerHTML=`<div class="prep-panel">${prepInner(out,outcome)}</div>`;
+}
+
+/* ---------- settings: API key + model ---------- */
+const KEY_LS='theRead.apiKey.v1', MODEL_LS='theRead.model.v1';
+function getKey(){try{return localStorage.getItem(KEY_LS)||'';}catch(e){return '';}}
+function getModel(){try{return localStorage.getItem(MODEL_LS)||'claude-opus-4-8';}catch(e){return 'claude-opus-4-8';}}
+function parseModelJSON(raw){
+  let t=(raw||'').replace(/```json/gi,'').replace(/```/g,'').trim();
+  const cands=[t, '{'+t];                 // handle assistant-prefill continuations
+  for(const c of cands){ try{return JSON.parse(c);}catch(e){} }
+  for(const c of cands){                  // last resort: extract first {...last}
+    const s=c.indexOf('{'), e=c.lastIndexOf('}');
+    if(s>=0&&e>s){ try{return JSON.parse(c.slice(s,e+1).replace(/,(\s*[}\]])/g,'$1'));}catch(e){} }
+  }
+  throw new Error('the model didn\u2019t return clean JSON \u2014 try again');
+}
+function loadSettingsUI(){
+  const k=getKey();
+  document.getElementById('set-key').value=k;
+  document.getElementById('set-model').value=getModel();
+  const st=document.getElementById('set-key-status');
+  st.textContent=k?'Key saved on this device.':'No key yet \u2014 AI read is off until you add one.';
+  st.className='set-status '+(k?'ok':'');
+  // populate print selector
+  const sel=document.getElementById('print-select');
+  sel.innerHTML='<option value="">Select a person\u2026</option>'+
+    PEOPLE.map(p=>`<option value="${p.id}">${esc(p.name)||'Untitled'}</option>`).join('');
+}
+function saveSettings(){
+  const k=document.getElementById('set-key').value.trim();
+  const m=document.getElementById('set-model').value;
+  try{ if(k)localStorage.setItem(KEY_LS,k); else localStorage.removeItem(KEY_LS); localStorage.setItem(MODEL_LS,m); }catch(e){}
+  const st=document.getElementById('set-key-status');
+  st.textContent='Saved.'; st.className='set-status ok';
+}
+
+/* ---------- backup / restore ---------- */
+function exportJSON(){
+  const data={app:'The Read',version:2,exportedAt:new Date().toISOString(),people:PEOPLE};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='the-read-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+  setStatus('backup-status','Exported '+PEOPLE.length+' '+(PEOPLE.length===1?'person':'people')+'.','ok');
+}
+function importJSON(ev){
+  const file=ev.target.files&&ev.target.files[0]; if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const parsed=JSON.parse(r.result);
+      const incoming=Array.isArray(parsed)?parsed:(parsed.people||[]);
+      if(!Array.isArray(incoming))throw new Error('bad format');
+      let added=0,updated=0;
+      incoming.forEach(np=>{
+        if(!np||!np.id){np={...np,id:'p'+Date.now()+Math.floor(Math.random()*999)};}
+        const i=PEOPLE.findIndex(p=>p.id===np.id);
+        // backfill any missing fields
+        const norm=Object.assign({star:false,driver:null,archetype:null,notes:'',openers:{proud:'',friction:'',origin:''},meetings:[],compass:null},np);
+        if(i>=0){PEOPLE[i]=norm;updated++;}else{PEOPLE.unshift(norm);added++;}
+      });
+      savePeople();
+      setStatus('backup-status','Imported \u2014 '+added+' added, '+updated+' updated.','ok');
+      loadSettingsUI();
+    }catch(e){ setStatus('backup-status','Couldn\u2019t read that file. Is it a valid backup?','err'); }
+  };
+  r.readAsText(file);
+  ev.target.value='';
+}
+function setStatus(id,msg,cls){const el=document.getElementById(id);if(!el)return;el.textContent=msg;el.className='set-status '+(cls||'');}
+
+/* ---------- print one person ---------- */
+function printPerson(){
+  const id=document.getElementById('print-select').value;
+  const p=getP(id);
+  if(!p){setStatus('backup-status','Pick a person to print first.','err');return;}
+  document.getElementById('print-area').innerHTML=buildPrintHTML(p);
+  window.print();
+}
+function buildPrintHTML(p){
+  const d=p.driver?DRIVERS[p.driver]:null;
+  const peg=p.archetype?`${p.archetype} \u00B7 ${d.name} driver`:(d?d.name+' driver':'Unpegged');
+  let body=`<h2>${esc(p.name)||'Untitled'}</h2>`;
+  if(p.role)body+=`<p class="p-role">${esc(p.role)}</p>`;
+  body+=`<p class="p-peg">${peg}</p>`;
+  const c=p.compass||{};
+  if(c.them||c.you){
+    body+=`<div class="p-sec"><div class="p-lbl">Compass \u2014 next meeting</div>`;
+    if(c.them)body+=`<div class="p-row"><span class="pk">Them</span><span>${QUAD[c.them].n} (${QUAD[c.them].d})</span></div>`;
+    if(c.you)body+=`<div class="p-row"><span class="pk">You</span><span>${QUAD[c.you].n} (${QUAD[c.you].d})</span></div>`;
+    body+=`</div>`;
+  }
+  const openCbs=openThreads(p).filter(t=>!t.done);
+  if(openCbs.length){
+    body+=`<div class="p-sec"><div class="p-lbl">Callbacks \u2014 threads left open</div>`+
+      openCbs.map(t=>`<div class="p-row"><span class="pk">${t.date||''}</span><span>${esc(t.t)}</span></div>`).join('')+`</div>`;
+  }
+  if(p.notes)body+=`<div class="p-sec"><div class="p-lbl">Quick read</div><div>${esc(p.notes)}</div></div>`;
+  const o=p.openers||{};
+  if(o.proud||o.friction||o.origin){
+    body+=`<div class="p-sec"><div class="p-lbl">Opener answers</div>`;
+    if(o.proud)body+=`<div class="p-row"><span class="pk">Proud</span><span>${esc(o.proud)}</span></div>`;
+    if(o.friction)body+=`<div class="p-row"><span class="pk">Friction</span><span>${esc(o.friction)}</span></div>`;
+    if(o.origin)body+=`<div class="p-row"><span class="pk">Origin</span><span>${esc(o.origin)}</span></div>`;
+    body+=`</div>`;
+  }
+  if(p.archetype){
+    const a=ARCHE[p.archetype];
+    body+=`<div class="p-sec"><div class="p-lbl">Playbook \u2014 ${p.archetype}</div>`+
+      `<div class="p-row"><span class="pk">Open</span><span>${a.open}</span></div>`+
+      `<div class="p-row"><span class="pk">Close</span><span>${a.close}</span></div>`+
+      `<div class="p-row"><span class="pk">Draw out</span><span>${a.drawOut}</span></div>`+
+      `<div class="p-row"><span class="pk">Avoid</span><span>${a.avoid}</span></div></div>`;
+  }
+  if(p.aiRead){
+    body+=`<div class="p-sec"><div class="p-lbl">AI read</div><div>${esc(p.aiRead.read)}</div></div>`;
+  }
+  const preps=normalizePreps(p);
+  if(preps.length){
+    body+=`<div class="p-sec"><div class="p-lbl">Prep log</div>`+
+      preps.map(pr=>{
+        const r=pr.result||{};
+        const qrows=(r.questions||[]).map(q=>`<div class="p-row"><span class="pk">Ask</span><span>${esc(q.q||'')}</span></div>`).join('');
+        const pieces=(r.pieces||[]).map((pc,i)=>`<div class="p-row"><span class="pk">Piece ${i+1}${pc.lever?' \u00B7 '+esc(pc.lever):''}</span><span>${esc(pc.piece||'')}</span></div>`).join('');
+        const ds=pr.at?new Date(pr.at-(new Date()).getTimezoneOffset()*60000).toISOString().slice(0,10):'';
+        return `<div class="p-mtg"><span class="pd">${ds}${pr.outcome?' \u2014 '+esc(pr.outcome):''}</span>`+
+          (r.theirIdea?`<div style="margin:3px 0"><i>\u201C${esc(r.theirIdea)}\u201D</i></div>`:'')+
+          qrows+pieces+
+          ((r.distance||r.timing)?`<div class="p-row"><span class="pk">Calibration</span><span>distance ${esc(r.distance||'?')} \u00B7 timing ${esc(r.timing||'?')}</span></div>`:'')+
+          (r.avoid?`<div class="p-row"><span class="pk">Avoid</span><span>${esc(r.avoid)}</span></div>`:'')+
+          `</div>`;
+      }).join('')+`</div>`;
+  }
+  if(p.meetings&&p.meetings.length){
+    body+=`<div class="p-sec"><div class="p-lbl">Meeting log</div>`+
+      p.meetings.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(m=>{
+        let extra='';
+        if(m.direction)extra+=`<div class="pd">direction: ${esc(m.direction)}</div>`;
+        if(m.pressures)extra+=`<div class="pd">pressures: ${esc(m.pressures)}</div>`;
+        if(m.threads&&m.threads.length)extra+=`<div class="pd">threads: ${m.threads.map(t=>esc(t.t)+(t.done?' \u2713':'')).join(' \u00B7 ')}</div>`;
+        return `<div class="p-mtg"><span class="pd">${m.date||''}</span><div>${esc(m.note)}</div>${extra}</div>`;
+      }).join('')+`</div>`;
+  }
+  return body;
+}
+
+/* ---------- AI read ---------- */
+const ARCHE_NAMES=["Ruler","Caregiver","Creator","Lover","Jester","Every Person","Hero","Rebel","Magician","Explorer","Sage","Innocent"];
+async function runAiRead(id){
+  const p=getP(id); if(!p)return;
+  const key=getKey();
+  const status=document.getElementById('ai-status');
+  if(!key){ if(status){status.textContent='Add your API key in Settings to use AI read.';status.className='set-status err';} return; }
+  const btn=document.getElementById('ai-btn');
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="ai-spin"></span> Reading\u2026';}
+  if(status){status.textContent='';status.className='set-status';}
+
+  const o=p.openers||{};
+  const facts=[
+    p.name?`Name: ${p.name}`:'',
+    p.role?`Role / context: ${p.role}`:'',
+    (p.driver||p.archetype)?`Current peg (a prior guess, confirm or revise it): ${p.archetype||''} ${p.driver?'('+DRIVERS[p.driver].name+')':''}`:'',
+    p.notes?`Notes / quick read: ${p.notes}`:'',
+    o.proud?`Q "What are you most proud of lately?" \u2192 ${o.proud}`:'',
+    o.friction?`Q "What's driving you up the wall?" \u2192 ${o.friction}`:'',
+    o.origin?`Q "How did you end up doing what you do?" \u2192 ${o.origin}`:'',
+    (p.meetings&&p.meetings.length)?`Meeting notes: ${p.meetings.map(m=>{
+      let s=(m.date||'')+': '+m.note;
+      if(m.direction)s+=' [direction: '+m.direction+']';
+      if(m.pressures)s+=' [pressures: '+m.pressures+']';
+      return s;
+    }).join(' | ')}`:''
+  ].filter(Boolean).join('\n');
+
+  if(facts.replace(/Name:.*/,'').trim().length<8){
+    if(btn){btn.disabled=false;btn.textContent='\u2726 AI read';}
+    if(status){status.textContent='Add some notes or opener answers first \u2014 there\u2019s little to read yet.';status.className='set-status err';}
+    return;
+  }
+
+  const sys=`You are an expert at the 12 brand archetypes used as a people-reading tool. Four DRIVERS each hold three ARCHETYPES:
+- Order (control/structure): Ruler, Caregiver, Creator
+- Belonging (connection): Lover, Jester, Every Person
+- Mastery (impact): Hero, Rebel, Magician
+- Freedom (truth/autonomy): Explorer, Sage, Innocent
+Read the evidence about a real person and infer their most likely archetype. Weigh involuntary tells (what irritates them, the role they cast themselves in) above curated self-presentation. Cite specifics from the evidence. Be decisive but honest about confidence given limited data.
+Reply with ONLY a JSON object, no markdown, no preamble:
+{"driver":"order|belong|mastery|freedom","archetype":"one of: ${ARCHE_NAMES.join(', ')}","confidence":"low|medium|high","read":"2-3 sentences, specific, quoting/citing the evidence","engage":"1-2 sentences on how to open and what language to use with this person","caution":"one short watch-out, or empty string"}
+Respond with the JSON object only \u2014 begin with { and end with } and include no other text.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:getModel(),max_tokens:900,system:sys,messages:[{role:'user',content:'Evidence:\n'+facts}]})
+    });
+    if(!resp.ok){
+      let detail=resp.status;
+      try{const e=await resp.json();detail=(e.error&&e.error.message)?e.error.message:detail;}catch(_){}
+      throw new Error(detail);
+    }
+    const data=await resp.json();
+    const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const out=parseModelJSON(raw);
+    if(!ARCHE_NAMES.includes(out.archetype))throw new Error('unexpected archetype in response');
+    p.aiRead={driver:out.driver,archetype:out.archetype,confidence:out.confidence||'',read:out.read||'',engage:out.engage||'',caution:out.caution||'',at:Date.now()};
+    savePeople();
+    showDetail(id);
+  }catch(err){
+    if(btn){btn.disabled=false;btn.innerHTML='\u2726 AI read';}
+    if(status){status.textContent='AI read failed: '+err.message;status.className='set-status err';}
+  }
+}
+function applyAiPeg(id){
+  const p=getP(id); if(!p||!p.aiRead)return;
+  p.driver=p.aiRead.driver; p.archetype=p.aiRead.archetype;
+  savePeople(); showDetail(id);
+}
+function clearAiRead(id){
+  const p=getP(id); if(!p)return; delete p.aiRead; savePeople(); showDetail(id);
+}
+function aiPanelHTML(p){
+  const a=p.aiRead; if(!a)return '';
+  const d=DRIVERS[a.driver];
+  const cau=a.caution?`<p class="ai-cau"><span class="ai-lbl">Watch</span> ${esc(a.caution)}</p>`:'';
+  const pegged=(p.driver===a.driver&&p.archetype===a.archetype);
+  return `<div class="ai-panel" style="border-left-color:var(${d?d.varc:'--freedom'})">
+    <div class="ai-head"><span class="ai-peg">${esc(a.archetype)}${d?` \u00B7 ${d.name}`:''}</span><span class="ai-conf">${esc(a.confidence)} confidence</span></div>
+    <p><span class="ai-lbl">Read</span> ${esc(a.read)}</p>
+    ${a.engage?`<p><span class="ai-lbl">Engage</span> ${esc(a.engage)}</p>`:''}
+    ${cau}
+    <div class="ai-acts">
+      ${pegged?'<button disabled>\u2713 Pegged</button>':`<button class="apply" onclick="applyAiPeg('${p.id}')">Apply this peg</button>`}
+      <button onclick="runAiRead('${p.id}')">Re-run</button>
+      <button onclick="clearAiRead('${p.id}')">Dismiss</button>
+    </div>
+  </div>`;
+}
+
+/* build diagnose */
+const order = ['order','belong','mastery','freedom'];
+function buildQuestions(){
+  const host = document.getElementById('questions');
+  QUESTIONS.forEach((item,i)=>{
+    const lines = order.map(k=>{
+      const d = DRIVERS[k];
+      return `<div class="dline"><span class="dkey" style="color:var(${d.varc})"><span class="dot" style="background:var(${d.varc})"></span>${d.name}</span><span>${d.diagnose[item.key]}</span></div>`;
+    }).join('');
+    const card = document.createElement('div');
+    card.className='qcard';
+    card.innerHTML = `<button aria-expanded="false" onclick="this.parentNode.classList.toggle('open');this.setAttribute('aria-expanded',this.parentNode.classList.contains('open'))">
+        <span class="qnum">0${i+1}</span>
+        <span class="qtext">${item.q}<span class="qhint">${item.hint}</span></span>
+      </button>
+      <div class="decoder">${lines}</div>`;
+    host.appendChild(card);
+  });
+}
+
+function buildVectorQs(){
+  const host=document.getElementById('vectorqs');
+  VECTORQ.forEach(item=>{
+    const lines=order.map(k=>{
+      const d=DRIVERS[k];
+      return `<div class="dline"><span class="dkey" style="color:var(${d.varc})"><span class="dot" style="background:var(${d.varc})"></span>${d.name}</span><span>${item.map[k]}</span></div>`;
+    }).join('');
+    const card=document.createElement('div');
+    card.className='qcard';
+    card.innerHTML=`<button aria-expanded="false" onclick="this.parentNode.classList.toggle('open');this.setAttribute('aria-expanded',this.parentNode.classList.contains('open'))">
+        <span class="qnum">${item.cat}</span>
+        <span class="qtext">\u201C${item.q}\u201D<span class="qhint">${item.hint}</span></span>
+      </button>
+      <div class="decoder">${lines}</div>`;
+    host.appendChild(card);
+  });
+}
+
+/* build engage stations */
+let activeDriver=null, activeArche=null;
+function buildStations(){
+  const host=document.getElementById('stations');
+  order.forEach(k=>{
+    const d=DRIVERS[k];
+    const b=document.createElement('button');
+    b.className='station';b.style.setProperty('--c',`var(${d.varc})`);
+    b.setAttribute('aria-pressed','false');
+    b.innerHTML=`<span class="tag">${d.tag}</span><span class="name">${d.name}</span><span class="want">${d.want}</span><span class="types">${d.types.join('  ·  ')}</span>`;
+    b.onclick=()=>selectDriver(k,b);
+    host.appendChild(b);
+  });
+}
+
+function seqHTML(k){
+  const s=PCP[k]; if(!s)return '';
+  return `<div class="seq">
+    <div class="seq-h">Sequence \u00B7 move them in order</div>
+    <p class="seq-intro">Resonate, don't direct \u2014 acknowledge their current view before offering a new one, then walk them through these three.</p>
+    <div class="seq-step"><span class="sn">P</span><div><b>Perception.</b> ${s.perception}</div></div>
+    <div class="seq-step"><span class="sn">C</span><div><b>Context.</b> ${s.context}</div></div>
+    <div class="seq-step"><span class="sn">P</span><div><b>Permission.</b> ${s.permission}</div></div>
+  </div>`;
+}
+
+function rowsHTML(d){
+  const lang = d.language.map(w=>`\u201C${w}\u201D`).join(', ');
+  return `
+    <div class="row"><span class="k">Open</span><span class="v">${d.open}</span></div>
+    <div class="row"><span class="k">Close</span><span class="v">${d.close}</span></div>
+    <div class="row"><span class="k">Language</span><span class="v">${lang}</span></div>
+    <div class="row"><span class="k">Stories</span><span class="v">${d.stories}</span></div>
+    <div class="row draw"><span class="k">Draw out</span><span class="v">${d.drawOut}</span></div>
+    <div class="row warn"><span class="k">Avoid</span><span class="v">${d.avoid}</span></div>`;
+}
+
+function selectDriver(k,btn){
+  activeDriver=k;activeArche=null;
+  document.querySelectorAll('.station').forEach(s=>s.setAttribute('aria-pressed','false'));
+  btn.setAttribute('aria-pressed','true');
+  const d=DRIVERS[k];
+  document.documentElement.style.setProperty('--accent',`var(${d.varc})`);
+  const play=document.getElementById('play');play.hidden=false;
+  play.style.borderTopColor=`var(${d.varc})`;
+  const chips=d.types.map(t=>`<button class="chip" aria-pressed="false" onclick="selectArche('${t.replace(/'/g,"\\'")}',this)">${t}</button>`).join('');
+  play.innerHTML=`
+    <div class="head" style="border-top-color:var(${d.varc})">
+      <span class="tag">${d.tag}</span>
+      <h2 id="play-title">${d.name}</h2>
+      <p id="play-want">${d.want}</p>
+    </div>
+    <div class="chips">${chips}</div>
+    <div class="refine" id="refine">Tap an archetype to sharpen the whole playbook \u2014 same driver, different way of pursuing it.</div>
+    <div class="rows" id="rows">${rowsHTML(d)}</div>
+    ${seqHTML(k)}`;
+  play.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function selectArche(name,btn){
+  const wasOn = btn.getAttribute('aria-pressed')==='true';
+  document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed','false'));
+  const refine=document.getElementById('refine');
+  const rows=document.getElementById('rows');
+  const title=document.getElementById('play-title');
+  const want=document.getElementById('play-want');
+  const d=DRIVERS[activeDriver];
+  if(wasOn){
+    activeArche=null;
+    title.textContent=d.name; want.textContent=d.want;
+    refine.innerHTML="Tap an archetype to sharpen the whole playbook \u2014 same driver, different way of pursuing it.";
+    rows.innerHTML=rowsHTML(d);
+    return;
+  }
+  btn.setAttribute('aria-pressed','true');activeArche=name;
+  const a=ARCHE[name];
+  title.textContent=name; want.textContent=`${d.name} driver \u2014 ${a.how}.`;
+  refine.innerHTML=`<b>${name}.</b> Bristles at <b>${a.irk}</b>; casts itself as <b>${a.role}</b>. The playbook below is now tuned to this archetype.`;
+  rows.innerHTML=rowsHTML(a);
+}
+
+function buildOpeners(){
+  const host=document.getElementById('openers');
+  OPENERS.forEach((item,i)=>{
+    const lines=order.map(k=>{
+      const d=DRIVERS[k];
+      return `<div class="dline"><span class="dkey" style="color:var(${d.varc})"><span class="dot" style="background:var(${d.varc})"></span>${d.name}</span><span>${item.map[k]}</span></div>`;
+    }).join('');
+    const card=document.createElement('div');
+    card.className='qcard';
+    card.innerHTML=`<button aria-expanded="false" onclick="this.parentNode.classList.toggle('open');this.setAttribute('aria-expanded',this.parentNode.classList.contains('open'))">
+        <span class="qnum">Q${i+1}</span>
+        <span class="qtext">\u201C${item.q}\u201D<span class="qhint">${item.hint}</span></span>
+      </button>
+      <div class="decoder">${lines}</div>`;
+    host.appendChild(card);
+  });
+}
+
+function buildDrawout(){
+  const host=document.getElementById('drawlist');
+  order.forEach(k=>{
+    const d=DRIVERS[k];
+    const items=d.types.map(t=>{
+      const a=ARCHE[t];
+      return `<div class="ditem"><p class="an">${t}</p><p class="am">${a.drawOut}</p></div>`;
+    }).join('');
+    const g=document.createElement('div');
+    g.className='dgroup';g.style.setProperty('--c',`var(${d.varc})`);
+    g.innerHTML=`<h3><span class="bar"></span>${d.name} \u2014 ${d.want}</h3>${items}`;
+    host.appendChild(g);
+  });
+}
+
+/* ---------- People / dossier ---------- */
+const LS_KEY='theRead.people.v1';
+let PEOPLE=[], filter='all';
+function loadPeople(){try{const r=localStorage.getItem(LS_KEY);PEOPLE=r?JSON.parse(r):[];}catch(e){PEOPLE=[];}}
+function savePeople(){try{localStorage.setItem(LS_KEY,JSON.stringify(PEOPLE));}catch(e){/* preview may block storage; stays in memory this session */}}
+function getP(id){return PEOPLE.find(p=>p.id===id);}
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function newPerson(){
+  const p={id:'p'+Date.now()+Math.floor(Math.random()*999),name:'',role:'',star:false,driver:null,archetype:null,
+    notes:'',openers:{proud:'',friction:'',origin:''},meetings:[],compass:null};
+  PEOPLE.unshift(p);savePeople();showDetail(p.id);
+}
+function deletePerson(id){
+  if(!confirm('Delete this person from your dossier?'))return;
+  PEOPLE=PEOPLE.filter(p=>p.id!==id);savePeople();showList();
+}
+function setFilter(f,btn){filter=f;document.querySelectorAll('.filt').forEach(b=>b.setAttribute('aria-pressed',b===btn));renderList();}
+
+function showList(){
+  document.getElementById('people-list-view').hidden=false;
+  document.getElementById('people-detail-view').hidden=true;
+  renderList();
+}
+function renderList(){
+  const host=document.getElementById('people-list');
+  const empty=document.getElementById('people-empty');
+  let rows=PEOPLE.slice();
+  if(filter==='star')rows=rows.filter(p=>p.star);
+  host.innerHTML='';
+  if(rows.length===0){
+    empty.classList.remove('hide');
+    empty.textContent = filter==='star' ? 'No one starred yet. Tap the star on a card to add to your watchlist.' : 'No people yet. Add the few who actually move your situation.';
+    return;
+  }
+  empty.classList.add('hide');
+  rows.forEach(p=>{
+    const d=p.driver?DRIVERS[p.driver]:null;
+    const c=d?`var(${d.varc})`:'var(--line)';
+    const tag=p.archetype?`${p.archetype} \u00B7 ${d.name}`:(d?d.name:'Unpegged');
+    const nCb=openThreads(p).filter(t=>!t.done).length;
+    const card=document.createElement('div');
+    card.className='pcard';card.style.setProperty('--c',c);
+    card.innerHTML=`<div class="pmain" onclick="showDetail('${p.id}')">
+        <div class="pname">${esc(p.name)||'Untitled'}</div>
+        ${p.role?`<div class="prole">${esc(p.role)}</div>`:''}
+        <div class="ptag" style="color:${c}">${tag}${nCb?` <span style="color:var(--belong)">\u00B7 ${nCb} thread${nCb>1?'s':''} open</span>`:''}</div>
+      </div>
+      <button class="pstar ${p.star?'on':''}" title="Watchlist" onclick="toggleStar('${p.id}')">${p.star?'\u2605':'\u2606'}</button>`;
+    host.appendChild(card);
+  });
+}
+function toggleStar(id){const p=getP(id);if(!p)return;p.star=!p.star;savePeople();renderList();}
+
+/* ---------- compass + threads ---------- */
+function setCompass(id,who,k){
+  const p=getP(id);if(!p)return;
+  p.compass=p.compass||{them:null,you:null};
+  p.compass[who]=(p.compass[who]===k)?null:k;
+  savePeople();showDetail(id);
+}
+function compassNote(c){
+  if(!c||!c.them||!c.you)return '';
+  if(c.them===c.you)return `<div class="compass-note"><b>Aligned \u2014 ${QUAD[c.them].n}.</b> Lead straight into the shared goal; don\u2019t over-warm what\u2019s already warm.</div>`;
+  const rel={bond:1,ally:1,verify:0,ritual:0}, info={verify:1,ally:1,bond:0,ritual:0};
+  let hint;
+  if(rel[c.them]&&!rel[c.you])hint='They came for the relationship. Open in their quadrant \u2014 warmth and shared ground \u2014 and earn the bridge to your ask.';
+  else if(info[c.them]&&!info[c.you])hint='They came to decide or verify. Get to substance fast; the relational move comes after you\u2019ve been useful.';
+  else hint='Meet them in their quadrant first \u2014 the shift to yours has to be earned mid-conversation, not assumed at the door.';
+  return `<div class="compass-note"><b>Misaligned \u2014 they\u2019re at ${QUAD[c.them].n}, you\u2019re at ${QUAD[c.you].n}.</b> ${hint}</div>`;
+}
+function compassHTML(p){
+  const c=p.compass||{};
+  const row=(who,label)=>`<div class="cq-who">${label}</div><div class="cq-grid">`+
+    QUAD_ORDER.map(k=>`<button class="cq" aria-pressed="${c[who]===k}" onclick="setCompass('${p.id}','${who}','${k}')"><b>${QUAD[k].n}</b>${QUAD[k].d}</button>`).join('')+`</div>`;
+  return `<div class="field-label">Compass \u2014 next meeting</div>
+    <p class="opener-q" style="margin-top:0">Plot today's goals, not the personality. The archetype gives the lean; a crisis week overrides it.</p>
+    ${row('them','Them \u2014 what they want out of it')}
+    ${row('you','You \u2014 what you want out of it')}
+    ${compassNote(c)}`;
+}
+function openThreads(p){
+  const out=[];
+  (p.meetings||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).forEach(m=>{
+    (m.threads||[]).forEach(t=>out.push({id:t.id,t:t.t,done:!!t.done,mid:m.id,date:m.date}));
+  });
+  return out;
+}
+function toggleThread(pid,mid,tid){
+  const p=getP(pid);if(!p)return;
+  const m=(p.meetings||[]).find(x=>x.id===mid);if(!m)return;
+  const t=(m.threads||[]).find(x=>x.id===tid);if(!t)return;
+  t.done=!t.done;savePeople();showDetail(pid);
+}
+function callbacksHTML(p){
+  const all=openThreads(p);
+  if(!all.length)return '';
+  const open=all.filter(t=>!t.done);
+  const items=all.slice(0,8).map(t=>
+    `<div class="cb ${t.done?'done':''}"><button title="${t.done?'Reopen':'Pulled it'}" onclick="toggleThread('${p.id}','${t.mid}','${t.id}')">${t.done?'\u21BA':'\u2713'}</button><span>${esc(t.t)}<span class="cb-d">${t.date||''}</span></span></div>`).join('');
+  return `<div class="cb-card">
+    <div class="cb-h">Callbacks \u2014 threads left open</div>
+    <p class="cb-sub">${open.length?open.length+' to pull. These climb the pyramid across meetings \u2014 open with one and you start where you left off, not at the bottom.':'All pulled. Capture new ones after the next meeting.'}</p>
+    ${items}</div>`;
+}
+
+function showDetail(id){
+  const p=getP(id);if(!p)return;
+  document.getElementById('people-list-view').hidden=true;
+  const host=document.getElementById('people-detail-view');host.hidden=false;
+  const d=p.driver?DRIVERS[p.driver]:null;
+  const drivers=order.map(k=>{
+    const dd=DRIVERS[k];
+    return `<button class="dp" style="--c:var(${dd.varc})" aria-pressed="${p.driver===k}" onclick="setPersonDriver('${id}','${k}')">${dd.name}</button>`;
+  }).join('');
+  let archeBlock='';
+  if(d){
+    const chips=d.types.map(t=>`<button class="chip d-arche" aria-pressed="${p.archetype===t}" onclick="setPersonArche('${id}','${t.replace(/'/g,"\\'")}')">${t}</button>`).join('');
+    archeBlock=`<div class="field-label">Archetype \u2014 ${d.name}</div><div class="chips" style="padding-left:0;padding-right:0">${chips}</div>`;
+    if(p.archetype){
+      archeBlock+=`<div class="peg-play" style="border-top:3px solid var(${d.varc})"><div class="rows">${rowsHTML(ARCHE[p.archetype])}</div></div>`;
+    }
+  }
+  const meetings=p.meetings.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(mtg=>{
+    let extra='';
+    if(mtg.direction)extra+=`<div class="mkv"><span class="mk">Direction</span><span>${esc(mtg.direction)}</span></div>`;
+    if(mtg.pressures)extra+=`<div class="mkv"><span class="mk">Pressures</span><span>${esc(mtg.pressures)}</span></div>`;
+    if(mtg.threads&&mtg.threads.length)extra+=`<div class="mkv"><span class="mk">Threads</span><span>${mtg.threads.map(t=>esc(t.t)+(t.done?' \u2713':'')).join(' \u00B7 ')}</span></div>`;
+    return `<div class="meeting"><button class="mdel" title="Delete" onclick="delMeeting('${id}','${mtg.id}')">\u00D7</button><span class="mdate">${mtg.date||''}</span><div class="mtxt">${esc(mtg.note)}</div>${extra}</div>`;
+  }).join('');
+  const today=(()=>{const n=new Date();return new Date(n.getTime()-n.getTimezoneOffset()*60000).toISOString().slice(0,10);})();
+  const prepList=normalizePreps(p);
+  const prepEntries = prepList.length ? prepList.map(pr=>{
+    const ds=pr.at?new Date(pr.at-(new Date()).getTimezoneOffset()*60000).toISOString().slice(0,10):'';
+    return `<div class="qcard" style="border-left:3px solid var(--freedom)">
+      <button aria-expanded="false" onclick="this.parentNode.classList.toggle('open');this.setAttribute('aria-expanded',this.parentNode.classList.contains('open'))">
+        <span class="qtext" style="font-size:15px">${esc(pr.outcome)||'Prep'}<span class="qtag" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">${ds}</span></span>
+      </button>
+      <div class="decoder"><div class="prep-panel" style="margin:0;border:0;border-left:0;border-radius:0;padding:0;background:transparent">${prepInner(pr.result,pr.outcome)}</div>
+        <button class="set-btn ghost" style="min-height:38px;padding:9px 12px;margin-top:10px" onclick="delPrep('${id}','${pr.id}')">Delete this prep</button>
+      </div>
+    </div>`;
+  }).join('') : '<p class="opener-q" style="margin-top:0">No prep logged yet.</p>';
+  host.style.setProperty('--accent', d?`var(${d.varc})`:'var(--order)');
+  document.documentElement.style.setProperty('--accent', d?`var(${d.varc})`:'var(--order)');
+  host.innerHTML=`
+    <button class="back-btn" onclick="showList()">\u2039 All people</button>
+    <input class="d-name" placeholder="Name" value="${esc(p.name)}" oninput="updateField('${id}','name',this.value)" />
+    <input class="d-role" placeholder="Role / context (e.g. BHP CTO)" value="${esc(p.role)}" oninput="updateField('${id}','role',this.value)" />
+
+    <button class="room-launch" onclick="showRoomCard('${id}')">\u25A4 Room card</button><button id="ai-btn" class="ai-btn" onclick="runAiRead('${id}')">\u2726 AI read</button>
+    <p id="ai-status" class="set-status"></p>
+    ${aiPanelHTML(p)}
+
+    ${callbacksHTML(p)}
+
+    <div class="field-label">Driver</div>
+    <div class="driver-pick">${drivers}</div>
+    ${archeBlock}
+
+    ${compassHTML(p)}
+
+    <div class="field-label">Quick read / notes</div>
+    <textarea rows="3" placeholder="The one-line read. What lands, what to avoid." oninput="updateField('${id}','notes',this.value)">${esc(p.notes)}</textarea>
+
+    <div class="field-label">How they answered your openers</div>
+    <p class="opener-q"><b>Proud of lately?</b></p>
+    <textarea rows="2" oninput="updateOpener('${id}','proud',this.value)">${esc(p.openers.proud)}</textarea>
+    <p class="opener-q"><b>Driving them up the wall?</b></p>
+    <textarea rows="2" oninput="updateOpener('${id}','friction',this.value)">${esc(p.openers.friction)}</textarea>
+    <p class="opener-q"><b>How they got here?</b></p>
+    <textarea rows="2" oninput="updateOpener('${id}','origin',this.value)">${esc(p.openers.origin)}</textarea>
+
+    <div class="field-label">Prep log</div>
+    <button class="ai-btn" onclick="gotoPrepFor('${id}')">\u2726 Build a prep</button>
+    <div style="margin-top:10px">${prepEntries}</div>
+
+    <div class="field-label">Capture \u2014 60 seconds after the meeting</div>
+    <div class="m-add">
+      <input type="date" id="m-date-${id}" value="${today}" />
+      <textarea class="d-mnote" id="m-note-${id}" rows="1" placeholder="What happened / what to do next time"></textarea>
+      <div class="m-more">
+        <textarea class="d-mnote" id="m-threads-${id}" rows="2" placeholder="Threads they opened that you didn't pull \u2014 one per line. These become your callbacks."></textarea>
+        <textarea class="d-mnote" id="m-dir-${id}" rows="1" placeholder="Their stated direction \u2014 moving towards / walking away from"></textarea>
+        <textarea class="d-mnote" id="m-press-${id}" rows="1" placeholder="Pressures &amp; stakeholders they named"></textarea>
+      </div>
+      <button onclick="addMeeting('${id}')">Log</button>
+    </div>
+    <div style="margin-top:10px">${meetings||'<p class="opener-q" style="margin-top:0">No entries yet.</p>'}</div>
+
+    <button class="del-person" onclick="deletePerson('${id}')">Delete person</button>
+  `;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function updateField(id,f,v){const p=getP(id);if(!p)return;p[f]=v;savePeople();}
+function updateOpener(id,f,v){const p=getP(id);if(!p)return;p.openers[f]=v;savePeople();}
+function setPersonDriver(id,k){const p=getP(id);if(!p)return;if(p.driver===k){p.driver=null;p.archetype=null;}else{if(p.driver!==k)p.archetype=null;p.driver=k;}savePeople();showDetail(id);}
+function setPersonArche(id,t){const p=getP(id);if(!p)return;p.archetype=(p.archetype===t)?null:t;savePeople();showDetail(id);}
+function addMeeting(id){
+  const p=getP(id);if(!p)return;
+  const dt=document.getElementById('m-date-'+id).value;
+  const note=document.getElementById('m-note-'+id).value.trim();
+  const thr=document.getElementById('m-threads-'+id).value.trim();
+  const dir=document.getElementById('m-dir-'+id).value.trim();
+  const prs=document.getElementById('m-press-'+id).value.trim();
+  if(!note&&!thr&&!dir&&!prs)return;
+  const threads=thr?thr.split(/\n+/).map(t=>t.trim()).filter(Boolean).map((t,i)=>({id:'t'+Date.now()+'-'+i,t,done:false})):[];
+  p.meetings.push({id:'m'+Date.now(),date:dt,note,threads,direction:dir,pressures:prs});
+  savePeople();showDetail(id);
+}
+function delMeeting(id,mid){const p=getP(id);if(!p)return;p.meetings=p.meetings.filter(m=>m.id!==mid);savePeople();showDetail(id);}
+
+/* ---------- room card — the glanceable ---------- */
+function showRoomCard(id){
+  const p=getP(id);if(!p)return;
+  document.getElementById('people-list-view').hidden=true;
+  const host=document.getElementById('people-detail-view');host.hidden=false;
+  const d=p.driver?DRIVERS[p.driver]:null;
+  const a=p.archetype?ARCHE[p.archetype]:null;
+  const acc=d?`var(${d.varc})`:'var(--order)';
+  host.style.setProperty('--accent',acc);document.documentElement.style.setProperty('--accent',acc);
+  const peg=p.archetype?`${p.archetype} \u00B7 ${d.name} driver`:(d?d.name+' driver':'Unpegged');
+  const c=p.compass||{};
+  const compassLine=(c.them&&c.you)?
+    ((c.them===c.you)?`Aligned at <b>${QUAD[c.them].n}</b> \u2014 go straight at the shared goal.`:
+     `They\u2019re at <b>${QUAD[c.them].n}</b>, you\u2019re at <b>${QUAD[c.you].n}</b> \u2014 open in theirs, earn the bridge.`):
+    (c.them?`They\u2019re at <b>${QUAD[c.them].n}</b>.`:'');
+  const cbs=openThreads(p).filter(t=>!t.done).slice(0,3);
+  const preps=normalizePreps(p);
+  const pr=preps.length?preps[0].result:null;
+  let qs=(pr&&pr.questions&&pr.questions.length)?pr.questions.slice(0,3).map(q=>({q:q.q,why:q.why||''})):
+    VECTORQ.slice(0,3).map(v=>({q:v.q,why:v.cat+(d?` \u00B7 listen for: ${v.map[p.driver]}`:'')}));
+  const open=a?a.open:(d?d.open:'Open with a prepared topic \u2014 preparation reads as care, not artifice.');
+  const avoid=a?a.avoid:(d?d.avoid:'');
+  const lang=(a?a.language:(d?d.language:[])).map(w=>`\u201C${w}\u201D`).join(', ');
+  host.innerHTML=`
+    <button class="back-btn" onclick="showDetail('${id}')">\u2039 Back to profile</button>
+    <div class="room">
+      <span class="r-peg">${peg}</span>
+      <h2>${esc(p.name)||'Untitled'}</h2>
+      ${p.role?`<p class="r-role">${esc(p.role)}</p>`:''}
+      ${compassLine?`<div class="r-sec"><div class="r-lbl">Compass</div><p>${compassLine}</p></div>`:''}
+      ${cbs.length?`<div class="r-sec"><div class="r-lbl">Callbacks \u2014 start where you left off</div>${cbs.map(t=>`<p style="padding:3px 0">${esc(t.t)}</p>`).join('')}</div>`:''}
+      <div class="r-sec"><div class="r-lbl">Open</div><p>${open}</p></div>
+      <div class="r-sec"><div class="r-lbl">Ask \u2014 then pull the thread</div>${qs.map(q=>`<div class="r-q">\u201C${esc(q.q)}\u201D${q.why?`<span class="r-why">${esc(q.why)}</span>`:''}</div>`).join('')}</div>
+      ${lang?`<div class="r-sec"><div class="r-lbl">Their language</div><p class="r-lang">${lang}</p></div>`:''}
+      ${avoid?`<div class="r-sec"><div class="r-lbl" style="color:#d98a7e">Avoid</div><p>${avoid}</p></div>`:''}
+      <div class="r-rule"><b>The one rule</b>One genuine follow-up on their answer before you bridge to your agenda. Never leave a ZQ.</div>
+    </div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildLibrary(){
+  const host=document.getElementById('liblist');
+  order.forEach(k=>{
+    const d=DRIVERS[k];
+    const g=document.createElement('div');
+    g.className='dgroup';g.style.setProperty('--c',`var(${d.varc})`);
+    let cards=`<h3><span class="bar"></span>${d.name} \u2014 ${d.want}</h3>`;
+    d.types.forEach(t=>{
+      const x=ARCHE_DETAIL[t];
+      cards+=`<div class="qcard" style="border-left:4px solid var(${d.varc})">
+        <button aria-expanded="false" onclick="this.parentNode.classList.toggle('open');this.setAttribute('aria-expanded',this.parentNode.classList.contains('open'))">
+          <span class="qtext" style="font-size:21px">${t}<span class="qtag">${x.tag}</span></span>
+        </button>
+        <div class="decoder">
+          <p class="lib-essence">${x.essence}</p>
+          <div class="libline" style="--c:var(${d.varc})"><span class="lk">Desire</span><span class="lv">${x.desire}</span></div>
+          <div class="libline" style="--c:var(${d.varc})"><span class="lk">Fear</span><span class="lv">${x.fear}</span></div>
+          <div class="libline" style="--c:var(${d.varc})"><span class="lk">Gift</span><span class="lv">${x.gift}</span></div>
+          <div class="libline shadow"><span class="lk">Shadow</span><span class="lv">${x.shadow}</span></div>
+          <div class="libline" style="--c:var(${d.varc})"><span class="lk">In a colleague</span><span class="lv">${x.work}</span></div>
+          <div class="libline" style="--c:var(${d.varc})"><span class="lk">Examples</span><span class="lv">${x.eg}</span></div>
+        </div>
+      </div>`;
+    });
+    g.innerHTML=cards;
+    host.appendChild(g);
+  });
+}
+
+loadPeople();
+buildQuestions();
+buildOpeners();
+buildVectorQs();
+buildStations();
+buildDrawout();
+buildLibrary();
+</script>
+</body>
+</html>
