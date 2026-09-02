@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Stakeholder Map v2</title>
+<title>Stakeholder Map v3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&display=swap" rel="stylesheet">
@@ -18,8 +18,9 @@
     --line:#ded8cb;
     --accent:#1f3bb3;
     --accent-soft:#e7eaf8;
+    --accent-border:#bcc6ee;
     --rail:#cfc8b9;
-    --danger-line:#a04b2c;
+    --danger:#a04b2c;
     --serif:'Fraunces',Georgia,'Times New Roman',serif;
     --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --radius:12px;
@@ -33,687 +34,333 @@
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--paper);color:var(--ink);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;
   }
-  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-  input,select,textarea{font-family:inherit;font-size:16px}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;padding:0}
+  input,textarea{font-family:inherit;font-size:16px}
+  .mono{font-family:var(--mono)}
+  .serif{font-family:var(--serif)}
 
+  /* ---------- Masthead ---------- */
   header{
-    position:sticky;top:0;z-index:30;background:rgba(238,240,243,.86);
-    backdrop-filter:saturate(180%) blur(12px);-webkit-backdrop-filter:saturate(180%) blur(12px);
-    border-bottom:1px solid var(--line);padding:calc(var(--safe-t) + 12px) 16px 10px;
+    position:sticky;top:0;z-index:30;background:rgba(240,237,230,.92);
+    backdrop-filter:saturate(160%) blur(12px);-webkit-backdrop-filter:saturate(160%) blur(12px);
+    border-bottom:1px solid var(--line);padding:calc(var(--safe-t) + 14px) 16px 0;
   }
-  .titlebar{display:flex;align-items:center;gap:10px}
-  .backbtn{flex:none;width:34px;height:34px;border-radius:9px;display:none;align-items:center;justify-content:center;color:var(--accent);margin-left:-6px}
+  .overline{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+  .titlebar{display:flex;align-items:center;gap:10px;padding-bottom:10px}
+  .backbtn{flex:none;width:34px;height:34px;border-radius:9px;display:none;align-items:center;justify-content:center;color:var(--ink);margin-left:-6px}
   .backbtn.show{display:flex}
-  h1{font-size:19px;font-weight:680;margin:0;letter-spacing:-.02em;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .count{font-size:12px;color:var(--muted)}
-  .seg{display:flex;margin-top:12px;background:var(--line);border-radius:11px;padding:3px;gap:3px}
-  .seg button{flex:1;min-height:34px;border-radius:8px;font-size:14px;font-weight:600;color:var(--muted)}
-  .seg button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
-  .seg.sub{margin:0 0 14px}
+  h1{font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:-.015em;line-height:1.15;margin:0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .count{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);flex:none}
+  .menubtn{flex:none;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  .menubtn:active{background:var(--line)}
+  .tabs{display:flex;gap:20px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{
+    flex:0 0 auto;min-height:38px;font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+    font-weight:700;color:var(--faint);position:relative;padding:0 1px;
+  }
+  .tabs button[aria-selected="true"]{color:var(--ink)}
+  .tabs button[aria-selected="true"]::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--accent)}
 
   main{padding:14px 16px calc(120px + var(--safe-b))}
+  #app{animation:pageIn .22s ease both}
+  @keyframes pageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){#app{animation:none}}
 
-  /* ---- Programs ---- */
-  .sbo-group{margin-bottom:20px}
-  .sbo-head{font-size:15px;font-weight:680;letter-spacing:-.01em;margin:0 2px 2px}
-  .aip-head{font-size:12.5px;color:var(--muted);margin:10px 2px 8px;padding-left:10px;border-left:3px solid var(--accent)}
-  .prog{
-    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-    padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;
-  }
+  /* ---------- Shared surfaces ---------- */
+  .sheet-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 1px 0 rgba(26,23,19,.05)}
+  .empty{text-align:center;padding:46px 24px;color:var(--muted)}
+  .empty h2{font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink);margin:0 0 6px}
+  .empty p{margin:0;font-size:14px;max-width:290px;margin-inline:auto}
+  .miss{color:var(--faint);font-style:italic}
+  .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+
+  /* ---------- Agenda ---------- */
+  .sbo-group{margin-bottom:28px}
+  .sbo-head{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:baseline;gap:10px;margin:0 2px 8px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+  .sbo-head .no{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);letter-spacing:.12em}
+  .aip-head{border-left:2px solid var(--accent);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:14px 2px 8px;padding:1px 0 1px 10px}
+  .prog{padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
   .prog .body{flex:1;min-width:0}
-  .prog .nm{font-weight:650;font-size:16px;letter-spacing:-.01em}
-  .prog .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .prog .nm{font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .prog .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-top:5px}
   .prog .go{flex:none;color:var(--faint)}
+  .prog:active{background:#f7f4ee}
 
-  .ctx{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px}
-  .ctx .path{font-size:12.5px;color:var(--muted)}
-  .ctx .path b{color:var(--ink);font-weight:600}
-  .ctx .nm{font-size:17px;font-weight:680;letter-spacing:-.01em;margin-top:3px;display:flex;align-items:center;gap:8px}
-  .ctx .nm button{margin-left:auto;flex:none;color:var(--accent);font-size:14px;font-weight:600;min-height:32px}
+  /* ---------- Context card ---------- */
+  .ctx{padding:13px 15px;margin-bottom:14px}
+  .ctx .path{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .ctx .path b{color:var(--accent);font-weight:600}
+  .ctx .nm{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em;margin-top:3px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .ctx .nm .edit{margin-left:auto;flex:none;color:var(--accent);font-size:13px;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,sans-serif;min-height:32px}
   .ctx .notes{font-size:13px;color:var(--muted);margin-top:6px}
+  .ctx .roles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px}
+  .rline{margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rline span{color:var(--muted)}
 
-  /* ---- Tiers ---- */
-  .tier{margin-bottom:16px}
-  .tier-head{display:flex;align-items:baseline;gap:8px;margin:0 2px 8px}
-  .tier-head .t{font-size:14px;font-weight:680;letter-spacing:-.01em}
-  .tier-head .n{font-size:12px;color:var(--muted)}
-  .tier-rail{border-left:3px solid var(--accent);padding-left:10px}
-  .tier.t2 .tier-rail{border-left-color:#7a97d9}
-  .tier.t3 .tier-rail{border-left-color:#b3c3e6}
-  .tier.t4 .tier-rail{border-left-color:var(--line)}
-  .stk{
-    background:var(--surface);border:1px solid var(--line);border-radius:11px;
-    padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;min-height:var(--tap);
+  /* ---------- Chips & badges ---------- */
+  .stage,.status,.stance{
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;
+    border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--muted);background:var(--surface);
   }
-  .stk:active{background:#fafbfc}
-  .stk .body{flex:1;min-width:0}
-  .stk .nm{font-weight:630;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .stk .rl{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .badge{flex:none;font-size:11.5px;font-weight:700;border:1.5px solid var(--ink);border-radius:7px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
-  .stance{flex:none;font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 8px}
-
-  /* ---- Grid ---- */
-  .axis-x{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);padding:0 2px;margin:6px 0 2px}
-  .pgrid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8px}
-  .quad{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;min-height:130px}
-  .quad .qt{font-size:12.5px;font-weight:680}
-  .quad .qs{font-size:11px;color:var(--muted);margin:1px 0 8px}
-  .chiprow{display:flex;flex-wrap:wrap;gap:6px}
+  .stage.propose,.status.doing{border-color:var(--accent);color:var(--accent)}
+  .stage.won,.status.done{background:var(--ink);border-color:var(--ink);color:#fff}
+  .stage.lost{color:var(--faint)}
+  button.status,button.stage{min-height:28px}
+  .badge{flex:none;font-family:var(--mono);font-size:11.5px;font-weight:700;border:1.5px solid var(--ink);border-radius:6px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
   .pchip{
-    font-size:12.5px;font-weight:560;background:var(--accent-soft);color:var(--accent);
-    border:1px solid #c8d6f2;border-radius:999px;padding:5px 10px;max-width:100%;
+    font-size:12.5px;font-weight:600;background:var(--surface);color:var(--accent);
+    border:1px solid var(--accent);border-radius:999px;padding:5px 11px;max-width:100%;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   }
-  .axis-y{font-size:11.5px;color:var(--muted);margin:4px 2px 0}
+
+  /* ---------- Tiers ---------- */
+  .tier{margin-bottom:16px}
+  .tier-head{display:flex;align-items:baseline;gap:8px;margin:0 2px 8px}
+  .tier-head .t{font-family:var(--serif);font-size:16.5px;font-weight:600}
+  .tier-head .n{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--faint)}
+  .tier-rail{border-left:2px solid var(--line);padding-left:10px}
+  .tier.t1 .tier-rail{border-left-color:var(--ink)}
+  .tier.t2 .tier-rail{border-left-color:var(--accent)}
+  .tier.t3 .tier-rail{border-left-color:#8f8778}
+  .stk{padding:9px 11px;margin-bottom:8px;display:flex;align-items:center;gap:10px;min-height:var(--tap)}
+  .stk:active{background:#f7f4ee}
+  .stk .pav{flex:none;width:34px;height:34px;border-radius:9px;background:var(--accent-soft);color:var(--accent);font-family:var(--mono);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+  .stk .body{flex:1;min-width:0}
+  .stk .nm{font-weight:640;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stk .rl{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* ---------- Grid ---------- */
+  .axis{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .axis-x{display:flex;justify-content:space-between;padding:0 2px;margin:6px 0 2px}
+  .pgrid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8px}
+  .quad{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px;min-height:128px}
+  .quad.hot{background:var(--accent-soft);border-color:var(--accent-border)}
+  .quad .qt{font-family:var(--serif);font-size:15.5px;font-weight:600}
+  .quad .qs{font-size:11px;color:var(--muted);margin:1px 0 8px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:6px}
   .quad-guide{margin-top:14px;font-size:12.5px;color:var(--muted)}
-  .quad-guide b{color:var(--ink);font-weight:620}
+  .quad-guide b{font-family:var(--serif);color:var(--ink);font-weight:600}
   .quad-guide p{margin:0 0 5px}
 
-  /* ---- Plan ---- */
-  .plan{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px}
+  /* ---------- Plan ---------- */
+  .plan{padding:12px 14px;margin-bottom:10px}
   .plan .top{display:flex;align-items:center;gap:8px}
   .plan .nm{font-weight:650;font-size:15px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .status{flex:none;font-size:11.5px;font-weight:600;border-radius:999px;padding:3px 9px;border:1px solid var(--line);color:var(--muted)}
-  .status.doing{border-color:var(--accent);color:var(--accent)}
-  .status.done{background:var(--ink);border-color:var(--ink);color:#fff}
   .plan .msg{font-size:13.5px;margin-top:7px}
-  .plan .msg .lbl,.plan .act .lbl{font-size:11px;color:var(--faint);display:block;margin-bottom:1px}
+  .plan .msg .lbl,.plan .act .lbl{display:block;margin-bottom:1px}
   .plan .act{font-size:13.5px;margin-top:8px;display:flex;gap:14px;flex-wrap:wrap}
   .plan .act>div{min-width:120px;flex:1}
-  .miss{color:var(--faint);font-style:italic}
 
-  /* ---- Pursuits ---- */
-  .pur{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px}
+  /* ---------- Pursuits ---------- */
+  .pur{padding:12px 14px;margin-bottom:10px}
   .pur .top{display:flex;align-items:center;gap:8px}
-  .pur .nm{font-weight:650;font-size:15px;flex:1;min-width:0}
-  .stage{flex:none;font-size:11.5px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--muted)}
-  .stage.propose{border-color:var(--accent);color:var(--accent)}
-  .stage.won{background:var(--ink);border-color:var(--ink);color:#fff}
-  .stage.lost{color:var(--faint)}
+  .pur .nm{font-family:var(--serif);font-size:17px;font-weight:600;flex:1;min-width:0}
   .pur .val{font-size:13px;color:var(--muted);margin-top:3px}
   .pur .sum{font-size:13.5px;margin-top:7px}
-  .pur .roles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
-  .pur .side{font-size:12.5px;min-width:0}
-  .pur .side .h{font-size:11px;color:var(--faint);margin-bottom:2px}
-  .pur .rline{margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .pur .rline span{color:var(--muted)}
+  .pur .roles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:9px;padding-top:9px;border-top:1px solid var(--line);font-size:12.5px}
+  .pur .side{min-width:0}
+  .pur .side .h{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:2px}
+  .pur:active{background:#f7f4ee}
 
-  /* ---- People directory ---- */
+  /* ---------- People ---------- */
   .searchrow{display:flex;gap:8px;margin-bottom:14px}
   .searchwrap{position:relative;flex:1}
-  .search{width:100%;min-height:var(--tap);padding:0 14px 0 38px;background:var(--surface);border:1px solid var(--line);border-radius:11px;color:var(--ink)}
-  .search:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
   .searchwrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--faint)}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px;margin-bottom:10px}
-  .card-top{display:flex;gap:12px;align-items:flex-start}
-  .avatar{flex:none;width:42px;height:42px;border-radius:11px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;letter-spacing:.02em}
-  .who{flex:1;min-width:0}
-  .who .nm{font-weight:650;font-size:16px;letter-spacing:-.01em;overflow-wrap:anywhere}
-  .who .rl{font-size:13.5px;color:var(--muted);margin-top:1px;overflow-wrap:anywhere}
-  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
-  .tag{font-size:11.5px;letter-spacing:.02em;padding:3px 8px;border-radius:999px;background:var(--paper);border:1px solid var(--line);color:var(--muted);display:inline-flex;align-items:center;gap:5px;max-width:100%}
-  .tag b{color:var(--ink);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .tag .lbl{color:var(--faint);text-transform:uppercase;font-size:9.5px;letter-spacing:.06em}
-  .actions{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}
-  .chip{min-height:36px;padding:0 13px;border:1px solid var(--line);border-radius:9px;background:var(--surface);font-size:13px;font-weight:560;display:inline-flex;align-items:center;gap:6px;color:var(--ink);text-decoration:none}
-  .chip.ghost{color:var(--muted)}
-  .chip svg{width:15px;height:15px}
-  .chip:active{background:var(--paper)}
-  .reports-line{font-size:12.5px;color:var(--muted);margin-top:9px;display:flex;align-items:center;gap:5px}
-  .reports-line b{color:var(--ink);font-weight:600}
+  .search{width:100%;min-height:var(--tap);padding:0 14px 0 38px;background:var(--surface);border:1px solid var(--line);border-radius:10px;color:var(--ink)}
+  .search:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+  .pcard{padding:12px 14px;margin-bottom:9px;display:flex;align-items:center;gap:12px;min-height:60px}
+  .pcard:active{background:#f7f4ee}
+  .avatar{flex:none;width:42px;height:42px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-family:var(--mono);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+  .pcard .who{flex:1;min-width:0}
+  .pcard .nm{font-family:var(--serif);font-size:16.5px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pcard .rl{font-size:13px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pcard .fp{flex:none;font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);text-align:right}
+  .pcard .fp b{display:block;font-size:14px;color:var(--accent)}
 
-  /* ---- Manage mode ---- */
+  .tbtn{
+    flex:1;min-width:120px;min-height:40px;border:1px solid var(--line);border-radius:9px;background:var(--surface);
+    font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--muted);
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:0 12px;
+  }
+  .tbtn:active{background:var(--paper)}
   .tbtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-  .tbtn.on svg{color:#fff}
-  .listrow{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:8px 10px;margin-bottom:8px;min-height:var(--tap)}
+  .tbtn svg{width:14px;height:14px}
+  .toolbar{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+  .hint{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);margin-top:8px;text-align:center}
+
+  /* Manage mode */
+  .listrow{display:flex;align-items:center;gap:10px;padding:8px 10px;margin-bottom:8px;min-height:var(--tap)}
   .listrow .pick{flex:none;width:22px;height:22px;accent-color:var(--accent)}
   .listrow .info{flex:1;min-width:0}
-  .listrow .info .nm{font-weight:620;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .listrow .info .rl{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .listrow .nm{font-weight:640;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .listrow .rl{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .icobtn{flex:none;width:38px;height:38px;border:1px solid var(--line);border-radius:9px;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--muted)}
   .icobtn:active{background:var(--paper)}
-  .icobtn.trash{color:var(--danger-line);border-color:#d9c2b8}
+  .icobtn.trash{color:var(--danger);border-color:#d8c2b4}
   .icobtn svg{width:17px;height:17px}
   .bulkbar{
     position:fixed;left:16px;right:16px;bottom:calc(86px + var(--safe-b));z-index:45;
-    background:var(--ink);color:#fff;border-radius:14px;display:none;align-items:center;gap:10px;
-    padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.25);
+    background:var(--ink);color:#fff;border-radius:13px;display:none;align-items:center;gap:10px;
+    padding:10px 12px;box-shadow:0 8px 24px rgba(26,23,19,.28);
   }
   .bulkbar.show{display:flex}
   .bulkbar .bcount{flex:1;font-size:14px;font-weight:600}
   .bulkbar button{min-height:38px;padding:0 14px;border-radius:9px;font-size:13.5px;font-weight:600}
-  .bulkbar .bdel{background:#fff;color:var(--danger-line)}
-  .bulkbar .bcancel{color:#cfd6de}
+  .bulkbar .bdel{background:#fff;color:var(--danger)}
+  .bulkbar .bcancel{color:#d8d2c6}
 
-  /* ---- Org tree ---- */
-  .node{position:relative}
+  /* Org tree */
   .node .row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;margin-bottom:8px;min-height:var(--tap)}
-  .node .row:active{background:var(--paper)}
+  .node .row:active{background:#f7f4ee}
   .twist{flex:none;width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--muted);background:var(--paper)}
   .twist.leaf{visibility:hidden}
   .twist svg{transition:transform .18s ease}
   .node.collapsed > .row .twist svg{transform:rotate(-90deg)}
   .node-body{flex:1;min-width:0}
-  .node-body .nm{font-weight:620;font-size:15px;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .node-body .rl{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .node-count{flex:none;font-size:11px;color:var(--muted);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-weight:600}
-  .children{margin-left:18px;padding-left:14px;border-left:1.5px solid var(--rail);position:relative}
+  .node-body .nm{font-weight:640;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .node-body .rl{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .node-count{flex:none;font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-weight:600}
+  .children{margin-left:18px;padding-left:14px;border-left:1.5px solid var(--rail)}
   .node.collapsed > .children{display:none}
   @media (prefers-reduced-motion:reduce){.twist svg{transition:none}}
-  .roots-label{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin:4px 2px 8px}
+  .roots-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:4px 2px 8px}
 
-  /* ---- Shared ---- */
-  .empty{text-align:center;padding:46px 24px;color:var(--muted)}
-  .empty h2{font-size:16px;color:var(--ink);margin:0 0 6px;font-weight:620}
-  .empty p{margin:0;font-size:14px;max-width:290px;margin-inline:auto}
+  /* ---------- Person profile ---------- */
+  .profile-head{padding:16px;margin-bottom:12px}
+  .profile-head .toprow{display:flex;gap:13px;align-items:center}
+  .profile-head .avatar{width:52px;height:52px;font-size:17px;border-radius:12px}
+  .profile-head .nm{font-family:var(--serif);font-size:23px;font-weight:600;letter-spacing:-.015em;line-height:1.15}
+  .profile-head .rl{font-size:13.5px;color:var(--muted);margin-top:2px}
+  .profile-head .tagsrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+  .ptag{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--muted)}
+  .profile-actions{display:flex;gap:8px;margin-top:12px}
+  .pact{
+    flex:1;min-height:40px;border:1px solid var(--line);border-radius:9px;background:var(--surface);
+    font-size:13px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px;color:var(--ink);text-decoration:none;
+  }
+  .pact svg{width:15px;height:15px;color:var(--muted)}
+  .pact:active{background:var(--paper)}
+  .fp-section{margin-bottom:18px}
+  .fp-h{font-family:var(--serif);font-size:17px;font-weight:600;margin:0 2px 8px;display:flex;align-items:baseline;gap:8px}
+  .fp-h .n{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.08em}
+  .fp-item{padding:11px 13px;margin-bottom:8px}
+  .fp-item:active{background:#f7f4ee}
+  .fp-item .where{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+  .fp-item .toprow{display:flex;align-items:center;gap:8px}
+  .fp-item .t{font-family:var(--serif);font-size:15.5px;font-weight:600;flex:1;min-width:0}
+  .fp-item .detail{font-size:13px;color:var(--muted);margin-top:5px}
+  .fp-item .detail b{color:var(--ink);font-weight:600}
+
+  /* ---------- FAB ---------- */
   .fab{
     position:fixed;right:18px;bottom:calc(20px + var(--safe-b));z-index:40;height:54px;padding:0 20px 0 17px;
-    border-radius:16px;background:var(--accent);color:#fff;font-size:16px;font-weight:640;
-    display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(39,86,200,.34);
+    border-radius:14px;background:var(--accent);color:#fff;font-size:16px;font-weight:640;
+    display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(31,59,179,.32);
   }
   .fab:active{transform:translateY(1px)}
   .fab svg{width:20px;height:20px}
-  .toolbar{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
-  .tbtn{
-    flex:1;min-width:130px;min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
-    font-size:13px;font-weight:560;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:7px;
-  }
-  .tbtn:active{background:var(--paper)}
-  .tbtn svg{width:15px;height:15px;color:var(--muted)}
-  .hint{font-size:12px;color:var(--faint);margin-top:8px;text-align:center}
+  .fab.hide{display:none}
 
-  .scrim{position:fixed;inset:0;z-index:50;background:rgba(20,25,30,.42);display:none;align-items:flex-end;justify-content:center}
+  /* ---------- Sheets ---------- */
+  .scrim{position:fixed;inset:0;z-index:50;background:rgba(26,23,19,.42);display:none;align-items:flex-end;justify-content:center}
   .scrim.open{display:flex}
-  .sheet{width:100%;max-width:560px;background:var(--surface);border-radius:20px 20px 0 0;max-height:92vh;display:flex;flex-direction:column;animation:rise .26s cubic-bezier(.2,.8,.2,1)}
+  .sheet{width:100%;max-width:560px;background:var(--surface);border-radius:18px 18px 0 0;max-height:92vh;display:flex;flex-direction:column;animation:rise .24s cubic-bezier(.2,.8,.2,1)}
   @media (prefers-reduced-motion:reduce){.sheet{animation:none}}
   @keyframes rise{from{transform:translateY(100%)}to{transform:translateY(0)}}
-  .sheet-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);border-radius:20px 20px 0 0}
-  .sheet-head h3{margin:0;font-size:16px;font-weight:660}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);border-radius:18px 18px 0 0;z-index:2}
+  .sheet-head h3{margin:0;font-family:var(--serif);font-size:18px;font-weight:600}
   .sheet-head button{font-size:15px;color:var(--accent);font-weight:600;min-height:36px;padding:0 4px}
-  .sheet-head button.del{color:var(--danger-line)}
+  .sheet-head button.del{color:var(--danger)}
   .sheet-body{overflow-y:auto;padding:14px 16px calc(20px + var(--safe-b));-webkit-overflow-scrolling:touch}
-  .field{margin-bottom:13px}
-  .field label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;font-weight:600}
-  .field input,.field select,.field textarea{width:100%;min-height:var(--tap);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+  .field{margin-bottom:14px}
+  .field>label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:700}
+  .field input,.field textarea{width:100%;min-height:var(--tap);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
   .field textarea{min-height:76px;resize:vertical;line-height:1.4}
-  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
-  .field .sub{font-size:12px;color:var(--faint);margin-top:4px}
+  .field input:focus,.field textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-  .save{width:100%;min-height:50px;background:var(--accent);color:#fff;border-radius:13px;font-size:16px;font-weight:640;margin-top:6px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chips button{
+    min-height:36px;padding:0 13px;border:1px solid var(--line);border-radius:999px;background:var(--surface);
+    font-size:13px;font-weight:560;color:var(--muted);
+  }
+  .chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
+  .chips.accent button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent)}
+  .suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+  .suggest button{
+    min-height:28px;padding:0 10px;border:1px dashed var(--line);border-radius:999px;background:none;
+    font-size:12px;color:var(--muted);
+  }
+  .suggest button:active{background:var(--paper)}
+  .pickerfield{
+    width:100%;min-height:var(--tap);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+    display:flex;align-items:center;gap:8px;font-size:16px;text-align:left;
+  }
+  .pickerfield .v{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pickerfield .v.placeholder{color:var(--faint)}
+  .pickerfield svg{flex:none;color:var(--faint)}
+  .save{width:100%;min-height:50px;background:var(--accent);color:#fff;border-radius:12px;font-size:16px;font-weight:640;margin-top:6px}
   .save:active{transform:translateY(1px)}
   .save:disabled{opacity:.45}
-  .req{color:var(--danger-line)}
+  .req{color:var(--danger)}
+
+  /* Picker sheet */
+  .picker-search{position:sticky;top:0;background:var(--surface);padding:2px 0 10px;z-index:2}
+  .pickrow{display:flex;align-items:center;gap:11px;padding:9px 4px;min-height:52px;border-bottom:1px solid var(--line);width:100%;text-align:left}
+  .pickrow:active{background:var(--paper)}
+  .pickrow .avatar{width:36px;height:36px;font-size:12px;border-radius:9px}
+  .pickrow .who{flex:1;min-width:0}
+  .pickrow .nm{font-weight:640;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pickrow .rl{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pickrow.free .avatar{background:var(--paper);color:var(--muted);border:1px dashed var(--line)}
+
+  /* ---------- Dialog ---------- */
+  .dscrim{position:fixed;inset:0;z-index:70;background:rgba(26,23,19,.46);display:none;align-items:center;justify-content:center;padding:24px}
+  .dscrim.open{display:flex}
+  .dialog{width:100%;max-width:340px;background:var(--surface);border-radius:16px;padding:20px 18px 14px;animation:pop .18s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.dialog{animation:none}}
+  .dialog h4{font-family:var(--serif);font-size:18px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  .dialog p{font-size:13.5px;color:var(--muted);margin:0 0 16px;line-height:1.5;white-space:pre-line}
+  .dialog .dbtns{display:flex;flex-direction:column;gap:8px}
+  .dialog .dbtns button{
+    min-height:44px;border-radius:10px;font-size:15px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  }
+  .dialog .dbtns button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .dialog .dbtns button.danger{color:var(--danger);border-color:#d8c2b4}
+  .dialog .dbtns button.quiet{border:none;color:var(--muted);min-height:38px}
+  .dialog .dbtns button:active{transform:translateY(1px)}
 
   .toast{
     position:fixed;left:50%;bottom:calc(86px + var(--safe-b));transform:translateX(-50%) translateY(20px);
     background:var(--ink);color:#fff;font-size:13.5px;font-weight:550;padding:10px 16px;border-radius:11px;
-    z-index:60;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90vw;text-align:center;
+    z-index:80;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90vw;text-align:center;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-</style>
-<style>
-  /* ============ Editorial design layer ============ */
-  header{background:rgba(240,237,230,.9);padding-top:calc(var(--safe-t) + 14px)}
-  .overline{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
-  h1{font-family:var(--serif);font-size:25px;font-weight:600;letter-spacing:-.015em;line-height:1.15}
-  .count{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
-  .backbtn{color:var(--ink)}
-
-  /* Tabs: pill seg -> editorial underline tabs */
-  .seg{background:none;border-radius:0;padding:0;gap:20px;border-bottom:1px solid var(--line);margin-top:8px}
-  .seg button{flex:0 1 auto;min-height:38px;border-radius:0;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--faint);position:relative;padding:0 1px}
-  .seg button[aria-selected="true"]{background:none;color:var(--ink);box-shadow:none}
-  .seg button[aria-selected="true"]::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--accent)}
-  .seg.sub{margin:0 0 16px}
-
-  /* Screen entrances */
-  #view-programs,#view-program,#view-pursuit,#view-people{animation:pageIn .24s ease both}
-  @keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  @media (prefers-reduced-motion:reduce){#view-programs,#view-program,#view-pursuit,#view-people{animation:none}}
-
-  /* The Agenda: numbered SBO sections */
-  .sbo-group{margin-bottom:28px}
-  .sbo-head{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:baseline;gap:10px;margin:0 2px 8px;padding-bottom:7px;border-bottom:1px solid var(--line)}
-  .sbo-head .no{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);letter-spacing:.12em}
-  .aip-head{border-left:2px solid var(--accent);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:14px 2px 8px;padding:1px 0 1px 10px}
-  .prog{box-shadow:0 1px 0 rgba(26,23,19,.05)}
-  .prog .nm{font-family:var(--serif);font-size:18px;font-weight:600}
-  .prog .meta{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-top:5px}
-
-  /* Program & pursuit context */
-  .ctx{box-shadow:0 1px 0 rgba(26,23,19,.05)}
-  .ctx .path{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
-  .ctx .path b{color:var(--accent);font-weight:600}
-  .ctx .nm{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em}
-
-  /* Tiers: seniority as ink depth */
-  .tier-head .t{font-family:var(--serif);font-size:16.5px;font-weight:600}
-  .tier-head .n{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--faint)}
-  .tier-rail{border-left-width:2px}
-  .tier.t1 .tier-rail{border-left-color:var(--ink)}
-  .tier.t2 .tier-rail{border-left-color:var(--accent)}
-  .tier.t3 .tier-rail{border-left-color:#8f8778}
-  .tier.t4 .tier-rail{border-left-color:var(--line)}
-  .badge{font-family:var(--mono);border-radius:6px}
-  .stance{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase}
-
-  /* Grid: printed matrix, priority quadrant washed in accent */
-  .quad .qt{font-family:var(--serif);font-size:15.5px;font-weight:600}
-  .pgrid .quad:nth-child(2){background:var(--accent-soft);border-color:#bcc6ee}
-  .axis-x,.axis-y{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
-  .pchip{background:var(--surface);border-color:var(--accent);color:var(--accent);font-weight:600}
-  .quad-guide b{font-family:var(--serif)}
-
-  /* Plan & pursuits */
-  .plan,.pur{box-shadow:0 1px 0 rgba(26,23,19,.05)}
-  .pur .nm{font-family:var(--serif);font-size:17px;font-weight:600}
-  .status,.stage{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase}
-  .plan .msg .lbl,.plan .act .lbl,.pur .side .h{font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
-
-  /* People */
-  .card{box-shadow:0 1px 0 rgba(26,23,19,.05)}
-  .who .nm{font-family:var(--serif);font-size:17px;font-weight:600}
-  .avatar{font-family:var(--mono);border-radius:10px}
-  .tag,.tag .lbl{font-family:var(--mono)}
-  .node-body .nm{font-weight:640}
-  .node-count{font-family:var(--mono)}
-  .roots-label{font-family:var(--mono);letter-spacing:.12em}
-
-  /* Controls */
-  .tbtn{font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--muted);border-radius:9px}
-  .tbtn.on{color:#fff}
-  .fab{border-radius:14px;box-shadow:0 6px 20px rgba(31,59,179,.32)}
-  .search{border-radius:10px}
-  .empty h2{font-family:var(--serif);font-size:19px;font-weight:600}
-  .sheet-head h3{font-family:var(--serif);font-size:18px;font-weight:600}
-  .field label{font-family:var(--mono);font-size:10px;letter-spacing:.09em}
-  .hint{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase}
 </style>
 </head>
 <body>
 <header>
   <div class="overline">Stakeholder Map · Account Intelligence</div>
   <div class="titlebar">
-    <button class="backbtn" id="backbtn" onclick="goBack()" aria-label="Back">
+    <button class="backbtn" id="backbtn" onclick="pop()" aria-label="Back">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
-    <h1 id="title">Stakeholder Map</h1>
+    <h1 id="title">The Agenda</h1>
     <span class="count" id="count"></span>
+    <button class="menubtn" id="menubtn" onclick="openMenu()" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+    </button>
   </div>
-  <div class="seg" id="mainseg" role="tablist">
-    <button id="main-programs" aria-selected="true" onclick="setMain('programs')">Programs</button>
-    <button id="main-people" aria-selected="false" onclick="setMain('people')">People</button>
-  </div>
-  <div class="seg" id="progtabs" style="display:none" role="tablist">
-    <button id="tab-tiers" aria-selected="true" onclick="setProgTab('tiers')">Tiers</button>
-    <button id="tab-grid" aria-selected="false" onclick="setProgTab('grid')">Grid</button>
-    <button id="tab-plan" aria-selected="false" onclick="setProgTab('plan')">Plan</button>
-    <button id="tab-pursuits" aria-selected="false" onclick="setProgTab('pursuits')">Pursuits</button>
-  </div>
+  <div class="tabs" id="tabbar"></div>
 </header>
 
-<main>
-  <section id="view-programs"></section>
-  <section id="view-program" style="display:none"></section>
-
-  <section id="view-pursuit" style="display:none">
-    <div id="pursuit-ctx"></div>
-    <div class="seg sub" role="tablist">
-      <button id="uv-grid" aria-selected="true" onclick="setPursuitTab('grid')">Grid</button>
-      <button id="uv-plan" aria-selected="false" onclick="setPursuitTab('plan')">Plan</button>
-    </div>
-    <div id="pursuit-body"></div>
-  </section>
-
-  <section id="view-people" style="display:none">
-    <div class="seg sub" role="tablist">
-      <button id="pv-list" aria-selected="true" onclick="setPeopleView('list')">Directory</button>
-      <button id="pv-chart" aria-selected="false" onclick="setPeopleView('chart')">Org chart</button>
-    </div>
-    <div id="people-list-wrap">
-      <div class="searchrow">
-        <div class="searchwrap">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input class="search" id="search" type="search" placeholder="Search name, role, function…" oninput="renderDirectory()" autocomplete="off">
-        </div>
-        <button class="tbtn" id="manage-btn" style="flex:none;min-width:0;min-height:var(--tap);padding:0 15px" onclick="toggleManage()">Manage</button>
-      </div>
-      <div id="people-list"></div>
-      <div class="toolbar">
-        <button class="tbtn" onclick="exportOrgJSON()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Export JSON</button>
-        <button class="tbtn" onclick="exportOrgCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Export CSV</button>
-        <button class="tbtn" onclick="document.getElementById('org-importer').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg>Import JSON</button>
-        <button class="tbtn" onclick="dedupe()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="m3 6 1 1 2-2"/><path d="m3 12 1 1 2-2"/><path d="m3 18 1 1 2-2"/></svg>Clean up duplicates</button>
-      </div>
-    </div>
-    <div id="people-chart-wrap" style="display:none">
-      <div id="chart-area"></div>
-    </div>
-  </section>
-</main>
+<main><div id="app"></div></main>
 
 <button class="fab" id="fab" onclick="fabTap()">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
   <span id="fab-label">Program</span>
 </button>
-
-<!-- PROGRAM SHEET -->
-<div class="scrim" id="pscrim" onclick="if(event.target===this)closeSheet('pscrim')">
-  <div class="sheet" role="dialog" aria-modal="true">
-    <div class="sheet-head">
-      <button id="p-del" class="del" style="visibility:hidden" onclick="deleteProgram()">Delete</button>
-      <h3 id="p-title">Add program</h3>
-      <button onclick="closeSheet('pscrim')">Done</button>
-    </div>
-    <div class="sheet-body">
-      <input type="hidden" id="p-id">
-      <div class="field">
-        <label for="p-sbo">Strategic Business Objective <span class="req">*</span></label>
-        <input id="p-sbo" type="text" list="dl-sbo" oninput="pValidate()">
-        <datalist id="dl-sbo"></datalist>
-      </div>
-      <div class="field">
-        <label for="p-aip">AIP <span class="req">*</span></label>
-        <input id="p-aip" type="text" list="dl-aip" oninput="pValidate()">
-        <datalist id="dl-aip"></datalist>
-      </div>
-      <div class="field">
-        <label for="p-name">Program <span class="req">*</span></label>
-        <input id="p-name" type="text" oninput="pValidate()">
-      </div>
-      <div class="field">
-        <label for="p-notes">Objective / notes</label>
-        <textarea id="p-notes" placeholder="What success looks like, delivery expectations…"></textarea>
-      </div>
-      <button class="save" id="p-save" onclick="saveProgram()">Save program</button>
-    </div>
-  </div>
-</div>
-
-<!-- STAKEHOLDER SHEET -->
-<div class="scrim" id="sscrim" onclick="if(event.target===this)closeSheet('sscrim')">
-  <div class="sheet" role="dialog" aria-modal="true">
-    <div class="sheet-head">
-      <button id="s-del" class="del" style="visibility:hidden" onclick="deleteStakeholder()">Delete</button>
-      <h3 id="s-title">Add stakeholder</h3>
-      <button onclick="closeSheet('sscrim')">Done</button>
-    </div>
-    <div class="sheet-body">
-      <input type="hidden" id="s-id">
-      <div class="field">
-        <label for="s-name">Name <span class="req">*</span></label>
-        <input id="s-name" type="text" list="dl-people" autocapitalize="words" oninput="sNameInput()">
-        <datalist id="dl-people"></datalist>
-        <div class="sub" id="s-namehint">Type to search your People directory, or enter anyone.</div>
-      </div>
-      <div class="field">
-        <label for="s-role">Role</label>
-        <input id="s-role" type="text" autocapitalize="words">
-      </div>
-      <div class="field">
-        <label for="s-tier">Stakeholder tier</label>
-        <select id="s-tier">
-          <option>Senior Ownership</option>
-          <option>Business Value Owner</option>
-          <option>Delivery Team</option>
-          <option>Influencer</option>
-        </select>
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label for="s-raci">Accountability</label>
-          <select id="s-raci">
-            <option value="A">Accountable</option>
-            <option value="R">Responsible</option>
-            <option value="C" selected>Consulted</option>
-            <option value="I">Informed</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="s-stance">Stance</label>
-          <select id="s-stance">
-            <option>Champion</option>
-            <option>Supportive</option>
-            <option selected>Neutral</option>
-            <option>Sceptical</option>
-            <option>Blocker</option>
-          </select>
-        </div>
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label for="s-influence">Influence</label>
-          <select id="s-influence">
-            <option>High</option>
-            <option selected>Medium</option>
-            <option>Low</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="s-interest">Interest</label>
-          <select id="s-interest">
-            <option>High</option>
-            <option selected>Medium</option>
-            <option>Low</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label for="s-message">Key message</label>
-        <textarea id="s-message" placeholder="What this stakeholder needs to hear, and by when…"></textarea>
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label for="s-owner">KPMG owner</label>
-          <input id="s-owner" type="text" list="dl-owners" autocapitalize="words">
-          <datalist id="dl-owners"></datalist>
-        </div>
-        <div class="field">
-          <label for="s-status">Status</label>
-          <select id="s-status">
-            <option>Not started</option>
-            <option>In progress</option>
-            <option>Done</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label for="s-action">Next action</label>
-        <input id="s-action" type="text" placeholder="e.g. 1:1 briefing before SteerCo">
-      </div>
-      <button class="save" id="s-save" onclick="saveStakeholder()">Save stakeholder</button>
-    </div>
-  </div>
-</div>
-
-<!-- PURSUIT SHEET -->
-<div class="scrim" id="uscrim" onclick="if(event.target===this)closeSheet('uscrim')">
-  <div class="sheet" role="dialog" aria-modal="true">
-    <div class="sheet-head">
-      <button id="u-del" class="del" style="visibility:hidden" onclick="deletePursuit()">Delete</button>
-      <h3 id="u-title">Add pursuit</h3>
-      <button onclick="closeSheet('uscrim')">Done</button>
-    </div>
-    <div class="sheet-body">
-      <input type="hidden" id="u-id">
-      <div class="field">
-        <label for="u-name">Pursuit opportunity <span class="req">*</span></label>
-        <input id="u-name" type="text" oninput="uValidate()">
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label for="u-stage">Stage</label>
-          <select id="u-stage">
-            <option>Identify</option>
-            <option>Qualify</option>
-            <option>Propose</option>
-            <option>Won</option>
-            <option>Lost</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="u-value">Est. value</label>
-          <input id="u-value" type="text" placeholder="e.g. $1.5M">
-        </div>
-      </div>
-      <div class="field">
-        <label for="u-summary">Scope / thesis</label>
-        <textarea id="u-summary" placeholder="What we'd deliver and the scorecard line it moves…"></textarea>
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label for="u-bhpsponsor">BHP sponsor</label>
-          <input id="u-bhpsponsor" type="text" list="dl-bhp" autocapitalize="words">
-        </div>
-        <div class="field">
-          <label for="u-bhpowner">BHP business owner</label>
-          <input id="u-bhpowner" type="text" list="dl-bhp" autocapitalize="words">
-        </div>
-      </div>
-      <datalist id="dl-bhp"></datalist>
-      <div class="grid2">
-        <div class="field">
-          <label for="u-ksponsor">KPMG sponsor</label>
-          <input id="u-ksponsor" type="text" list="dl-kpmg" autocapitalize="words">
-        </div>
-        <div class="field">
-          <label for="u-klead">KPMG pursuit lead</label>
-          <input id="u-klead" type="text" list="dl-kpmg" autocapitalize="words">
-        </div>
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label for="u-dlead">Delivery lead</label>
-          <input id="u-dlead" type="text" list="dl-kpmg" autocapitalize="words">
-        </div>
-        <div class="field">
-          <label for="u-milestone">Next milestone</label>
-          <input id="u-milestone" type="text" placeholder="e.g. Scope agreed pre-SteerCo">
-        </div>
-      </div>
-      <datalist id="dl-kpmg"></datalist>
-      <div class="field">
-        <label for="u-team">Delivery team</label>
-        <input id="u-team" type="text" placeholder="Names, comma separated">
-      </div>
-      <button class="save" id="u-save" onclick="savePursuit()">Save pursuit</button>
-    </div>
-  </div>
-</div>
-
-<!-- PERSON SHEET -->
-<div class="scrim" id="fscrim" onclick="if(event.target===this)closeSheet('fscrim')">
-  <div class="sheet" role="dialog" aria-modal="true">
-    <div class="sheet-head">
-      <button id="f-del" class="del" style="visibility:hidden" onclick="deletePerson()">Delete</button>
-      <h3 id="f-title">Add person</h3>
-      <button onclick="closeSheet('fscrim')">Done</button>
-    </div>
-    <div class="sheet-body">
-      <input type="hidden" id="f-id">
-      <div class="field">
-        <label for="f-name">Name <span class="req">*</span></label>
-        <input id="f-name" type="text" autocapitalize="words" oninput="personValidate()">
-      </div>
-      <div class="field">
-        <label for="f-role">Role</label>
-        <input id="f-role" type="text" list="dl-role" autocapitalize="words">
-        <datalist id="dl-role"></datalist>
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label for="f-email">Email</label>
-          <input id="f-email" type="email" autocapitalize="none" autocomplete="off" inputmode="email">
-        </div>
-        <div class="field">
-          <label for="f-phone">Phone</label>
-          <input id="f-phone" type="tel" inputmode="tel" autocomplete="off">
-        </div>
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label for="f-location">Location</label>
-          <input id="f-location" type="text" list="dl-location" autocapitalize="words">
-          <datalist id="dl-location"></datalist>
-        </div>
-        <div class="field">
-          <label for="f-function">Function</label>
-          <input id="f-function" type="text" list="dl-function" autocapitalize="words">
-          <datalist id="dl-function"></datalist>
-        </div>
-      </div>
-      <div class="field">
-        <label for="f-reports">Reports to</label>
-        <select id="f-reports"></select>
-      </div>
-      <div class="field">
-        <label for="f-notes">Notes</label>
-        <textarea id="f-notes" autocapitalize="sentences"></textarea>
-      </div>
-      <button class="save" id="f-save" onclick="savePerson()">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- PURSUIT MEMBER PICKER -->
-<div class="scrim" id="mscrim" onclick="if(event.target===this)closeSheet('mscrim')">
-  <div class="sheet" role="dialog" aria-modal="true">
-    <div class="sheet-head">
-      <span></span>
-      <h3>Add to this pursuit</h3>
-      <button onclick="closeSheet('mscrim')">Done</button>
-    </div>
-    <div class="sheet-body" id="m-list"></div>
-  </div>
-</div>
-
-<!-- PURSUIT STAKEHOLDER OVERLAY -->
-<div class="scrim" id="oscrim" onclick="if(event.target===this)closeSheet('oscrim')">
-  <div class="sheet" role="dialog" aria-modal="true">
-    <div class="sheet-head">
-      <button class="del" onclick="removeMember()">Remove</button>
-      <h3 id="o-title">Engagement</h3>
-      <button onclick="closeSheet('oscrim')">Done</button>
-    </div>
-    <div class="sheet-body">
-      <input type="hidden" id="o-id">
-      <div class="field">
-        <label for="o-raci">Accountability in this pursuit</label>
-        <select id="o-raci">
-          <option value="A">Accountable</option>
-          <option value="R">Responsible</option>
-          <option value="C" selected>Consulted</option>
-          <option value="I">Informed</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="o-message">Key message for this pursuit</label>
-        <textarea id="o-message" placeholder="What they need to hear about this specific opportunity…"></textarea>
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label for="o-owner">KPMG owner</label>
-          <input id="o-owner" type="text" list="dl-owners" autocapitalize="words">
-        </div>
-        <div class="field">
-          <label for="o-status">Status</label>
-          <select id="o-status">
-            <option>Not started</option>
-            <option>In progress</option>
-            <option>Done</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label for="o-action">Next action</label>
-        <input id="o-action" type="text" placeholder="e.g. Pre-brief before scope discussion">
-      </div>
-      <button class="save" onclick="saveMember()">Save</button>
-    </div>
-  </div>
-</div>
 
 <div class="bulkbar" id="bulkbar">
   <span class="bcount" id="bcount"></span>
@@ -721,33 +368,71 @@
   <button class="bdel" onclick="bulkDelete()">Delete</button>
 </div>
 
-<input type="file" id="org-importer" accept="application/json,.json" style="display:none" onchange="importOrgJSON(event)">
-<input type="file" id="map-importer" accept="application/json,.json" style="display:none" onchange="importMap(event)">
+<!-- generic form sheet (content injected) -->
+<div class="scrim" id="fscrim" onclick="if(event.target===this)closeForm()">
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-head">
+      <button id="form-del" class="del" style="visibility:hidden" onclick="formDelete()">Delete</button>
+      <h3 id="form-title"></h3>
+      <button onclick="closeForm()">Done</button>
+    </div>
+    <div class="sheet-body" id="form-body"></div>
+  </div>
+</div>
+
+<!-- person / member picker sheet -->
+<div class="scrim" id="kscrim" onclick="if(event.target===this)pickerCancel()">
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-head">
+      <span style="width:44px"></span>
+      <h3 id="picker-title">Choose person</h3>
+      <button onclick="pickerCancel()">Cancel</button>
+    </div>
+    <div class="sheet-body">
+      <div class="picker-search">
+        <input class="search" id="picker-q" type="search" placeholder="Search…" autocomplete="off" oninput="pickerFilter()" style="padding-left:14px">
+      </div>
+      <div id="picker-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- dialog -->
+<div class="dscrim" id="dscrim">
+  <div class="dialog">
+    <h4 id="d-title"></h4>
+    <p id="d-msg"></p>
+    <div class="dbtns" id="d-btns"></div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* Stakeholder Map v2 — org directory + program stakeholder & pursuit mapping.
-   Data lives only in this browser's local storage. Nothing is transmitted. */
-const KEY_MAP='stakemap_v1';        // same keys as v1 apps: existing data on the
-const KEY_ORG='orgchart_contacts_v1'; // same origin carries over automatically
+/* ============================================================
+   Stakeholder Map v3 — data lives only in this browser's
+   local storage. Nothing is transmitted anywhere.
+   ============================================================ */
+const KEY_MAP='stakemap_v1';
+const KEY_ORG='orgchart_contacts_v1';
 let data={programs:[]};
 let contacts=[];
-let screen='programs';   // 'programs' | 'program' | 'pursuit' | 'people'
-let progTab='tiers';
-let pursuitTab='grid';
-let peopleView='list';
 let manage=false;
 let selected=new Set();
 let collapsed={};
-let currentId=null;
-let currentPursuitId=null;
+let dirSearch='';
 
 const TIERS=['Senior Ownership','Business Value Owner','Delivery Team','Influencer'];
 const RACI={A:'Accountable',R:'Responsible',C:'Consulted',I:'Informed'};
+const RACI_KEYS=['A','R','C','I'];
 const STAGES=['Identify','Qualify','Propose','Won','Lost'];
+const STANCES=['Champion','Supportive','Neutral','Sceptical','Blocker'];
+const LEVELS=['High','Medium','Low'];
+const STATUSES=['Not started','In progress','Done'];
+const SBO_ORDER=['Copper Growth','Operating Excellence','Project Excellence','Technology','Social Value & Sustainability'];
+const QNAMES=['Manage closely','Keep satisfied','Keep informed','Monitor'];
 
-/* ---------- storage & shared ---------- */
+/* ---------- storage & helpers ---------- */
 function load(){
   try{const r=localStorage.getItem(KEY_MAP);data=r?JSON.parse(r):{programs:[]};}catch(e){data={programs:[]};}
   if(!data||!Array.isArray(data.programs))data={programs:[]};
@@ -772,9 +457,6 @@ function initials(name){
   if(p.length===1)return p[0].slice(0,2).toUpperCase();
   return (p[0][0]+p[p.length-1][0]).toUpperCase();
 }
-function prog(){return data.programs.find(p=>p.id===currentId);}
-function curPursuit(){const p=prog();return p?p.pursuits.find(u=>u.id===currentPursuitId):null;}
-function stakeholderById(p,id){return p.stakeholders.find(s=>s.id===id);}
 function download(filename,text,type){
   const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download=filename;
@@ -782,92 +464,275 @@ function download(filename,text,type){
 }
 function stamp(){return new Date().toISOString().slice(0,10);}
 function csvCell(v){v=(v==null?'':String(v));return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
-function closeSheet(id){document.getElementById(id).classList.remove('open');}
+function slugify(s){return (s||'item').replace(/[^\w-]+/g,'-').toLowerCase();}
 
-/* ---------- navigation ---------- */
-function setMain(s){
-  screen=s;currentId=null;currentPursuitId=null;
-  if(s!=='people'&&manage){manage=false;selected=new Set();const b=document.getElementById('manage-btn');b.textContent='Manage';b.classList.remove('on');}
+/* ---------- navigation stack ---------- */
+let stack=[{screen:'root',tab:'agenda',scroll:0}];
+function topFrame(){return stack[stack.length-1];}
+function push(frame){
+  topFrame().scroll=window.scrollY;
+  stack.push(frame);
+  render();window.scrollTo(0,0);
+}
+function pop(){
+  if(stack.length<=1)return;
+  stack.pop();
+  render();
+  const y=topFrame().scroll||0;
+  requestAnimationFrame(()=>window.scrollTo(0,y));
+}
+function goRoot(){
+  stack=[{screen:'root',tab:'agenda',scroll:0}];
+  render();window.scrollTo(0,0);
+}
+function setTab(t){
+  const f=topFrame();
+  f.tab=t;
+  if(f.screen==='root'&&t!=='directory'&&manage){manage=false;selected=new Set();}
   render();
 }
-function goBack(){
-  if(screen==='pursuit'){screen='program';currentPursuitId=null;progTab='pursuits';render();}
-  else setMain('programs');
+function rerender(){const y=window.scrollY;render();requestAnimationFrame(()=>window.scrollTo(0,y));}
+
+/* resolve current entities from frame */
+function curProgram(){const f=topFrame();return data.programs.find(p=>p.id===f.programId);}
+function curPursuit(){const p=curProgram();const f=topFrame();return p?p.pursuits.find(u=>u.id===f.pursuitId):null;}
+function curContact(){return byId(topFrame().contactId);}
+
+/* ---------- dialogs ---------- */
+let dialogResolve=null;
+function showDialog(opts){
+  return new Promise(res=>{
+    dialogResolve=res;
+    document.getElementById('d-title').textContent=opts.title||'';
+    document.getElementById('d-msg').textContent=opts.message||'';
+    document.getElementById('d-msg').style.display=opts.message?'':'none';
+    document.getElementById('d-btns').innerHTML=opts.buttons.map((b,i)=>
+      `<button class="${b.style||''}" onclick="dialogPick(${i})">${esc(b.label)}</button>`
+    ).join('');
+    document.getElementById('dscrim')._buttons=opts.buttons;
+    document.getElementById('dscrim').classList.add('open');
+  });
 }
-function openProgram(id){screen='program';currentId=id;progTab='tiers';render();}
-function openPursuit(id){screen='pursuit';currentPursuitId=id;pursuitTab='grid';render();}
-function setProgTab(t){progTab=t;render();}
-function setPursuitTab(t){pursuitTab=t;render();}
-function setPeopleView(v){peopleView=v;render();}
-function fabTap(){
-  if(screen==='programs')return openProgramForm();
-  if(screen==='program')return progTab==='pursuits'?openPursuitForm():openStakeholderForm();
-  if(screen==='pursuit')return openMemberPicker();
-  openPersonForm();
+function dialogPick(i){
+  const b=document.getElementById('dscrim')._buttons[i];
+  document.getElementById('dscrim').classList.remove('open');
+  const r=dialogResolve;dialogResolve=null;
+  if(r)r(b.value);
+}
+function confirmDialog(title,message,confirmLabel,danger){
+  return showDialog({title,message,buttons:[
+    {label:confirmLabel,style:danger?'danger':'primary',value:true},
+    {label:'Cancel',style:'quiet',value:false}
+  ]});
+}
+function actionSheet(title,options,current){
+  return showDialog({title,message:'',buttons:options.map(o=>({label:o+(o===current?'  ·':''),style:o===current?'primary':'',value:o})).concat([{label:'Cancel',style:'quiet',value:null}])});
 }
 
-/* ---------- render dispatcher ---------- */
-function render(){
-  const inProgram=screen==='program';
-  const inPursuit=screen==='pursuit';
-  document.getElementById('view-programs').style.display=screen==='programs'?'':'none';
-  document.getElementById('view-program').style.display=inProgram?'':'none';
-  document.getElementById('view-pursuit').style.display=inPursuit?'':'none';
-  document.getElementById('view-people').style.display=screen==='people'?'':'none';
-  document.getElementById('backbtn').classList.toggle('show',inProgram||inPursuit);
-  document.getElementById('mainseg').style.display=(inProgram||inPursuit)?'none':'flex';
-  document.getElementById('progtabs').style.display=inProgram?'flex':'none';
-  document.getElementById('main-programs').setAttribute('aria-selected',screen==='programs');
-  document.getElementById('main-people').setAttribute('aria-selected',screen==='people');
-  ['tiers','grid','plan','pursuits'].forEach(t=>document.getElementById('tab-'+t).setAttribute('aria-selected',t===progTab));
-  document.getElementById('uv-grid').setAttribute('aria-selected',pursuitTab==='grid');
-  document.getElementById('uv-plan').setAttribute('aria-selected',pursuitTab==='plan');
-  document.getElementById('pv-list').setAttribute('aria-selected',peopleView==='list');
-  document.getElementById('pv-chart').setAttribute('aria-selected',peopleView==='chart');
-  document.getElementById('fab-label').textContent=
-    screen==='programs'?'Program':(inProgram?(progTab==='pursuits'?'Pursuit':'Stakeholder'):(inPursuit?'Stakeholder':'Person'));
-
-  if(screen==='programs'){
-    document.getElementById('title').textContent='The Agenda';
-    const n=data.programs.length;
-    document.getElementById('count').textContent=n?(n+' program'+(n===1?'':'s')):'';
-    renderPrograms();
-  }else if(inProgram){
-    const p=prog();
-    if(!p){setMain('programs');return;}
-    document.getElementById('title').textContent=p.name;
-    document.getElementById('count').textContent=p.stakeholders.length+' stk';
-    renderProgramDetail();
-  }else if(inPursuit){
-    const u=curPursuit();
-    if(!u){goBack();return;}
-    document.getElementById('title').textContent=u.name;
-    document.getElementById('count').textContent=u.members.length+' stk';
-    renderPursuitDetail();
-  }else{
-    document.getElementById('title').textContent='People';
-    document.getElementById('count').textContent=contacts.length+' '+(contacts.length===1?'person':'people');
-    document.getElementById('people-list-wrap').style.display=peopleView==='list'?'':'none';
-    document.getElementById('people-chart-wrap').style.display=peopleView==='chart'?'':'none';
-    peopleView==='list'?renderDirectory():renderOrgTree();
+/* ---------- person picker ---------- */
+let pickerResolve=null;let pickerOpts={};
+function openPersonPicker(opts){
+  pickerOpts=opts||{};
+  document.getElementById('picker-title').textContent=pickerOpts.title||'Choose person';
+  document.getElementById('picker-q').value='';
+  renderPickerList('');
+  document.getElementById('kscrim').classList.add('open');
+  return new Promise(res=>{pickerResolve=res;});
+}
+function pickerSource(){
+  if(pickerOpts.source)return pickerOpts.source;
+  return contacts.map(c=>({key:'c:'+c.id,name:c.name,sub:[c.role,c.function].filter(Boolean).join(' · '),payload:{type:'contact',contact:c}}));
+}
+function renderPickerList(q){
+  q=(q||'').toLowerCase().trim();
+  let rows=pickerSource();
+  const ex=new Set(pickerOpts.exclude||[]);
+  rows=rows.filter(r=>!ex.has(r.key));
+  if(q)rows=rows.filter(r=>(r.name+' '+(r.sub||'')).toLowerCase().includes(q));
+  rows.sort((a,b)=>a.name.localeCompare(b.name));
+  let html=rows.slice(0,80).map((r,i)=>`<button class="pickrow" onclick="pickerChoose(${i})">
+    <span class="avatar">${esc(initials(r.name))}</span>
+    <span class="who"><span class="nm" style="display:block">${esc(r.name)}</span>${r.sub?`<span class="rl" style="display:block">${esc(r.sub)}</span>`:''}</span>
+  </button>`).join('');
+  document.getElementById('picker-list')._rows=rows.slice(0,80);
+  if(pickerOpts.allowFree&&q){
+    html+=`<button class="pickrow free" onclick="pickerFree()">
+      <span class="avatar">+</span>
+      <span class="who"><span class="nm" style="display:block">Use “${esc(document.getElementById('picker-q').value.trim())}”</span><span class="rl" style="display:block">Not in the directory — free text</span></span>
+    </button>`;
   }
+  if(pickerOpts.allowClear){
+    html=`<button class="pickrow free" onclick="pickerClear()">
+      <span class="avatar">—</span>
+      <span class="who"><span class="nm" style="display:block">${esc(pickerOpts.clearLabel||'None')}</span></span>
+    </button>`+html;
+  }
+  if(!rows.length&&!q&&pickerOpts.emptyHint){
+    html=`<div class="empty"><p>${esc(pickerOpts.emptyHint)}</p></div>`+html;
+  }
+  document.getElementById('picker-list').innerHTML=html;
+}
+function pickerFilter(){renderPickerList(document.getElementById('picker-q').value);}
+function pickerChoose(i){
+  const r=document.getElementById('picker-list')._rows[i];
+  document.getElementById('kscrim').classList.remove('open');
+  const res=pickerResolve;pickerResolve=null;
+  if(res)res(r.payload);
+}
+function pickerFree(){
+  const name=document.getElementById('picker-q').value.trim();
+  document.getElementById('kscrim').classList.remove('open');
+  const res=pickerResolve;pickerResolve=null;
+  if(res)res({type:'free',name});
+}
+function pickerClear(){
+  document.getElementById('kscrim').classList.remove('open');
+  const res=pickerResolve;pickerResolve=null;
+  if(res)res({type:'clear'});
+}
+function pickerCancel(){
+  document.getElementById('kscrim').classList.remove('open');
+  const res=pickerResolve;pickerResolve=null;
+  if(res)res(null);
+}
+
+/* ---------- footprint ---------- */
+function footprint(contact){
+  const key=(contact.name||'').trim().toLowerCase();
+  const progHits=[];const purHits=[];const roleHits=[];
+  data.programs.forEach(p=>{
+    p.stakeholders.forEach(s=>{
+      const match=s.contactId===contact.id||(s.name||'').trim().toLowerCase()===key;
+      if(!match)return;
+      progHits.push({p,s});
+      p.pursuits.forEach(u=>(u.members||[]).forEach(m=>{if(m.ref===s.id)purHits.push({p,u,s,m});}));
+    });
+    p.pursuits.forEach(u=>{
+      ['bhpSponsor','bhpOwner'].forEach(f=>{
+        if((u[f]||'').trim().toLowerCase()===key)roleHits.push({p,u,role:f==='bhpSponsor'?'BHP sponsor':'BHP owner'});
+      });
+    });
+  });
+  return {progHits,purHits,roleHits};
+}
+function footprintCount(contact){
+  const f=footprint(contact);
+  return f.progHits.length+f.purHits.length;
+}
+
+/* ---------- header / chrome ---------- */
+const TABSETS={
+  root:[['agenda','The Agenda'],['directory','Directory'],['chart','Org chart']],
+  program:[['tiers','Tiers'],['grid','Grid'],['plan','Plan'],['pursuits','Pursuits']],
+  pursuit:[['grid','Grid'],['plan','Plan']],
+  person:null
+};
+function render(){
+  const f=topFrame();
+  const tabs=TABSETS[f.screen];
+  document.getElementById('backbtn').classList.toggle('show',stack.length>1);
+  const tb=document.getElementById('tabbar');
+  if(tabs){
+    tb.style.display='flex';
+    tb.innerHTML=tabs.map(([k,l])=>`<button aria-selected="${f.tab===k}" onclick="setTab('${k}')">${l}</button>`).join('');
+  }else{tb.style.display='none';tb.innerHTML='';}
+
+  let title='',count='',fabLabel=null;
+  const app=document.getElementById('app');
+  if(f.screen==='root'){
+    if(f.tab==='agenda'){
+      title='The Agenda';
+      count=data.programs.length?data.programs.length+' prog':'';
+      fabLabel='Program';
+      app.innerHTML=renderAgenda();
+    }else{
+      title='People';count=contacts.length+' ppl';
+      fabLabel='Person';
+      app.innerHTML=renderPeople(f.tab);
+    }
+  }else if(f.screen==='program'){
+    const p=curProgram();
+    if(!p){stack.pop();render();return;}
+    title=p.name;count=p.stakeholders.length+' stk';
+    fabLabel=f.tab==='pursuits'?'Pursuit':'Stakeholder';
+    app.innerHTML=renderProgram(p,f.tab);
+  }else if(f.screen==='pursuit'){
+    const u=curPursuit();
+    if(!u){stack.pop();render();return;}
+    title=u.name;count=(u.members||[]).length+' stk';
+    fabLabel='Stakeholder';
+    app.innerHTML=renderPursuit(curProgram(),u,f.tab);
+  }else if(f.screen==='person'){
+    const c=curContact();
+    if(!c){stack.pop();render();return;}
+    title=c.name;count='';fabLabel=null;
+    app.innerHTML=renderPerson(c);
+  }
+  document.getElementById('title').textContent=title;
+  document.getElementById('count').textContent=count;
+  const fab=document.getElementById('fab');
+  fab.classList.toggle('hide',!fabLabel);
+  if(fabLabel)document.getElementById('fab-label').textContent=fabLabel;
   updateBulkbar();
 }
+function fabTap(){
+  const f=topFrame();
+  if(f.screen==='root')return f.tab==='agenda'?openProgramForm():openPersonForm();
+  if(f.screen==='program')return f.tab==='pursuits'?openPursuitForm():openStakeholderForm();
+  if(f.screen==='pursuit')return addPursuitMember();
+}
+function goPrograms(){goRoot();}
+function goPeople(){goRoot();topFrame().tab='directory';render();}
 
-/* ================= PROGRAMS ================= */
-function renderPrograms(){
-  const el=document.getElementById('view-programs');
+/* ---------- overflow menu ---------- */
+async function openMenu(){
+  const f=topFrame();
+  let buttons=[];
+  if(f.screen==='root'&&f.tab!=='agenda'){
+    buttons=[
+      {label:'Export people (JSON)',value:'orgjson'},
+      {label:'Export people (CSV)',value:'orgcsv'},
+      {label:'Import people (JSON)',value:'orgimport'},
+      {label:'Clean up duplicates',value:'dedupe'},
+      {label:'Export programs (JSON)',value:'mapjson'},
+    ];
+  }else{
+    buttons=[
+      {label:'Export programs (JSON)',value:'mapjson'},
+      {label:'Import programs (JSON)',value:'mapimport'},
+      {label:'Export people (JSON)',value:'orgjson'},
+    ];
+  }
+  buttons.push({label:'Cancel',style:'quiet',value:null});
+  const v=await showDialog({title:'Menu',message:'',buttons});
+  if(v==='orgjson')exportOrgJSON();
+  else if(v==='orgcsv')exportOrgCSV();
+  else if(v==='orgimport')fileInput(importOrgJSON);
+  else if(v==='dedupe')dedupe();
+  else if(v==='mapjson')exportMap();
+  else if(v==='mapimport')fileInput(importMap);
+}
+function fileInput(handler){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='application/json,.json';
+  inp.onchange=e=>{const file=e.target.files[0];if(file)handler(file);};
+  inp.click();
+}
+
+/* ============================================================
+   SCREEN: The Agenda
+   ============================================================ */
+function renderAgenda(){
   if(!data.programs.length){
-    el.innerHTML=`<div class="empty"><h2>No programs yet</h2><p>Add a program and anchor it to its Strategic Business Objective and AIP. Then map the stakeholders who decide whether it succeeds.</p></div>`+programsToolbar();
-    return;
+    return `<div class="empty"><h2>No programs yet</h2><p>Add a program and anchor it to its Strategic Business Objective and AIP. Then map the stakeholders who decide whether it succeeds.</p></div>
+    <div class="toolbar"><button class="tbtn" onclick="goPeople()">Go to People</button></div>`;
   }
   const bySbo={};
   data.programs.forEach(p=>{
     const s=p.sbo||'(No SBO)';const a=p.aip||'(No AIP)';
     bySbo[s]=bySbo[s]||{};bySbo[s][a]=bySbo[s][a]||[];bySbo[s][a].push(p);
   });
-  const SBO_ORDER=['Copper Growth','Operating Excellence','Project Excellence','Technology','Social Value & Sustainability'];
-  const sboKeys=Object.keys(bySbo).sort((a,b)=>{
+  const keys=Object.keys(bySbo).sort((a,b)=>{
     const ia=SBO_ORDER.indexOf(a),ib=SBO_ORDER.indexOf(b);
     if(ia!==-1&&ib!==-1)return ia-ib;
     if(ia!==-1)return -1;
@@ -875,52 +740,44 @@ function renderPrograms(){
     return a.localeCompare(b);
   });
   let html='';
-  sboKeys.forEach((s,si)=>{
+  keys.forEach((s,si)=>{
     html+=`<div class="sbo-group"><div class="sbo-head"><span class="no">${String(si+1).padStart(2,'0')}</span>${esc(s)}</div>`;
     Object.keys(bySbo[s]).sort().forEach(a=>{
       html+=`<div class="aip-head">${esc(a)}</div>`;
       bySbo[s][a].forEach(p=>{
         const open=p.stakeholders.filter(x=>x.action&&x.status!=='Done').length;
-        const meta=[p.stakeholders.length+' stakeholder'+(p.stakeholders.length===1?'':'s')];
-        if((p.pursuits||[]).length)meta.push(p.pursuits.length+' pursuit'+(p.pursuits.length===1?'':'s'));
-        if(open)meta.push(open+' open action'+(open===1?'':'s'));
-        html+=`<div class="prog" onclick="openProgram('${p.id}')">
-          <div class="body"><div class="nm">${esc(p.name)}</div><div class="meta">${meta.join(' — ')}</div></div>
+        const meta=[p.stakeholders.length+' stk'];
+        if(p.pursuits.length)meta.push(p.pursuits.length+' pursuits');
+        if(open)meta.push(open+' open');
+        html+=`<div class="prog sheet-card" onclick="openProgramScreen('${p.id}')">
+          <div class="body"><div class="nm">${esc(p.name)}</div><div class="meta">${meta.join(' · ')}</div></div>
           <svg class="go" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </div>`;
       });
     });
     html+='</div>';
   });
-  el.innerHTML=html+programsToolbar();
+  return html;
 }
-function programsToolbar(){
-  return `<div class="toolbar">
-    <button class="tbtn" onclick="exportMap()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Export programs</button>
-    <button class="tbtn" onclick="document.getElementById('map-importer').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg>Import programs</button>
-  </div>
-  <div class="hint">People from the People tab are suggested when you add stakeholders or pursuit roles.</div>`;
-}
+function openProgramScreen(id){push({screen:'program',programId:id,tab:'tiers',scroll:0});}
 
-function renderProgramDetail(){
-  const p=prog();
-  const el=document.getElementById('view-program');
-  const ctx=`<div class="ctx">
+/* ============================================================
+   SCREEN: Program
+   ============================================================ */
+function renderProgram(p,tab){
+  const ctx=`<div class="ctx sheet-card">
     <div class="path"><b>${esc(p.sbo)}</b> › ${esc(p.aip)}</div>
-    <div class="nm">${esc(p.name)}<button onclick="openProgramForm('${p.id}')">Edit</button></div>
+    <div class="nm">${esc(p.name)}<button class="edit" onclick="openProgramForm('${p.id}')">Edit</button></div>
     ${p.notes?`<div class="notes">${esc(p.notes)}</div>`:''}
   </div>`;
   let body='';
-  if(progTab==='pursuits'){
-    body=renderPursuits(p);
-  }else if(!p.stakeholders.length){
-    body=`<div class="empty"><h2>No stakeholders mapped</h2><p>Add the people who own, fund, deliver and influence this program — accountable and interested alike.</p></div>`;
-  }else if(progTab==='tiers')body=renderTiers(p);
-  else if(progTab==='grid')body=renderGrid(p);
-  else body=renderPlan(p);
-  el.innerHTML=ctx+body;
+  if(tab==='pursuits')body=renderPursuitList(p);
+  else if(!p.stakeholders.length)body=`<div class="empty"><h2>No stakeholders mapped</h2><p>Add the people who own, fund, deliver and influence this program — accountable and interested alike.</p></div>`;
+  else if(tab==='tiers')body=renderTiers(p);
+  else if(tab==='grid')body=renderGridView(p.stakeholders.map(s=>({s,edit:`openStakeholderForm('${s.id}')`})),true);
+  else body=renderPlanList(p);
+  return ctx+body;
 }
-
 function renderTiers(p){
   let html='';
   TIERS.forEach((t,i)=>{
@@ -928,17 +785,17 @@ function renderTiers(p){
     if(!list.length)return;
     html+=`<div class="tier t${i+1}"><div class="tier-head"><span class="t">${esc(t)}</span><span class="n">${list.length}</span></div><div class="tier-rail">`;
     list.forEach(s=>{
-      html+=`<div class="stk" onclick="openStakeholderForm('${s.id}')">
-        <span class="badge" title="${RACI[s.raci]||''}">${esc(s.raci||'')}</span>
+      html+=`<div class="stk sheet-card" onclick="openStakeholderForm('${s.id}')">
+        <button class="pav" onclick="event.stopPropagation();openPersonByName('${s.id}')" aria-label="Profile">${esc(initials(s.name))}</button>
         <div class="body"><div class="nm">${esc(s.name)}</div>${s.role?`<div class="rl">${esc(s.role)}</div>`:''}</div>
+        <span class="badge" title="${RACI[s.raci]||''}">${esc(s.raci||'')}</span>
         <span class="stance">${esc(s.stance||'')}</span>
       </div>`;
     });
     html+='</div></div>';
   });
-  return html||'<div class="empty"><p>Stakeholders exist but have no tier set. Tap Plan to review them.</p></div>';
+  return html||'<div class="empty"><p>Stakeholders exist but have no tier set.</p></div>';
 }
-
 function quadrant(s){
   const hi=v=>v==='High';
   if(hi(s.influence)&&hi(s.interest))return 0;
@@ -946,385 +803,914 @@ function quadrant(s){
   if(hi(s.interest))return 2;
   return 3;
 }
-function renderGrid(p){
+function renderGridView(items,withGuide){
   const quads=[[],[],[],[]];
-  p.stakeholders.forEach(s=>quads[quadrant(s)].push(s));
-  const chip=s=>`<button class="pchip" onclick="openStakeholderForm('${s.id}')">${esc(s.name)}</button>`;
-  const q=(idx,title,subtitle)=>`<div class="quad"><div class="qt">${title}</div><div class="qs">${subtitle}</div><div class="chiprow">${quads[idx].map(chip).join('')||'<span style="font-size:12px;color:var(--faint)">—</span>'}</div></div>`;
+  items.forEach(x=>quads[quadrant(x.s)].push(x));
+  const chip=x=>`<button class="pchip" onclick="${x.edit}">${esc(x.s.name)}</button>`;
+  const q=(idx,hot)=>`<div class="quad${hot?' hot':''}"><div class="qt">${QNAMES[idx]}</div><div class="qs">${['High influence, high interest','High influence, lower interest','High interest, lower influence','Lower influence, lower interest'][idx]}</div><div class="chiprow">${quads[idx].map(chip).join('')||'<span style="font-size:12px;color:var(--faint)">—</span>'}</div></div>`;
   return `<div>
-    <div class="axis-y">Influence high ↑</div>
-    <div class="pgrid">
-      ${q(1,'Keep satisfied','High influence, lower interest')}
-      ${q(0,'Manage closely','High influence, high interest')}
-      ${q(3,'Monitor','Lower influence, lower interest')}
-      ${q(2,'Keep informed','High interest, lower influence')}
-    </div>
-    <div class="axis-x"><span>Interest low</span><span>Interest high →</span></div>
-    <div class="quad-guide">
+    <div class="axis" style="margin:0 2px 4px">Influence high ↑</div>
+    <div class="pgrid">${q(1)}${q(0,true)}${q(3)}${q(2)}</div>
+    <div class="axis-x axis"><span>Interest low</span><span>Interest high →</span></div>
+    ${withGuide?`<div class="quad-guide">
       <p><b>Manage closely</b> — engage directly and often; co-design the outcome with them.</p>
       <p><b>Keep satisfied</b> — enough substance to hold confidence; never let them be surprised.</p>
       <p><b>Keep informed</b> — regular updates and access; they carry your story into the business.</p>
       <p><b>Monitor</b> — light touch; watch for movement in either axis.</p>
+    </div>`:`<div class="hint">Influence, interest and stance live on the program map — one source, every pursuit aligned.</div>`}
+  </div>`;
+}
+function planCard(id,name,raci,status,message,owner,action,editCall,cycleCall){
+  const cls=status==='Done'?'done':(status==='In progress'?'doing':'');
+  return `<div class="plan sheet-card" id="plan-${id}" onclick="${editCall}">
+    <div class="top"><span class="badge">${esc(raci||'')}</span><span class="nm">${esc(name)}</span>
+      <button class="status ${cls}" onclick="event.stopPropagation();${cycleCall}">${esc(status)}</button></div>
+    <div class="msg"><span class="lbl">Key message</span>${message?esc(message):'<span class="miss">Not set</span>'}</div>
+    <div class="act">
+      <div><span class="lbl">KPMG owner</span>${owner?esc(owner):'<span class="miss">Unassigned</span>'}</div>
+      <div><span class="lbl">Next action</span>${action?esc(action):'<span class="miss">None</span>'}</div>
     </div>
   </div>`;
 }
-
-function renderPlan(p){
+function renderPlanList(p){
   const order=s=>TIERS.indexOf(s.tier);
   const list=p.stakeholders.slice().sort((a,b)=>order(a)-order(b)||(a.name||'').localeCompare(b.name||''));
-  let html=list.map(s=>{
-    const st=s.status||'Not started';
-    const cls=st==='Done'?'done':(st==='In progress'?'doing':'');
-    return `<div class="plan" onclick="openStakeholderForm('${s.id}')">
-      <div class="top"><span class="badge">${esc(s.raci||'')}</span><span class="nm">${esc(s.name)}</span><span class="status ${cls}">${esc(st)}</span></div>
-      <div class="msg"><span class="lbl">Key message</span>${s.message?esc(s.message):'<span class="miss">Not set</span>'}</div>
-      <div class="act">
-        <div><span class="lbl">KPMG owner</span>${s.owner?esc(s.owner):'<span class="miss">Unassigned</span>'}</div>
-        <div><span class="lbl">Next action</span>${s.action?esc(s.action):'<span class="miss">None</span>'}</div>
-      </div>
-    </div>`;
-  }).join('');
-  html+=`<div class="toolbar"><button class="tbtn" onclick="exportStakeholdersCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Export stakeholders (CSV)</button></div>`;
+  let html=list.map(s=>planCard(s.id,s.name,s.raci,s.status||'Not started',s.message,s.owner,s.action,
+    `openStakeholderForm('${s.id}')`,`cycleStatus('s','${s.id}')`)).join('');
+  html+=`<div class="toolbar"><button class="tbtn" onclick="exportStakeholdersCSV()">Export stakeholders CSV</button></div>
+  <div class="hint">Tap the status chip to cycle it — no form needed.</div>`;
   return html;
 }
+function cycleStatus(kind,id){
+  let obj=null;
+  const p=curProgram();
+  if(kind==='s'&&p)obj=p.stakeholders.find(x=>x.id===id);
+  if(kind==='m'){const u=curPursuit();if(u)obj=u.members.find(x=>x.id===id);}
+  if(!obj)return;
+  const idx=STATUSES.indexOf(obj.status||'Not started');
+  obj.status=STATUSES[(idx+1)%STATUSES.length];
+  saveMap();
+  const card=document.getElementById('plan-'+id);
+  if(card){
+    const btn=card.querySelector('.status');
+    btn.textContent=obj.status;
+    btn.className='status '+(obj.status==='Done'?'done':(obj.status==='In progress'?'doing':''));
+  }
+}
 
-function renderPursuits(p){
+/* ---------- pursuits list within program ---------- */
+function renderPursuitList(p){
   if(!p.pursuits.length){
     return `<div class="empty"><h2>No pursuits yet</h2><p>Add the specific opportunities under this AIP — each with its BHP sponsorship and KPMG delivery structure.</p></div>`;
   }
   const order=u=>STAGES.indexOf(u.stage);
   const list=p.pursuits.slice().sort((a,b)=>order(a)-order(b)||(a.name||'').localeCompare(b.name||''));
-  const stageCls=s=>s==='Won'?'won':(s==='Lost'?'lost':(s==='Propose'?'propose':''));
   const line=(l,v)=>`<div class="rline"><span>${l}</span> ${v?esc(v):'<span class="miss">TBC</span>'}</div>`;
-  let html=list.map(u=>`<div class="pur" onclick="openPursuit('${u.id}')">
-    <div class="top"><span class="nm">${esc(u.name)}</span><span class="stage ${stageCls(u.stage)}">${esc(u.stage)}</span></div>
+  return list.map(u=>`<div class="pur sheet-card" onclick="openPursuitScreen('${u.id}')">
+    <div class="top"><span class="nm">${esc(u.name)}</span>
+      <button class="stage ${stageCls(u.stage)}" id="stage-${u.id}" onclick="event.stopPropagation();tapStage('${u.id}')">${esc(u.stage)}</button></div>
     ${u.value||u.milestone?`<div class="val">${[u.value,u.milestone].filter(Boolean).map(esc).join(' — ')}</div>`:''}
     ${u.summary?`<div class="sum">${esc(u.summary)}</div>`:''}
     <div class="roles">
       <div class="side"><div class="h">BHP</div>${line('Sponsor',u.bhpSponsor)}${line('Owner',u.bhpOwner)}</div>
       <div class="side"><div class="h">KPMG</div>${line('Sponsor',u.kpmgSponsor)}${line('Lead',u.kpmgLead)}${line('Delivery',u.deliveryLead)}</div>
     </div>
-    <div class="val" style="margin-top:7px">${(u.members||[]).length} stakeholder${(u.members||[]).length===1?'':'s'} mapped${u.team?' — Team: '+esc(u.team):''}</div>
-  </div>`).join('');
-  html+=`<div class="toolbar"><button class="tbtn" onclick="exportPursuitsCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Export pursuits (CSV)</button></div>`;
+    <div class="val" style="margin-top:7px">${(u.members||[]).length} stakeholder${(u.members||[]).length===1?'':'s'} mapped</div>
+  </div>`).join('')+`<div class="toolbar"><button class="tbtn" onclick="exportPursuitsCSV()">Export pursuits CSV</button></div>`;
+}
+function stageCls(s){return s==='Won'?'won':(s==='Lost'?'lost':(s==='Propose'?'propose':''));}
+async function tapStage(uidv){
+  const p=curProgram();if(!p)return;
+  const u=p.pursuits.find(x=>x.id===uidv);if(!u)return;
+  const v=await actionSheet('Stage — '+u.name,STAGES,u.stage);
+  if(!v)return;
+  u.stage=v;saveMap();
+  const btn=document.getElementById('stage-'+uidv);
+  if(btn){btn.textContent=v;btn.className='stage '+stageCls(v);}
+}
+function openPursuitScreen(id){push({screen:'pursuit',programId:topFrame().programId,pursuitId:id,tab:'grid',scroll:0});}
+
+/* ============================================================
+   SCREEN: Pursuit
+   ============================================================ */
+function stakeholderById(p,id){return p.stakeholders.find(s=>s.id===id);}
+function resolvedMembers(p,u){
+  return (u.members||[]).map(m=>{
+    const s=stakeholderById(p,m.ref);
+    return s?{m,s}:null;
+  }).filter(Boolean);
+}
+function renderPursuit(p,u,tab){
+  const line=(l,v)=>`<div class="rline"><span>${l}</span> ${v?esc(v):'<span class="miss">TBC</span>'}</div>`;
+  const ctx=`<div class="ctx sheet-card">
+    <div class="path"><b>${esc(p.sbo)}</b> › ${esc(p.aip)} › ${esc(p.name)}</div>
+    <div class="nm">${esc(u.name)}
+      <button class="stage ${stageCls(u.stage)}" id="stage-${u.id}" onclick="tapStage('${u.id}')">${esc(u.stage)}</button>
+      <button class="edit" onclick="openPursuitForm('${u.id}')">Edit</button></div>
+    ${u.value||u.milestone?`<div class="notes">${[u.value,u.milestone].filter(Boolean).map(esc).join(' — ')}</div>`:''}
+    <div class="roles">
+      <div class="side"><div class="h" style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:2px">BHP</div>${line('Sponsor',u.bhpSponsor)}${line('Owner',u.bhpOwner)}</div>
+      <div class="side"><div class="h" style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:2px">KPMG</div>${line('Sponsor',u.kpmgSponsor)}${line('Lead',u.kpmgLead)}${line('Delivery',u.deliveryLead)}</div>
+    </div>
+    <div class="toolbar" style="margin-top:11px"><button class="tbtn" onclick="exportOnePager()">One-pager (editable HTML)</button></div>
+  </div>`;
+  const members=resolvedMembers(p,u);
+  let body='';
+  if(!members.length){
+    body=`<div class="empty"><h2>No stakeholders on this pursuit</h2><p>Add people from the program's stakeholder map, then set the message, owner and action for this specific opportunity.</p></div>`;
+  }else if(tab==='grid'){
+    body=renderGridView(members.map(x=>({s:x.s,edit:`openMemberForm('${x.m.id}')`})),false);
+  }else{
+    const order=x=>TIERS.indexOf(x.s.tier);
+    const list=members.slice().sort((a,b)=>order(a)-order(b)||(a.s.name||'').localeCompare(b.s.name||''));
+    body=list.map(x=>planCard(x.m.id,x.s.name,x.m.raci,x.m.status||'Not started',x.m.message,x.m.owner,x.m.action,
+      `openMemberForm('${x.m.id}')`,`cycleStatus('m','${x.m.id}')`)).join('');
+    body+=`<div class="toolbar"><button class="tbtn" onclick="exportPursuitPlanCSV()">Export this plan CSV</button></div>
+    <div class="hint">Tap the status chip to cycle it — no form needed.</div>`;
+  }
+  return ctx+body;
+}
+async function addPursuitMember(){
+  const p=curProgram();const u=curPursuit();if(!p||!u)return;
+  const inPursuit=new Set(u.members.map(m=>m.ref));
+  const source=p.stakeholders.filter(s=>!inPursuit.has(s.id))
+    .sort((a,b)=>TIERS.indexOf(a.tier)-TIERS.indexOf(b.tier)||(a.name||'').localeCompare(b.name||''))
+    .map(s=>({key:'s:'+s.id,name:s.name,sub:[s.tier,s.role].filter(Boolean).join(' · '),payload:{type:'stakeholder',s}}));
+  const res=await openPersonPicker({
+    title:'Add to this pursuit',source,
+    emptyHint:p.stakeholders.length?'Everyone on the program map is already on this pursuit.':'No program stakeholders yet — add them on the program\u2019s Tiers view first.'
+  });
+  if(!res||res.type!=='stakeholder')return;
+  const s=res.s;
+  const m={id:uid(),ref:s.id,raci:s.raci||'C',message:'',owner:u.kpmgLead||'',action:'',status:'Not started'};
+  u.members.push(m);
+  saveMap();rerender();
+  openMemberForm(m.id);
+}
+
+/* ============================================================
+   SCREEN: People
+   ============================================================ */
+function renderPeople(tab){
+  if(tab==='chart')return `<div id="chart-area">${renderOrgTree()}</div>`;
+  const q=dirSearch.toLowerCase().trim();
+  let rows=contacts.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  if(q)rows=rows.filter(c=>[c.name,c.role,c.function,c.location,c.email].some(f=>(f||'').toLowerCase().includes(q)));
+  let html=`<div class="searchrow">
+    <div class="searchwrap">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input class="search" id="dir-search" type="search" placeholder="Search name, role, function…" value="${esc(dirSearch)}" oninput="dirSearchInput(this.value)" autocomplete="off">
+    </div>
+    <button class="tbtn ${manage?'on':''}" style="flex:none;min-width:0;min-height:var(--tap)" onclick="toggleManage()">${manage?'Done':'Manage'}</button>
+  </div>`;
+  if(!contacts.length){
+    return html+`<div class="empty"><h2>No one here yet</h2><p>Tap Add to capture your first contact, or use the menu to import your org chart JSON. People here feed everything else.</p></div>`;
+  }
+  if(!rows.length){
+    return html+`<div class="empty"><h2>No matches</h2><p>Nothing matches “${esc(q)}”.</p></div>`;
+  }
+  html+=`<div id="dir-list">`;
+  if(manage){
+    html+=rows.map(c=>`<div class="listrow sheet-card">
+      <input type="checkbox" class="pick" ${selected.has(c.id)?'checked':''} onchange="togglePick('${c.id}',this.checked)" aria-label="Select ${esc(c.name)}">
+      <div class="info" onclick="openPersonForm('${c.id}')">
+        <div class="nm">${esc(c.name)}</div>
+        <div class="rl">${esc([c.role,c.function].filter(Boolean).join(' · '))}</div>
+      </div>
+      <button class="icobtn" onclick="openPersonForm('${c.id}')" aria-label="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button>
+      <button class="icobtn trash" onclick="quickDelete('${c.id}')" aria-label="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+    </div>`).join('');
+  }else{
+    html+=rows.map(c=>{
+      const n=footprintCount(c);
+      return `<div class="pcard sheet-card" onclick="openPersonScreen('${c.id}')">
+        <span class="avatar">${esc(initials(c.name))}</span>
+        <div class="who">
+          <div class="nm">${esc(c.name)}</div>
+          <div class="rl">${esc([c.role,c.function].filter(Boolean).join(' · '))||'&nbsp;'}</div>
+        </div>
+        ${n?`<div class="fp"><b>${n}</b>on map</div>`:''}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </div>`;
+    }).join('');
+  }
+  html+=`</div>`;
   return html;
+}
+function dirSearchInput(v){
+  dirSearch=v;
+  const y=window.scrollY;
+  const f=topFrame();
+  if(f.screen!=='root'||f.tab!=='directory')return;
+  // re-render list only, keep input focus
+  const listOnly=document.getElementById('dir-list');
+  if(!listOnly){render();return;}
+  const tmp=document.createElement('div');
+  tmp.innerHTML=renderPeople('directory');
+  const fresh=tmp.querySelector('#dir-list');
+  if(fresh)listOnly.replaceWith(fresh);
+  else render();
+  window.scrollTo(0,y);
+}
+function openPersonScreen(id){push({screen:'person',contactId:id,scroll:0});}
+function openPersonByName(stakeholderId){
+  const p=curProgram();if(!p)return;
+  const s=p.stakeholders.find(x=>x.id===stakeholderId);if(!s)return;
+  const c=(s.contactId&&byId(s.contactId))||contacts.find(x=>(x.name||'').trim().toLowerCase()===(s.name||'').trim().toLowerCase());
+  if(c)openPersonScreen(c.id);
+  else toast(s.name+' is not in the People directory');
+}
+
+/* ---------- org tree ---------- */
+function renderOrgTree(){
+  if(!contacts.length)return `<div class="empty"><h2>Nothing to chart yet</h2><p>Add people and set who they report to.</p></div>`;
+  const ids=new Set(contacts.map(c=>c.id));
+  const kids={};
+  contacts.forEach(c=>{kids[c.id]=[];});
+  const roots=[];
+  contacts.forEach(c=>{
+    if(c.reportsTo && ids.has(c.reportsTo) && c.reportsTo!==c.id)kids[c.reportsTo].push(c);
+    else roots.push(c);
+  });
+  const sortFn=(a,b)=>(a.name||'').localeCompare(b.name||'');
+  roots.sort(sortFn);
+  Object.values(kids).forEach(arr=>arr.sort(sortFn));
+  const seen=new Set();
+  function countDesc(id){
+    let n=0;const stackA=[...(kids[id]||[])];const visited=new Set();
+    while(stackA.length){const x=stackA.pop();if(visited.has(x.id))continue;visited.add(x.id);n++;stackA.push(...(kids[x.id]||[]));}
+    return n;
+  }
+  function node(c){
+    if(seen.has(c.id)){
+      return `<div class="node"><div class="row"><span class="twist leaf"></span><div class="node-body"><div class="nm">${esc(c.name)}</div><div class="rl">↳ already shown above</div></div></div></div>`;
+    }
+    seen.add(c.id);
+    const ch=kids[c.id]||[];
+    const isCol=collapsed[c.id];
+    const tw=ch.length
+      ? `<button class="twist" onclick="toggleNode(event,'${c.id}')" aria-label="Toggle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>`
+      : `<span class="twist leaf"></span>`;
+    const cnt=ch.length?`<span class="node-count">${countDesc(c.id)}</span>`:'';
+    const childHTML=ch.length?`<div class="children">${ch.map(node).join('')}</div>`:'';
+    return `<div class="node${isCol?' collapsed':''}">
+      <div class="row" onclick="openPersonScreen('${c.id}')">
+        ${tw}
+        <div class="node-body">
+          <div class="nm">${esc(c.name)}</div>
+          ${c.role?`<div class="rl">${esc(c.role)}</div>`:''}
+        </div>
+        ${cnt}
+      </div>
+      ${childHTML}
+    </div>`;
+  }
+  const label=roots.length===contacts.length?'Everyone (no reporting links set)':'Top of chain';
+  let out=`<div class="roots-label">${label}</div><div>${roots.map(node).join('')}</div>`;
+  const unseen=contacts.filter(c=>!seen.has(c.id));
+  if(unseen.length){
+    out+=`<div class="roots-label" style="margin-top:14px">Circular reporting — fix “reports to”</div><div>${unseen.map(node).join('')}</div>`;
+  }
+  return out;
+}
+function toggleNode(ev,id){
+  ev.stopPropagation();
+  collapsed[id]=!collapsed[id];
+  const area=document.getElementById('chart-area');
+  if(area){const y=window.scrollY;area.innerHTML=renderOrgTree();window.scrollTo(0,y);}
+}
+
+/* ============================================================
+   SCREEN: Person profile + footprint
+   ============================================================ */
+function renderPerson(c){
+  const mgr=c.reportsTo?byId(c.reportsTo):null;
+  const directs=contacts.filter(x=>x.reportsTo===c.id);
+  const fp=footprint(c);
+  const tags=[];
+  if(c.function)tags.push(c.function);
+  if(c.location)tags.push(c.location);
+  let html=`<div class="profile-head sheet-card">
+    <div class="toprow">
+      <span class="avatar">${esc(initials(c.name))}</span>
+      <div style="flex:1;min-width:0">
+        <div class="nm">${esc(c.name)}</div>
+        ${c.role?`<div class="rl">${esc(c.role)}</div>`:''}
+      </div>
+    </div>
+    ${tags.length?`<div class="tagsrow">${tags.map(t=>`<span class="ptag">${esc(t)}</span>`).join('')}</div>`:''}
+    ${mgr||directs.length?`<div style="font-size:13px;color:var(--muted);margin-top:10px">
+      ${mgr?`Reports to <button style="color:var(--accent);font-weight:600;font-size:13px" onclick="openPersonScreen('${mgr.id}')">${esc(mgr.name)}</button>`:''}
+      ${mgr&&directs.length?' · ':''}
+      ${directs.length?`${directs.length} direct report${directs.length===1?'':'s'}`:''}
+    </div>`:''}
+    <div class="profile-actions">
+      ${c.email?`<a class="pact" href="mailto:${esc(c.email)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email</a>`:''}
+      ${c.phone?`<a class="pact" href="tel:${esc(c.phone)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>Call</a>`:''}
+      <button class="pact" onclick="openPersonForm('${c.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Edit</button>
+    </div>
+  </div>`;
+
+  if(!fp.progHits.length&&!fp.purHits.length&&!fp.roleHits.length){
+    html+=`<div class="empty"><h2>Not on any map yet</h2><p>When ${esc(c.name.split(' ')[0])} is added as a stakeholder on a program or pursuit, their full footprint appears here.</p></div>`;
+    return html;
+  }
+  if(fp.progHits.length){
+    html+=`<div class="fp-section"><div class="fp-h">Programs <span class="n">${fp.progHits.length}</span></div>`;
+    fp.progHits.forEach(h=>{
+      const st=h.s.status||'Not started';
+      const cls=st==='Done'?'done':(st==='In progress'?'doing':'');
+      html+=`<div class="fp-item sheet-card" onclick="jumpToProgram('${h.p.id}')">
+        <div class="where">${esc(h.p.sbo)} › ${esc(h.p.aip)}</div>
+        <div class="toprow"><span class="t">${esc(h.p.name)}</span><span class="badge">${esc(h.s.raci||'')}</span><span class="status ${cls}">${esc(st)}</span></div>
+        <div class="detail">${esc(h.s.tier)} · ${esc(QNAMES[quadrant(h.s)])} · ${esc(h.s.stance||'')}</div>
+        ${h.s.message?`<div class="detail"><b>Message:</b> ${esc(h.s.message)}</div>`:''}
+        ${h.s.action?`<div class="detail"><b>Next:</b> ${esc(h.s.action)}${h.s.owner?' — '+esc(h.s.owner):''}</div>`:''}
+      </div>`;
+    });
+    html+='</div>';
+  }
+  if(fp.purHits.length){
+    html+=`<div class="fp-section"><div class="fp-h">Pursuits <span class="n">${fp.purHits.length}</span></div>`;
+    fp.purHits.forEach(h=>{
+      const st=h.m.status||'Not started';
+      const cls=st==='Done'?'done':(st==='In progress'?'doing':'');
+      html+=`<div class="fp-item sheet-card" onclick="jumpToPursuit('${h.p.id}','${h.u.id}')">
+        <div class="where">${esc(h.p.name)}</div>
+        <div class="toprow"><span class="t">${esc(h.u.name)}</span><span class="stage ${stageCls(h.u.stage)}">${esc(h.u.stage)}</span></div>
+        <div class="detail">${esc(RACI[h.m.raci]||'')} · <span class="status ${cls}" style="padding:2px 8px">${esc(st)}</span></div>
+        ${h.m.message?`<div class="detail"><b>Message:</b> ${esc(h.m.message)}</div>`:''}
+        ${h.m.action?`<div class="detail"><b>Next:</b> ${esc(h.m.action)}${h.m.owner?' — '+esc(h.m.owner):''}</div>`:''}
+      </div>`;
+    });
+    html+='</div>';
+  }
+  if(fp.roleHits.length){
+    html+=`<div class="fp-section"><div class="fp-h">Sponsorship roles <span class="n">${fp.roleHits.length}</span></div>`;
+    fp.roleHits.forEach(h=>{
+      html+=`<div class="fp-item sheet-card" onclick="jumpToPursuit('${h.p.id}','${h.u.id}')">
+        <div class="where">${esc(h.p.name)}</div>
+        <div class="toprow"><span class="t">${esc(h.u.name)}</span><span class="stage ${stageCls(h.u.stage)}">${esc(h.u.stage)}</span></div>
+        <div class="detail">${esc(h.role)} on this pursuit</div>
+      </div>`;
+    });
+    html+='</div>';
+  }
+  return html;
+}
+function jumpToProgram(pid){push({screen:'program',programId:pid,tab:'plan',scroll:0});}
+function jumpToPursuit(pid,uidv){push({screen:'pursuit',programId:pid,pursuitId:uidv,tab:'plan',scroll:0});}
+
+/* ============================================================
+   FORMS (generic sheet with chip inputs)
+   ============================================================ */
+let formCtx=null; // {type, id, onDelete}
+function openForm(title,bodyHTML,showDelete){
+  document.getElementById('form-title').textContent=title;
+  document.getElementById('form-body').innerHTML=bodyHTML;
+  document.getElementById('form-del').style.visibility=showDelete?'visible':'hidden';
+  document.getElementById('fscrim').classList.add('open');
+}
+function closeForm(){document.getElementById('fscrim').classList.remove('open');formCtx=null;}
+function formDelete(){if(formCtx&&formCtx.onDelete)formCtx.onDelete();}
+function chipGroup(id,options,value,labels,accent){
+  return `<div class="chips${accent?' accent':''}" id="${id}">`+options.map(o=>{
+    const lab=labels?labels[o]||o:o;
+    return `<button aria-pressed="${o===value}" onclick="chipSet('${id}','${esc(o)}',this)">${esc(lab)}</button>`;
+  }).join('')+`<input type="hidden" id="${id}-v" value="${esc(value)}"></div>`;
+}
+function chipSet(groupId,val,btn){
+  const g=document.getElementById(groupId);
+  g.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));
+  btn.setAttribute('aria-pressed','true');
+  document.getElementById(groupId+'-v').value=val;
+}
+function chipVal(id){return document.getElementById(id+'-v').value;}
+function suggestChips(inputId,values){
+  const vals=[...new Set(values.filter(Boolean))].slice(0,8);
+  if(!vals.length)return '';
+  return `<div class="suggest">`+vals.map(v=>`<button onclick="document.getElementById('${inputId}').value='${esc(v).replace(/'/g,"\\'")}'">${esc(v)}</button>`).join('')+`</div>`;
+}
+function pickerField(id,value,placeholder,onclickFn){
+  return `<button class="pickerfield" id="${id}" onclick="${onclickFn}">
+    <span class="v ${value?'':'placeholder'}" id="${id}-label">${esc(value||placeholder)}</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input type="hidden" id="${id}-v" value="${esc(value||'')}">
+  </button>`;
+}
+function setPickerField(id,value,placeholder){
+  document.getElementById(id+'-v').value=value||'';
+  const lab=document.getElementById(id+'-label');
+  lab.textContent=value||placeholder;
+  lab.classList.toggle('placeholder',!value);
 }
 
 /* ---------- program form ---------- */
 function openProgramForm(id){
   const p=id?data.programs.find(x=>x.id===id):null;
-  document.getElementById('p-id').value=p?p.id:'';
-  document.getElementById('p-sbo').value=p?p.sbo:'';
-  document.getElementById('p-aip').value=p?p.aip:'';
-  document.getElementById('p-name').value=p?p.name:'';
-  document.getElementById('p-notes').value=p?(p.notes||''):'';
-  document.getElementById('p-title').textContent=p?'Edit program':'Add program';
-  document.getElementById('p-del').style.visibility=p?'visible':'hidden';
-  const sbos=[...new Set(data.programs.map(x=>x.sbo).filter(Boolean))].sort();
-  const aips=[...new Set(data.programs.map(x=>x.aip).filter(Boolean))].sort();
-  document.getElementById('dl-sbo').innerHTML=sbos.map(v=>`<option value="${esc(v)}">`).join('');
-  document.getElementById('dl-aip').innerHTML=aips.map(v=>`<option value="${esc(v)}">`).join('');
-  pValidate();
-  document.getElementById('pscrim').classList.add('open');
-}
-function pValidate(){
-  const ok=['p-sbo','p-aip','p-name'].every(i=>document.getElementById(i).value.trim());
-  document.getElementById('p-save').disabled=!ok;
+  const sbos=[...new Set(data.programs.map(x=>x.sbo).filter(Boolean))];
+  const aips=[...new Set(data.programs.map(x=>x.aip).filter(Boolean))];
+  formCtx={type:'program',id:id||null,onDelete:id?()=>deleteProgram(id):null};
+  openForm(p?'Edit program':'Add program',`
+    <div class="field"><label>Strategic Business Objective <span class="req">*</span></label>
+      <input id="pf-sbo" type="text" value="${esc(p?p.sbo:'')}">${suggestChips('pf-sbo',sbos)}</div>
+    <div class="field"><label>AIP <span class="req">*</span></label>
+      <input id="pf-aip" type="text" value="${esc(p?p.aip:'')}">${suggestChips('pf-aip',aips)}</div>
+    <div class="field"><label>Program <span class="req">*</span></label>
+      <input id="pf-name" type="text" value="${esc(p?p.name:'')}"></div>
+    <div class="field"><label>Objective / notes</label>
+      <textarea id="pf-notes" placeholder="What success looks like, delivery expectations…">${esc(p?(p.notes||''):'')}</textarea></div>
+    <button class="save" onclick="saveProgram()">Save program</button>
+  `,!!p);
 }
 function saveProgram(){
-  const id=document.getElementById('p-id').value;
-  const vals={
-    sbo:document.getElementById('p-sbo').value.trim(),
-    aip:document.getElementById('p-aip').value.trim(),
-    name:document.getElementById('p-name').value.trim(),
-    notes:document.getElementById('p-notes').value.trim()
-  };
-  if(!vals.sbo||!vals.aip||!vals.name)return;
-  if(id){Object.assign(data.programs.find(x=>x.id===id),vals);toast('Program updated');}
-  else{const p={id:uid(),...vals,stakeholders:[],pursuits:[]};data.programs.push(p);toast('Program added');currentId=p.id;screen='program';progTab='tiers';}
-  saveMap();closeSheet('pscrim');render();
+  const sbo=document.getElementById('pf-sbo').value.trim();
+  const aip=document.getElementById('pf-aip').value.trim();
+  const name=document.getElementById('pf-name').value.trim();
+  if(!sbo||!aip||!name)return toast('SBO, AIP and Program are required');
+  const notes=document.getElementById('pf-notes').value.trim();
+  if(formCtx&&formCtx.id){
+    Object.assign(data.programs.find(x=>x.id===formCtx.id),{sbo,aip,name,notes});
+    saveMap();closeForm();rerender();toast('Program updated');
+  }else{
+    const p={id:uid(),sbo,aip,name,notes,stakeholders:[],pursuits:[]};
+    data.programs.push(p);
+    saveMap();closeForm();
+    push({screen:'program',programId:p.id,tab:'tiers',scroll:0});
+    toast('Program added');
+  }
 }
-function deleteProgram(){
-  const id=document.getElementById('p-id').value;if(!id)return;
+async function deleteProgram(id){
   const p=data.programs.find(x=>x.id===id);
-  if(!confirm('Delete "'+p.name+'" with '+p.stakeholders.length+' stakeholders and '+p.pursuits.length+' pursuits?'))return;
+  const ok=await confirmDialog('Delete program','“'+p.name+'” with '+p.stakeholders.length+' stakeholders and '+p.pursuits.length+' pursuits will be deleted.','Delete',true);
+  if(!ok)return;
   data.programs=data.programs.filter(x=>x.id!==id);
-  saveMap();closeSheet('pscrim');setMain('programs');toast('Program deleted');
+  saveMap();closeForm();
+  if(topFrame().screen!=='root')goPrograms();else rerender();
+  toast('Program deleted');
 }
 
 /* ---------- stakeholder form ---------- */
 function openStakeholderForm(id){
-  const p=prog();if(!p)return;
+  const p=curProgram();if(!p)return;
   const s=id?p.stakeholders.find(x=>x.id===id):null;
-  document.getElementById('s-id').value=s?s.id:'';
-  document.getElementById('s-name').value=s?s.name:'';
-  document.getElementById('s-role').value=s?(s.role||''):'';
-  document.getElementById('s-tier').value=s?s.tier:'Senior Ownership';
-  document.getElementById('s-raci').value=s?(s.raci||'C'):'C';
-  document.getElementById('s-stance').value=s?(s.stance||'Neutral'):'Neutral';
-  document.getElementById('s-influence').value=s?(s.influence||'Medium'):'Medium';
-  document.getElementById('s-interest').value=s?(s.interest||'Medium'):'Medium';
-  document.getElementById('s-message').value=s?(s.message||''):'';
-  document.getElementById('s-owner').value=s?(s.owner||''):'';
-  document.getElementById('s-status').value=s?(s.status||'Not started'):'Not started';
-  document.getElementById('s-action').value=s?(s.action||''):'';
-  document.getElementById('s-title').textContent=s?'Edit stakeholder':'Add stakeholder';
-  document.getElementById('s-del').style.visibility=s?'visible':'hidden';
-  document.getElementById('s-namehint').textContent='Type to search your People directory, or enter anyone.';
-  document.getElementById('dl-people').innerHTML=contacts.map(c=>`<option value="${esc(c.name)}">${esc(c.role||'')}</option>`).join('');
-  const owners=[...new Set(data.programs.flatMap(x=>x.stakeholders.map(k=>k.owner)).filter(Boolean))].sort();
-  document.getElementById('dl-owners').innerHTML=owners.map(v=>`<option value="${esc(v)}">`).join('');
-  document.getElementById('sscrim').classList.add('open');
-  if(!s)setTimeout(()=>document.getElementById('s-name').focus(),120);
+  formCtx={type:'stakeholder',id:id||null,onDelete:id?()=>deleteStakeholder(id):null,contactId:s?(s.contactId||''):''};
+  const owners=[...new Set(data.programs.flatMap(x=>x.stakeholders.map(k=>k.owner)).filter(Boolean))];
+  openForm(s?'Edit stakeholder':'Add stakeholder',`
+    <div class="field"><label>Person <span class="req">*</span></label>
+      ${pickerField('sf-name',s?s.name:'','Choose from People or type a name','stakeholderPick()')}</div>
+    <div class="field"><label>Role</label><input id="sf-role" type="text" value="${esc(s?(s.role||''):'')}"></div>
+    <div class="field"><label>Tier</label>${chipGroup('sf-tier',TIERS,s?s.tier:'Senior Ownership')}</div>
+    <div class="field"><label>Accountability</label>${chipGroup('sf-raci',RACI_KEYS,s?(s.raci||'C'):'C',RACI)}</div>
+    <div class="field"><label>Stance</label>${chipGroup('sf-stance',STANCES,s?(s.stance||'Neutral'):'Neutral')}</div>
+    <div class="grid2">
+      <div class="field"><label>Influence</label>${chipGroup('sf-influence',LEVELS,s?(s.influence||'Medium'):'Medium',null,true)}</div>
+      <div class="field"><label>Interest</label>${chipGroup('sf-interest',LEVELS,s?(s.interest||'Medium'):'Medium',null,true)}</div>
+    </div>
+    <div class="field"><label>Key message</label>
+      <textarea id="sf-message" placeholder="What this stakeholder needs to hear, and by when…">${esc(s?(s.message||''):'')}</textarea></div>
+    <div class="field"><label>KPMG owner</label><input id="sf-owner" type="text" value="${esc(s?(s.owner||''):'')}">${suggestChips('sf-owner',owners)}</div>
+    <div class="field"><label>Status</label>${chipGroup('sf-status',STATUSES,s?(s.status||'Not started'):'Not started')}</div>
+    <div class="field"><label>Next action</label><input id="sf-action" type="text" value="${esc(s?(s.action||''):'')}" placeholder="e.g. 1:1 briefing before SteerCo"></div>
+    <button class="save" onclick="saveStakeholder()">Save stakeholder</button>
+  `,!!s);
 }
-function sNameInput(){
-  const v=document.getElementById('s-name').value.trim().toLowerCase();
-  const c=contacts.find(x=>(x.name||'').trim().toLowerCase()===v);
-  if(c&&!document.getElementById('s-role').value)document.getElementById('s-role').value=c.role||'';
-  if(c)document.getElementById('s-namehint').textContent='Matched from People: '+(c.role||'')+(c.function?' — '+c.function:'');
+async function stakeholderPick(){
+  const res=await openPersonPicker({title:'Choose person',allowFree:true});
+  if(!res)return;
+  if(res.type==='contact'){
+    setPickerField('sf-name',res.contact.name,'Choose from People or type a name');
+    formCtx.contactId=res.contact.id;
+    const roleEl=document.getElementById('sf-role');
+    if(!roleEl.value)roleEl.value=res.contact.role||'';
+  }else if(res.type==='free'){
+    setPickerField('sf-name',res.name,'Choose from People or type a name');
+    formCtx.contactId='';
+  }
 }
 function saveStakeholder(){
-  const p=prog();if(!p)return;
-  const name=document.getElementById('s-name').value.trim();
-  if(!name)return toast('Name is required');
+  const p=curProgram();if(!p)return;
+  const name=document.getElementById('sf-name-v').value.trim();
+  if(!name)return toast('Choose or enter a person');
   const vals={
-    name,
-    role:document.getElementById('s-role').value.trim(),
-    tier:document.getElementById('s-tier').value,
-    raci:document.getElementById('s-raci').value,
-    stance:document.getElementById('s-stance').value,
-    influence:document.getElementById('s-influence').value,
-    interest:document.getElementById('s-interest').value,
-    message:document.getElementById('s-message').value.trim(),
-    owner:document.getElementById('s-owner').value.trim(),
-    status:document.getElementById('s-status').value,
-    action:document.getElementById('s-action').value.trim()
+    name,contactId:formCtx.contactId||'',
+    role:document.getElementById('sf-role').value.trim(),
+    tier:chipVal('sf-tier'),raci:chipVal('sf-raci'),stance:chipVal('sf-stance'),
+    influence:chipVal('sf-influence'),interest:chipVal('sf-interest'),
+    message:document.getElementById('sf-message').value.trim(),
+    owner:document.getElementById('sf-owner').value.trim(),
+    status:chipVal('sf-status'),
+    action:document.getElementById('sf-action').value.trim()
   };
-  const id=document.getElementById('s-id').value;
-  if(id){Object.assign(p.stakeholders.find(x=>x.id===id),vals);toast('Updated');}
+  if(formCtx.id){Object.assign(p.stakeholders.find(x=>x.id===formCtx.id),vals);toast('Updated');}
   else{p.stakeholders.push({id:uid(),...vals});toast('Added');}
-  saveMap();closeSheet('sscrim');render();
+  saveMap();closeForm();rerender();
 }
-function deleteStakeholder(){
-  const p=prog();const id=document.getElementById('s-id').value;
-  if(!p||!id)return;
+async function deleteStakeholder(id){
+  const p=curProgram();if(!p)return;
   const s=p.stakeholders.find(x=>x.id===id);
   const onPursuits=p.pursuits.filter(u=>(u.members||[]).some(m=>m.ref===id)).length;
-  let msg='Remove '+s.name+' from this map?';
-  if(onPursuits)msg+='\n\nThey are on '+onPursuits+' pursuit'+(onPursuits===1?'':'s')+' here — they will be removed from those too.';
-  if(!confirm(msg))return;
+  let msg=s.name+' will be removed from this program\u2019s map.';
+  if(onPursuits)msg+='\nThey are on '+onPursuits+' pursuit'+(onPursuits===1?'':'s')+' here and will be removed from those too.';
+  const ok=await confirmDialog('Remove stakeholder',msg,'Remove',true);
+  if(!ok)return;
   p.stakeholders=p.stakeholders.filter(x=>x.id!==id);
   p.pursuits.forEach(u=>{u.members=(u.members||[]).filter(m=>m.ref!==id);});
-  saveMap();closeSheet('sscrim');render();toast('Removed');
+  saveMap();closeForm();rerender();toast('Removed');
 }
 
 /* ---------- pursuit form ---------- */
-function openPursuitForm(id){
-  const p=prog();if(!p)return;
-  const u=id?p.pursuits.find(x=>x.id===id):null;
-  document.getElementById('u-id').value=u?u.id:'';
-  document.getElementById('u-name').value=u?u.name:'';
-  document.getElementById('u-stage').value=u?(u.stage||'Identify'):'Identify';
-  document.getElementById('u-value').value=u?(u.value||''):'';
-  document.getElementById('u-summary').value=u?(u.summary||''):'';
-  document.getElementById('u-bhpsponsor').value=u?(u.bhpSponsor||''):'';
-  document.getElementById('u-bhpowner').value=u?(u.bhpOwner||''):'';
-  document.getElementById('u-ksponsor').value=u?(u.kpmgSponsor||''):'';
-  document.getElementById('u-klead').value=u?(u.kpmgLead||''):'';
-  document.getElementById('u-dlead').value=u?(u.deliveryLead||''):'';
-  document.getElementById('u-milestone').value=u?(u.milestone||''):'';
-  document.getElementById('u-team').value=u?(u.team||''):'';
-  document.getElementById('u-title').textContent=u?'Edit pursuit':'Add pursuit';
-  document.getElementById('u-del').style.visibility=u?'visible':'hidden';
-  const bhp=[...new Set([...p.stakeholders.map(s=>s.name),...contacts.map(c=>c.name)].filter(Boolean))];
-  document.getElementById('dl-bhp').innerHTML=bhp.map(v=>`<option value="${esc(v)}">`).join('');
-  const kpmg=[...new Set(data.programs.flatMap(x=>[
-    ...x.stakeholders.map(k=>k.owner),
-    ...(x.pursuits||[]).flatMap(k=>[k.kpmgSponsor,k.kpmgLead,k.deliveryLead])
-  ]).filter(Boolean))].sort();
-  document.getElementById('dl-kpmg').innerHTML=kpmg.map(v=>`<option value="${esc(v)}">`).join('');
-  uValidate();
-  document.getElementById('uscrim').classList.add('open');
-  if(!u)setTimeout(()=>document.getElementById('u-name').focus(),120);
-}
-function uValidate(){
-  document.getElementById('u-save').disabled=!document.getElementById('u-name').value.trim();
-}
-function savePursuit(){
-  const p=prog();if(!p)return;
-  const name=document.getElementById('u-name').value.trim();
-  if(!name)return;
-  const vals={
-    name,
-    stage:document.getElementById('u-stage').value,
-    value:document.getElementById('u-value').value.trim(),
-    summary:document.getElementById('u-summary').value.trim(),
-    bhpSponsor:document.getElementById('u-bhpsponsor').value.trim(),
-    bhpOwner:document.getElementById('u-bhpowner').value.trim(),
-    kpmgSponsor:document.getElementById('u-ksponsor').value.trim(),
-    kpmgLead:document.getElementById('u-klead').value.trim(),
-    deliveryLead:document.getElementById('u-dlead').value.trim(),
-    milestone:document.getElementById('u-milestone').value.trim(),
-    team:document.getElementById('u-team').value.trim()
-  };
-  const id=document.getElementById('u-id').value;
-  if(id){Object.assign(p.pursuits.find(x=>x.id===id),vals);toast('Pursuit updated');}
-  else{p.pursuits.push({id:uid(),...vals,members:[]});toast('Pursuit added');}
-  saveMap();closeSheet('uscrim');render();
-}
-function deletePursuit(){
-  const p=prog();const id=document.getElementById('u-id').value;
-  if(!p||!id)return;
-  const u=p.pursuits.find(x=>x.id===id);
-  if(!confirm('Delete pursuit "'+u.name+'"?'))return;
-  p.pursuits=p.pursuits.filter(x=>x.id!==id);
-  saveMap();closeSheet('uscrim');render();toast('Pursuit deleted');
-}
-
-/* ---------- pursuit detail: grid + action plan ---------- */
-function resolvedMembers(p,u){
-  return u.members.map(m=>{
-    const s=stakeholderById(p,m.ref);
-    return s?{m,s}:null;
-  }).filter(Boolean);
-}
-function renderPursuitDetail(){
-  const p=prog();const u=curPursuit();
-  const stageCls=s=>s==='Won'?'won':(s==='Lost'?'lost':(s==='Propose'?'propose':''));
-  const line=(l,v)=>`<div class="rline"><span>${l}</span> ${v?esc(v):'<span class="miss">TBC</span>'}</div>`;
-  document.getElementById('pursuit-ctx').innerHTML=`<div class="ctx">
-    <div class="path"><b>${esc(p.sbo)}</b> › ${esc(p.aip)} › ${esc(p.name)}</div>
-    <div class="nm">${esc(u.name)}<span class="stage ${stageCls(u.stage)}" style="margin-left:2px">${esc(u.stage)}</span><button onclick="openPursuitForm('${u.id}')">Edit</button></div>
-    ${u.value||u.milestone?`<div class="notes">${[u.value,u.milestone].filter(Boolean).map(esc).join(' — ')}</div>`:''}
-    <div class="roles" style="margin-top:9px;padding-top:9px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12.5px">
-      <div class="side"><div class="h" style="font-size:11px;color:var(--faint);margin-bottom:2px">BHP</div>${line('Sponsor',u.bhpSponsor)}${line('Owner',u.bhpOwner)}</div>
-      <div class="side"><div class="h" style="font-size:11px;color:var(--faint);margin-bottom:2px">KPMG</div>${line('Sponsor',u.kpmgSponsor)}${line('Lead',u.kpmgLead)}${line('Delivery',u.deliveryLead)}</div>
-    </div>
-    <div class="toolbar" style="margin-top:11px"><button class="tbtn" onclick="exportOnePager()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M3 21h18"/></svg>Export one-pager (editable HTML)</button></div>
-  </div>`;
-  const body=document.getElementById('pursuit-body');
-  const members=resolvedMembers(p,u);
-  if(!members.length){
-    body.innerHTML=`<div class="empty"><h2>No stakeholders on this pursuit</h2><p>Add people from the program's stakeholder map, then set the message, owner and action for this specific opportunity.</p></div>`;
-    return;
-  }
-  body.innerHTML=pursuitTab==='grid'?renderPursuitGrid(members):renderPursuitPlan(members);
-}
-function renderPursuitGrid(members){
-  const quads=[[],[],[],[]];
-  members.forEach(x=>quads[quadrant(x.s)].push(x));
-  const chip=x=>`<button class="pchip" onclick="openMemberForm('${x.m.id}')">${esc(x.s.name)}</button>`;
-  const q=(idx,title,subtitle)=>`<div class="quad"><div class="qt">${title}</div><div class="qs">${subtitle}</div><div class="chiprow">${quads[idx].map(chip).join('')||'<span style="font-size:12px;color:var(--faint)">—</span>'}</div></div>`;
-  return `<div>
-    <div class="axis-y">Influence high ↑</div>
-    <div class="pgrid">
-      ${q(1,'Keep satisfied','High influence, lower interest')}
-      ${q(0,'Manage closely','High influence, high interest')}
-      ${q(3,'Monitor','Lower influence, lower interest')}
-      ${q(2,'Keep informed','High interest, lower influence')}
-    </div>
-    <div class="axis-x"><span>Interest low</span><span>Interest high →</span></div>
-    <div class="hint">Influence, interest and stance come from the program stakeholder map — edit them there and every pursuit stays aligned.</div>
-  </div>`;
-}
-function renderPursuitPlan(members){
-  const order=x=>TIERS.indexOf(x.s.tier);
-  const list=members.slice().sort((a,b)=>order(a)-order(b)||(a.s.name||'').localeCompare(b.s.name||''));
-  let html=list.map(x=>{
-    const st=x.m.status||'Not started';
-    const cls=st==='Done'?'done':(st==='In progress'?'doing':'');
-    return `<div class="plan" onclick="openMemberForm('${x.m.id}')">
-      <div class="top"><span class="badge">${esc(x.m.raci||'')}</span><span class="nm">${esc(x.s.name)}</span><span class="status ${cls}">${esc(st)}</span></div>
-      <div class="msg"><span class="lbl">Key message</span>${x.m.message?esc(x.m.message):'<span class="miss">Not set</span>'}</div>
-      <div class="act">
-        <div><span class="lbl">KPMG owner</span>${x.m.owner?esc(x.m.owner):'<span class="miss">Unassigned</span>'}</div>
-        <div><span class="lbl">Next action</span>${x.m.action?esc(x.m.action):'<span class="miss">None</span>'}</div>
-      </div>
-    </div>`;
-  }).join('');
-  html+=`<div class="toolbar"><button class="tbtn" onclick="exportPursuitPlanCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Export this plan (CSV)</button></div>`;
-  return html;
-}
-function openMemberPicker(){
-  const p=prog();const u=curPursuit();if(!p||!u)return;
-  const inPursuit=new Set(u.members.map(m=>m.ref));
-  const avail=p.stakeholders.filter(s=>!inPursuit.has(s.id)).sort((a,b)=>TIERS.indexOf(a.tier)-TIERS.indexOf(b.tier)||(a.name||'').localeCompare(b.name||''));
-  const el=document.getElementById('m-list');
-  if(!p.stakeholders.length){
-    el.innerHTML=`<div class="empty"><h2>No program stakeholders yet</h2><p>Add people to the program's stakeholder map first (Tiers tab) — pursuits draw from that list so everything stays aligned.</p></div>`;
-  }else if(!avail.length){
-    el.innerHTML=`<div class="empty"><h2>Everyone's already on this pursuit</h2><p>All ${p.stakeholders.length} program stakeholders are mapped here. Add new people on the program first.</p></div>`;
-  }else{
-    el.innerHTML=avail.map(s=>`<div class="stk" onclick="addMember('${s.id}')">
-      <span class="badge">${esc(s.raci||'')}</span>
-      <div class="body"><div class="nm">${esc(s.name)}</div><div class="rl">${esc([s.tier,s.role].filter(Boolean).join(' · '))}</div></div>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-    </div>`).join('')+`<div class="hint">Someone missing? Add them on the program's stakeholder map first.</div>`;
-  }
-  document.getElementById('mscrim').classList.add('open');
-}
-function addMember(refId){
-  const p=prog();const u=curPursuit();if(!p||!u)return;
-  const s=stakeholderById(p,refId);if(!s)return;
-  const m={id:uid(),ref:refId,raci:s.raci||'C',message:'',owner:u.kpmgLead||'',action:'',status:'Not started'};
-  u.members.push(m);
-  saveMap();closeSheet('mscrim');render();
-  openMemberForm(m.id);
-}
-function openMemberForm(mid){
-  const p=prog();const u=curPursuit();if(!p||!u)return;
-  const m=u.members.find(x=>x.id===mid);if(!m)return;
-  const s=stakeholderById(p,m.ref);
-  document.getElementById('o-id').value=m.id;
-  document.getElementById('o-title').textContent=s?s.name:'Engagement';
-  document.getElementById('o-raci').value=m.raci||'C';
-  document.getElementById('o-message').value=m.message||'';
-  document.getElementById('o-owner').value=m.owner||'';
-  document.getElementById('o-status').value=m.status||'Not started';
-  document.getElementById('o-action').value=m.action||'';
-  const owners=[...new Set(data.programs.flatMap(x=>[
+function kpmgNames(){
+  return [...new Set(data.programs.flatMap(x=>[
     ...x.stakeholders.map(k=>k.owner),
     ...(x.pursuits||[]).flatMap(k=>[k.kpmgSponsor,k.kpmgLead,k.deliveryLead,...(k.members||[]).map(mm=>mm.owner)])
   ]).filter(Boolean))].sort();
-  document.getElementById('dl-owners').innerHTML=owners.map(v=>`<option value="${esc(v)}">`).join('');
-  document.getElementById('oscrim').classList.add('open');
+}
+function openPursuitForm(id){
+  const p=curProgram();if(!p)return;
+  const u=id?p.pursuits.find(x=>x.id===id):null;
+  formCtx={type:'pursuit',id:id||null,onDelete:id?()=>deletePursuit(id):null};
+  const kn=kpmgNames();
+  openForm(u?'Edit pursuit':'Add pursuit',`
+    <div class="field"><label>Pursuit opportunity <span class="req">*</span></label>
+      <input id="uf-name" type="text" value="${esc(u?u.name:'')}"></div>
+    <div class="field"><label>Stage</label>${chipGroup('uf-stage',STAGES,u?(u.stage||'Identify'):'Identify')}</div>
+    <div class="field"><label>Est. value</label><input id="uf-value" type="text" value="${esc(u?(u.value||''):'')}" placeholder="e.g. $1.5M"></div>
+    <div class="field"><label>Scope / thesis</label>
+      <textarea id="uf-summary" placeholder="What we\u2019d deliver and the scorecard line it moves…">${esc(u?(u.summary||''):'')}</textarea></div>
+    <div class="grid2">
+      <div class="field"><label>BHP sponsor</label>${pickerField('uf-bhpsponsor',u?(u.bhpSponsor||''):'','Choose',"bhpPick('uf-bhpsponsor')")}</div>
+      <div class="field"><label>BHP owner</label>${pickerField('uf-bhpowner',u?(u.bhpOwner||''):'','Choose',"bhpPick('uf-bhpowner')")}</div>
+    </div>
+    <div class="field"><label>KPMG sponsor</label><input id="uf-ksponsor" type="text" value="${esc(u?(u.kpmgSponsor||''):'')}">${suggestChips('uf-ksponsor',kn)}</div>
+    <div class="grid2">
+      <div class="field"><label>KPMG lead</label><input id="uf-klead" type="text" value="${esc(u?(u.kpmgLead||''):'')}"></div>
+      <div class="field"><label>Delivery lead</label><input id="uf-dlead" type="text" value="${esc(u?(u.deliveryLead||''):'')}"></div>
+    </div>
+    <div class="field"><label>Delivery team</label><input id="uf-team" type="text" value="${esc(u?(u.team||''):'')}" placeholder="Names, comma separated"></div>
+    <div class="field"><label>Next milestone</label><input id="uf-milestone" type="text" value="${esc(u?(u.milestone||''):'')}" placeholder="e.g. Scope agreed pre-SteerCo"></div>
+    <button class="save" onclick="savePursuit()">Save pursuit</button>
+  `,!!u);
+}
+async function bhpPick(fieldId){
+  const p=curProgram();
+  const stkSource=(p?p.stakeholders:[]).map(s=>({key:'s:'+(s.contactId||s.id),name:s.name,sub:[s.tier,s.role].filter(Boolean).join(' · '),payload:{type:'free',name:s.name}}));
+  const contactSource=contacts.map(c=>({key:'c:'+c.id,name:c.name,sub:[c.role,c.function].filter(Boolean).join(' · '),payload:{type:'free',name:c.name}}));
+  const seen=new Set();const source=[];
+  stkSource.concat(contactSource).forEach(r=>{
+    const k=r.name.trim().toLowerCase();
+    if(seen.has(k))return;seen.add(k);source.push(r);
+  });
+  const res=await openPersonPicker({title:'Choose BHP contact',source,allowFree:true,allowClear:true,clearLabel:'Clear (TBC)'});
+  if(!res)return;
+  if(res.type==='clear')setPickerField(fieldId,'','Choose');
+  else setPickerField(fieldId,res.name,'Choose');
+}
+function savePursuit(){
+  const p=curProgram();if(!p)return;
+  const name=document.getElementById('uf-name').value.trim();
+  if(!name)return toast('Pursuit name is required');
+  const vals={
+    name,stage:chipVal('uf-stage'),
+    value:document.getElementById('uf-value').value.trim(),
+    summary:document.getElementById('uf-summary').value.trim(),
+    bhpSponsor:document.getElementById('uf-bhpsponsor-v').value.trim(),
+    bhpOwner:document.getElementById('uf-bhpowner-v').value.trim(),
+    kpmgSponsor:document.getElementById('uf-ksponsor').value.trim(),
+    kpmgLead:document.getElementById('uf-klead').value.trim(),
+    deliveryLead:document.getElementById('uf-dlead').value.trim(),
+    team:document.getElementById('uf-team').value.trim(),
+    milestone:document.getElementById('uf-milestone').value.trim()
+  };
+  if(formCtx.id){Object.assign(p.pursuits.find(x=>x.id===formCtx.id),vals);toast('Pursuit updated');}
+  else{p.pursuits.push({id:uid(),...vals,members:[]});toast('Pursuit added');}
+  saveMap();closeForm();rerender();
+}
+async function deletePursuit(id){
+  const p=curProgram();if(!p)return;
+  const u=p.pursuits.find(x=>x.id===id);
+  const ok=await confirmDialog('Delete pursuit','“'+u.name+'” and its stakeholder plan will be deleted.','Delete',true);
+  if(!ok)return;
+  p.pursuits=p.pursuits.filter(x=>x.id!==id);
+  saveMap();closeForm();
+  if(topFrame().screen==='pursuit')pop();else rerender();
+  toast('Pursuit deleted');
+}
+
+/* ---------- member (pursuit engagement) form ---------- */
+function openMemberForm(mid){
+  const p=curProgram();const u=curPursuit();if(!p||!u)return;
+  const m=u.members.find(x=>x.id===mid);if(!m)return;
+  const s=stakeholderById(p,m.ref);
+  formCtx={type:'member',id:mid,onDelete:()=>removeMember(mid)};
+  const owners=kpmgNames();
+  openForm(s?s.name:'Engagement',`
+    <div class="field"><label>Accountability in this pursuit</label>${chipGroup('mf-raci',RACI_KEYS,m.raci||'C',RACI)}</div>
+    <div class="field"><label>Key message for this pursuit</label>
+      <textarea id="mf-message" placeholder="What they need to hear about this specific opportunity…">${esc(m.message||'')}</textarea></div>
+    <div class="field"><label>KPMG owner</label><input id="mf-owner" type="text" value="${esc(m.owner||'')}">${suggestChips('mf-owner',owners)}</div>
+    <div class="field"><label>Status</label>${chipGroup('mf-status',STATUSES,m.status||'Not started')}</div>
+    <div class="field"><label>Next action</label><input id="mf-action" type="text" value="${esc(m.action||'')}" placeholder="e.g. Pre-brief before scope discussion"></div>
+    <button class="save" onclick="saveMember()">Save</button>
+  `,true);
+  document.getElementById('form-del').textContent='Remove';
 }
 function saveMember(){
   const u=curPursuit();if(!u)return;
-  const m=u.members.find(x=>x.id===document.getElementById('o-id').value);if(!m)return;
-  m.raci=document.getElementById('o-raci').value;
-  m.message=document.getElementById('o-message').value.trim();
-  m.owner=document.getElementById('o-owner').value.trim();
-  m.status=document.getElementById('o-status').value;
-  m.action=document.getElementById('o-action').value.trim();
-  saveMap();closeSheet('oscrim');render();toast('Saved');
+  const m=u.members.find(x=>x.id===formCtx.id);if(!m)return;
+  m.raci=chipVal('mf-raci');
+  m.message=document.getElementById('mf-message').value.trim();
+  m.owner=document.getElementById('mf-owner').value.trim();
+  m.status=chipVal('mf-status');
+  m.action=document.getElementById('mf-action').value.trim();
+  saveMap();closeForm();rerender();toast('Saved');
+  document.getElementById('form-del').textContent='Delete';
 }
-function removeMember(){
-  const p=prog();const u=curPursuit();if(!u)return;
-  const id=document.getElementById('o-id').value;
-  const m=u.members.find(x=>x.id===id);if(!m)return;
+async function removeMember(mid){
+  const p=curProgram();const u=curPursuit();if(!u)return;
+  const m=u.members.find(x=>x.id===mid);if(!m)return;
   const s=p?stakeholderById(p,m.ref):null;
-  if(!confirm('Remove '+(s?s.name:'this stakeholder')+' from this pursuit? They stay on the program map.'))return;
-  u.members=u.members.filter(x=>x.id!==id);
-  saveMap();closeSheet('oscrim');render();toast('Removed from pursuit');
+  const ok=await confirmDialog('Remove from pursuit',(s?s.name:'This stakeholder')+' stays on the program map.','Remove',true);
+  if(!ok)return;
+  u.members=u.members.filter(x=>x.id!==mid);
+  saveMap();closeForm();rerender();toast('Removed from pursuit');
+  document.getElementById('form-del').textContent='Delete';
+}
+
+/* ---------- person form ---------- */
+function openPersonForm(id){
+  const c=id?byId(id):null;
+  formCtx={type:'person',id:id||null,onDelete:id?()=>deletePerson(id):null,reportsTo:c?(c.reportsTo||''):''};
+  const roles=[...new Set(contacts.map(x=>x.role).filter(Boolean))];
+  const locs=[...new Set(contacts.map(x=>x.location).filter(Boolean))];
+  const fns=[...new Set(contacts.map(x=>x.function).filter(Boolean))];
+  const mgrName=c&&c.reportsTo?nameOf(c.reportsTo):'';
+  openForm(c?'Edit person':'Add person',`
+    <div class="field"><label>Name <span class="req">*</span></label>
+      <input id="cf-name" type="text" autocapitalize="words" value="${esc(c?c.name:'')}"></div>
+    <div class="field"><label>Role</label><input id="cf-role" type="text" autocapitalize="words" value="${esc(c?(c.role||''):'')}">${suggestChips('cf-role',roles)}</div>
+    <div class="grid2">
+      <div class="field"><label>Email</label><input id="cf-email" type="email" autocapitalize="none" inputmode="email" value="${esc(c?(c.email||''):'')}"></div>
+      <div class="field"><label>Phone</label><input id="cf-phone" type="tel" inputmode="tel" value="${esc(c?(c.phone||''):'')}"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Location</label><input id="cf-location" type="text" autocapitalize="words" value="${esc(c?(c.location||''):'')}">${suggestChips('cf-location',locs)}</div>
+      <div class="field"><label>Function</label><input id="cf-function" type="text" autocapitalize="words" value="${esc(c?(c.function||''):'')}">${suggestChips('cf-function',fns)}</div>
+    </div>
+    <div class="field"><label>Reports to</label>
+      ${pickerField('cf-reports',mgrName,'No one — top level','reportsPick()')}</div>
+    <div class="field"><label>Notes</label><textarea id="cf-notes" autocapitalize="sentences">${esc(c?(c.notes||''):'')}</textarea></div>
+    <button class="save" onclick="savePerson()">Save</button>
+  `,!!c);
+}
+async function reportsPick(){
+  const id=formCtx.id;
+  const banned=new Set();
+  if(id){
+    banned.add(id);
+    const kids={};contacts.forEach(c=>kids[c.id]=[]);
+    contacts.forEach(c=>{if(c.reportsTo&&kids[c.reportsTo])kids[c.reportsTo].push(c.id);});
+    const st=[id];while(st.length){const x=st.pop();(kids[x]||[]).forEach(k=>{if(!banned.has(k)){banned.add(k);st.push(k);}});}
+  }
+  const source=contacts.filter(c=>!banned.has(c.id)).map(c=>({key:'c:'+c.id,name:c.name,sub:c.role||'',payload:{type:'contact',contact:c}}));
+  const res=await openPersonPicker({title:'Reports to',source,allowClear:true,clearLabel:'No one — top level'});
+  if(!res)return;
+  if(res.type==='clear'){formCtx.reportsTo='';setPickerField('cf-reports','','No one — top level');}
+  else if(res.type==='contact'){formCtx.reportsTo=res.contact.id;setPickerField('cf-reports',res.contact.name,'No one — top level');}
+}
+function savePerson(){
+  const name=document.getElementById('cf-name').value.trim();
+  if(!name)return toast('Name is required');
+  const vals={
+    name,
+    role:document.getElementById('cf-role').value.trim(),
+    email:document.getElementById('cf-email').value.trim(),
+    phone:document.getElementById('cf-phone').value.trim(),
+    location:document.getElementById('cf-location').value.trim(),
+    function:document.getElementById('cf-function').value.trim(),
+    reportsTo:formCtx.reportsTo||'',
+    notes:document.getElementById('cf-notes').value.trim()
+  };
+  if(formCtx.id){Object.assign(byId(formCtx.id),vals);toast('Updated');}
+  else{contacts.push({id:uid(),...vals});toast('Added');}
+  saveOrg();closeForm();rerender();
+}
+function removeContacts(ids){
+  const idSet=new Set(ids);
+  const parentOf=id=>{const c=byId(id);return c?c.reportsTo:'';};
+  const surviving=id=>{
+    let p=parentOf(id);const seen=new Set();
+    while(p&&idSet.has(p)&&!seen.has(p)){seen.add(p);p=parentOf(p);}
+    return (p&&byId(p)&&!idSet.has(p))?p:'';
+  };
+  contacts.forEach(c=>{
+    if(!idSet.has(c.id)&&c.reportsTo&&idSet.has(c.reportsTo))c.reportsTo=surviving(c.reportsTo);
+  });
+  contacts=contacts.filter(c=>!idSet.has(c.id));
+  ids.forEach(id=>{delete collapsed[id];selected.delete(id);});
+  saveOrg();
+}
+function reportsNote(ids){
+  const idSet=new Set(ids);
+  const n=contacts.filter(x=>!idSet.has(x.id)&&x.reportsTo&&idSet.has(x.reportsTo)).length;
+  return n?('\n'+n+' '+(n===1?'person reports':'people report')+' to '+(ids.length===1?'them':'these entries')+' — they\u2019ll re-link to the next manager up.'):'';
+}
+async function deletePerson(id){
+  const c=byId(id);if(!c)return;
+  const ok=await confirmDialog('Delete '+c.name,'They\u2019ll be removed from the People directory.'+reportsNote([id]),'Delete',true);
+  if(!ok)return;
+  removeContacts([id]);
+  closeForm();
+  if(topFrame().screen==='person')pop();else rerender();
+  toast('Deleted');
+}
+async function quickDelete(id){
+  const c=byId(id);if(!c)return;
+  const ok=await confirmDialog('Delete '+c.name,reportsNote([id])||'They\u2019ll be removed from the People directory.','Delete',true);
+  if(!ok)return;
+  removeContacts([id]);
+  rerender();
+  toast('Deleted '+c.name);
+}
+
+/* ---------- manage / bulk / dedupe ---------- */
+function toggleManage(){
+  manage=!manage;
+  if(!manage)selected=new Set();
+  rerender();
+}
+function togglePick(id,on){
+  if(on)selected.add(id);else selected.delete(id);
+  updateBulkbar();
+}
+function updateBulkbar(){
+  const bar=document.getElementById('bulkbar');
+  const f=topFrame();
+  const show=f.screen==='root'&&f.tab==='directory'&&manage&&selected.size>0;
+  bar.classList.toggle('show',show);
+  if(show)document.getElementById('bcount').textContent=selected.size+' selected';
+}
+function clearSelection(){selected=new Set();rerender();}
+async function bulkDelete(){
+  if(!selected.size)return;
+  const ids=[...selected];
+  const ok=await confirmDialog('Delete '+ids.length+' contacts',reportsNote(ids)||'They\u2019ll be removed from the People directory.','Delete '+ids.length,true);
+  if(!ok)return;
+  removeContacts(ids);
+  rerender();
+  toast('Deleted '+ids.length);
+}
+async function dedupe(){
+  const groups={};
+  contacts.forEach(c=>{
+    const k=(c.name||'').trim().toLowerCase().replace(/\s+/g,' ');
+    if(!k)return;
+    (groups[k]=groups[k]||[]).push(c);
+  });
+  const dupGroups=Object.values(groups).filter(g=>g.length>1);
+  if(!dupGroups.length)return toast('No duplicate names found');
+  const managers=new Set(contacts.map(c=>c.reportsTo).filter(Boolean));
+  const FIELDS=['role','email','phone','location','function','notes'];
+  const score=c=>FIELDS.reduce((n,k)=>n+(c[k]?1:0),0)+(managers.has(c.id)?10:0);
+  const dupCount=dupGroups.reduce((n,g)=>n+g.length-1,0);
+  const ok=await confirmDialog('Clean up duplicates',
+    dupCount+' duplicate '+(dupCount===1?'entry':'entries')+' across '+dupGroups.length+' '+(dupGroups.length===1?'name':'names')+'.\nThe most complete record is kept, missing details merged in, reports re-linked.',
+    'Clean up',false);
+  if(!ok)return;
+  const toRemove=[];const remap={};
+  dupGroups.forEach(g=>{
+    g.sort((a,b)=>score(b)-score(a));
+    const keep=g[0];
+    g.slice(1).forEach(d=>{
+      toRemove.push(d.id);remap[d.id]=keep.id;
+      FIELDS.forEach(k=>{if(!keep[k]&&d[k])keep[k]=d[k];});
+      if(!keep.reportsTo&&d.reportsTo)keep.reportsTo=d.reportsTo;
+    });
+  });
+  contacts.forEach(c=>{
+    let t=c.reportsTo;const seen=new Set();
+    while(t&&remap[t]&&!seen.has(t)){seen.add(t);t=remap[t];}
+    c.reportsTo=(t===c.id)?'':t;
+  });
+  removeContacts(toRemove);
+  rerender();
+  toast('Removed '+toRemove.length+' '+(toRemove.length===1?'duplicate':'duplicates'));
+}
+
+/* ---------- import / export ---------- */
+function exportOrgJSON(){
+  if(!contacts.length)return toast('Nothing to export');
+  download('org-chart-'+stamp()+'.json',JSON.stringify(contacts,null,2),'application/json');
+  toast('Exported JSON');
+}
+function exportOrgCSV(){
+  if(!contacts.length)return toast('Nothing to export');
+  const head=['Name','Role','Email','Phone','Location','Function','Reports To','Notes'];
+  const rows=contacts.map(c=>[c.name,c.role,c.email,c.phone,c.location,c.function,nameOf(c.reportsTo),c.notes].map(csvCell).join(','));
+  download('org-chart-'+stamp()+'.csv',head.join(',')+'\n'+rows.join('\n'),'text/csv');
+  toast('Exported CSV');
+}
+function importOrgJSON(file){
+  const reader=new FileReader();
+  reader.onload=async()=>{
+    try{
+      const arr=JSON.parse(reader.result);
+      if(!Array.isArray(arr))throw new Error('bad');
+      const cleaned=arr.filter(x=>x&&x.name).map(x=>({
+        id:x.id||uid(),name:String(x.name),role:x.role||'',email:x.email||'',phone:x.phone||'',
+        location:x.location||'',function:x.function||'',reportsTo:x.reportsTo||'',notes:x.notes||''
+      }));
+      if(!cleaned.length)return toast('No people found in that file');
+      let mode='replace';
+      if(contacts.length){
+        mode=await showDialog({title:'Import '+cleaned.length+' people',
+          message:'You currently have '+contacts.length+' people.',
+          buttons:[
+            {label:'Add to existing',style:'primary',value:'merge'},
+            {label:'Replace all '+contacts.length,style:'danger',value:'replace'},
+            {label:'Cancel',style:'quiet',value:null}
+          ]});
+        if(!mode)return;
+      }
+      if(mode==='replace')contacts=cleaned;
+      else{
+        const existing=new Set(contacts.map(c=>c.id));
+        cleaned.forEach(c=>{if(existing.has(c.id))c.id=uid();contacts.push(c);});
+      }
+      saveOrg();rerender();
+      toast('Imported '+cleaned.length+' people');
+    }catch(e){toast('Could not read that file');}
+  };
+  reader.readAsText(file);
+}
+function exportMap(){
+  if(!data.programs.length)return toast('Nothing to export');
+  download('stakeholder-map-'+stamp()+'.json',JSON.stringify(data,null,2),'application/json');
+  toast('Exported');
+}
+function importMap(file){
+  const reader=new FileReader();
+  reader.onload=async()=>{
+    try{
+      const d=JSON.parse(reader.result);
+      if(!d||!Array.isArray(d.programs))throw new Error('bad');
+      d.programs.forEach(p=>{
+        if(!Array.isArray(p.stakeholders))p.stakeholders=[];
+        if(!Array.isArray(p.pursuits))p.pursuits=[];
+        p.pursuits.forEach(u=>{if(!Array.isArray(u.members))u.members=[];});
+      });
+      let mode='replace';
+      if(data.programs.length){
+        mode=await showDialog({title:'Import '+d.programs.length+' programs',
+          message:'You currently have '+data.programs.length+' programs.',
+          buttons:[
+            {label:'Add to existing',style:'primary',value:'merge'},
+            {label:'Replace all '+data.programs.length,style:'danger',value:'replace'},
+            {label:'Cancel',style:'quiet',value:null}
+          ]});
+        if(!mode)return;
+      }
+      if(mode==='replace')data=d;
+      else{
+        const existing=new Set(data.programs.map(p=>p.id));
+        d.programs.forEach(p=>{if(existing.has(p.id))p.id=uid();data.programs.push(p);});
+      }
+      saveMap();goPrograms();
+      toast('Imported '+d.programs.length+' program'+(d.programs.length===1?'':'s'));
+    }catch(e){toast('Could not read that file');}
+  };
+  reader.readAsText(file);
+}
+function exportStakeholdersCSV(){
+  const p=curProgram();if(!p||!p.stakeholders.length)return toast('Nothing to export');
+  const head=['SBO','AIP','Program','Stakeholder','Role','Tier','Accountability','Influence','Interest','Stance','Quadrant','Key message','KPMG owner','Next action','Status'];
+  const rows=p.stakeholders.map(s=>[p.sbo,p.aip,p.name,s.name,s.role,s.tier,RACI[s.raci]||'',s.influence,s.interest,s.stance,QNAMES[quadrant(s)],s.message,s.owner,s.action,s.status].map(csvCell).join(','));
+  download(slugify(p.name)+'-stakeholders-'+stamp()+'.csv',head.join(',')+'\n'+rows.join('\n'),'text/csv');
+  toast('CSV exported');
+}
+function exportPursuitsCSV(){
+  const p=curProgram();if(!p||!p.pursuits.length)return toast('Nothing to export');
+  const head=['SBO','AIP','Program','Pursuit','Stage','Est. value','Scope','BHP sponsor','BHP owner','KPMG sponsor','KPMG lead','Delivery lead','Delivery team','Next milestone','Stakeholders mapped'];
+  const rows=p.pursuits.map(u=>[p.sbo,p.aip,p.name,u.name,u.stage,u.value,u.summary,u.bhpSponsor,u.bhpOwner,u.kpmgSponsor,u.kpmgLead,u.deliveryLead,u.team,u.milestone,(u.members||[]).length].map(csvCell).join(','));
+  download(slugify(p.name)+'-pursuits-'+stamp()+'.csv',head.join(',')+'\n'+rows.join('\n'),'text/csv');
+  toast('CSV exported');
 }
 function exportPursuitPlanCSV(){
-  const p=prog();const u=curPursuit();
+  const p=curProgram();const u=curPursuit();
   if(!p||!u)return;
   const members=resolvedMembers(p,u);
   if(!members.length)return toast('Nothing to export');
   const head=['SBO','AIP','Program','Pursuit','Stage','Stakeholder','Role','Tier','Influence','Interest','Stance','Quadrant','Accountability (pursuit)','Key message','KPMG owner','Next action','Status'];
-  const qname=['Manage closely','Keep satisfied','Keep informed','Monitor'];
-  const rows=members.map(x=>[p.sbo,p.aip,p.name,u.name,u.stage,x.s.name,x.s.role,x.s.tier,x.s.influence,x.s.interest,x.s.stance,qname[quadrant(x.s)],RACI[x.m.raci]||'',x.m.message,x.m.owner,x.m.action,x.m.status].map(csvCell).join(','));
-  download((u.name||'pursuit').replace(/[^\w-]+/g,'-').toLowerCase()+'-plan-'+stamp()+'.csv',head.join(',')+'\n'+rows.join('\n'),'text/csv');
+  const rows=members.map(x=>[p.sbo,p.aip,p.name,u.name,u.stage,x.s.name,x.s.role,x.s.tier,x.s.influence,x.s.interest,x.s.stance,QNAMES[quadrant(x.s)],RACI[x.m.raci]||'',x.m.message,x.m.owner,x.m.action,x.m.status].map(csvCell).join(','));
+  download(slugify(u.name)+'-plan-'+stamp()+'.csv',head.join(',')+'\n'+rows.join('\n'),'text/csv');
   toast('CSV exported');
 }
 
+/* ---------- one-pager export ---------- */
 function exportOnePager(){
-  const p=prog();const u=curPursuit();
+  const p=curProgram();const u=curPursuit();
   if(!p||!u)return;
   const members=resolvedMembers(p,u);
-  const qname=['Manage closely','Keep satisfied','Keep informed','Monitor'];
   const quads=[[],[],[],[]];
   members.forEach(x=>quads[quadrant(x.s)].push(x));
   const chipHTML=idx=>quads[idx].map(x=>`<span class="chip">${esc(x.s.name)}<small>${esc(x.s.role||'')}</small></span>`).join('')||'';
@@ -1337,7 +1723,7 @@ function exportOnePager(){
     <td contenteditable="true">${esc(x.m.status||'')}</td>
   </tr>`;
   const emptyRow='<tr>'+'<td contenteditable="true"></td>'.repeat(6)+'</tr>';
-  const slug=(u.name||'pursuit').replace(/[^\w-]+/g,'-').toLowerCase();
+  const slug=slugify(u.name);
   const orderM=x=>TIERS.indexOf(x.s.tier);
   const planRows=members.slice().sort((a,b)=>orderM(a)-orderM(b)).map(rowHTML).join('')+emptyRow+emptyRow;
   const role=(l,v)=>`<div class="r"><span>${l}</span><b contenteditable="true">${v?esc(v):'TBC'}</b></div>`;
@@ -1368,7 +1754,7 @@ function exportOnePager(){
   [contenteditable]{outline:none;border-radius:6px}
   [contenteditable]:focus{background:var(--accent-soft)}
   .structure{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .structure .h{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+  .structure .h{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
   .r{display:flex;gap:8px;font-size:13.5px;margin-bottom:4px}
   .r span{color:var(--muted);min-width:70px}
   .grid2x2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1377,11 +1763,11 @@ function exportOnePager(){
   .grid2x2 .quad:nth-child(2){background:var(--accent-soft);border-color:#bcc6ee}
   .quad .qs{font-size:11px;color:var(--muted);margin:1px 0 8px}
   .quad .chips{min-height:40px}
-  .chip{display:inline-flex;flex-direction:column;background:var(--accent-soft);border:1px solid #c8d6f2;color:var(--accent);border-radius:10px;padding:5px 10px;margin:0 6px 6px 0;font-size:12.5px;font-weight:600}
+  .chip{display:inline-flex;flex-direction:column;background:var(--surface);border:1px solid var(--accent);color:var(--accent);border-radius:10px;padding:5px 10px;margin:0 6px 6px 0;font-size:12.5px;font-weight:600}
   .chip small{color:var(--muted);font-weight:400;font-size:10.5px}
-  .axes{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin:4px 2px}
+  .axes{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:4px 2px}
   table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:13px}
-  th{background:var(--paper);text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{background:var(--paper);text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:9px 10px;border-bottom:1px solid var(--line)}
   td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;min-width:70px}
   tr:last-child td{border-bottom:none}
   td small{color:var(--muted)}
@@ -1416,10 +1802,10 @@ function exportOnePager(){
   <h2>Stakeholder grid</h2>
   <div class="axes"><span>Influence high ↑</span></div>
   <div class="grid2x2">
-    <div class="quad"><div class="qt">${qname[1]}</div><div class="qs">High influence, lower interest</div><div class="chips" contenteditable="true">${chipHTML(1)}</div></div>
-    <div class="quad"><div class="qt">${qname[0]}</div><div class="qs">High influence, high interest</div><div class="chips" contenteditable="true">${chipHTML(0)}</div></div>
-    <div class="quad"><div class="qt">${qname[3]}</div><div class="qs">Lower influence, lower interest</div><div class="chips" contenteditable="true">${chipHTML(3)}</div></div>
-    <div class="quad"><div class="qt">${qname[2]}</div><div class="qs">High interest, lower influence</div><div class="chips" contenteditable="true">${chipHTML(2)}</div></div>
+    <div class="quad"><div class="qt">Keep satisfied</div><div class="qs">High influence, lower interest</div><div class="chips" contenteditable="true">${chipHTML(1)}</div></div>
+    <div class="quad"><div class="qt">Manage closely</div><div class="qs">High influence, high interest</div><div class="chips" contenteditable="true">${chipHTML(0)}</div></div>
+    <div class="quad"><div class="qt">Monitor</div><div class="qs">Lower influence, lower interest</div><div class="chips" contenteditable="true">${chipHTML(3)}</div></div>
+    <div class="quad"><div class="qt">Keep informed</div><div class="qs">High interest, lower influence</div><div class="chips" contenteditable="true">${chipHTML(2)}</div></div>
   </div>
   <div class="axes"><span>Interest low</span><span>Interest high →</span></div>
 
@@ -1460,357 +1846,6 @@ function saveCopy(){
 </html>`;
   download(slug+'-onepager-'+stamp()+'.html',html,'text/html');
   toast('One-pager exported');
-}
-
-/* ---------- map export / import / CSVs ---------- */
-function exportMap(){
-  if(!data.programs.length)return toast('Nothing to export');
-  download('stakeholder-map-'+stamp()+'.json',JSON.stringify(data,null,2),'application/json');
-  toast('Exported');
-}
-function importMap(ev){
-  const file=ev.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=()=>{
-    try{
-      const d=JSON.parse(reader.result);
-      if(!d||!Array.isArray(d.programs))throw new Error('bad');
-      d.programs.forEach(p=>{if(!Array.isArray(p.stakeholders))p.stakeholders=[];if(!Array.isArray(p.pursuits))p.pursuits=[];});
-      const replace=data.programs.length?confirm('Replace all '+data.programs.length+' current programs?\n\nOK = replace everything · Cancel = add to existing'):true;
-      if(replace)data=d;
-      else{
-        const existing=new Set(data.programs.map(p=>p.id));
-        d.programs.forEach(p=>{if(existing.has(p.id))p.id=uid();data.programs.push(p);});
-      }
-      saveMap();render();toast('Imported '+d.programs.length+' program'+(d.programs.length===1?'':'s'));
-    }catch(e){toast('Could not read that file');}
-    ev.target.value='';
-  };
-  reader.readAsText(file);
-}
-function exportStakeholdersCSV(){
-  const p=prog();if(!p||!p.stakeholders.length)return toast('Nothing to export');
-  const head=['SBO','AIP','Program','Stakeholder','Role','Tier','Accountability','Influence','Interest','Stance','Quadrant','Key message','KPMG owner','Next action','Status'];
-  const qname=['Manage closely','Keep satisfied','Keep informed','Monitor'];
-  const rows=p.stakeholders.map(s=>[p.sbo,p.aip,p.name,s.name,s.role,s.tier,RACI[s.raci]||'',s.influence,s.interest,s.stance,qname[quadrant(s)],s.message,s.owner,s.action,s.status].map(csvCell).join(','));
-  download((p.name||'program').replace(/[^\w-]+/g,'-').toLowerCase()+'-stakeholders-'+stamp()+'.csv',head.join(',')+'\n'+rows.join('\n'),'text/csv');
-  toast('CSV exported');
-}
-function exportPursuitsCSV(){
-  const p=prog();if(!p||!p.pursuits.length)return toast('Nothing to export');
-  const head=['SBO','AIP','Program','Pursuit','Stage','Est. value','Scope','BHP sponsor','BHP owner','KPMG sponsor','KPMG lead','Delivery lead','Delivery team','Next milestone'];
-  const rows=p.pursuits.map(u=>[p.sbo,p.aip,p.name,u.name,u.stage,u.value,u.summary,u.bhpSponsor,u.bhpOwner,u.kpmgSponsor,u.kpmgLead,u.deliveryLead,u.team,u.milestone].map(csvCell).join(','));
-  download((p.name||'program').replace(/[^\w-]+/g,'-').toLowerCase()+'-pursuits-'+stamp()+'.csv',head.join(',')+'\n'+rows.join('\n'),'text/csv');
-  toast('CSV exported');
-}
-
-/* ================= PEOPLE ================= */
-function renderDirectory(){
-  const q=(document.getElementById('search').value||'').toLowerCase().trim();
-  const list=document.getElementById('people-list');
-  let rows=contacts.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-  if(q)rows=rows.filter(c=>[c.name,c.role,c.function,c.location,c.email].some(f=>(f||'').toLowerCase().includes(q)));
-  if(screen==='people')document.getElementById('count').textContent=contacts.length+' '+(contacts.length===1?'person':'people');
-
-  if(!contacts.length){
-    list.innerHTML=`<div class="empty"><h2>No one here yet</h2><p>Tap Add to capture your first contact, or Import JSON to load your org chart export. People here feed the stakeholder and pursuit pickers.</p></div>`;
-    return;
-  }
-  if(!rows.length){
-    list.innerHTML=`<div class="empty"><h2>No matches</h2><p>Nothing matches “${esc(q)}”.</p></div>`;
-    return;
-  }
-  if(manage){
-    list.innerHTML=rows.map(c=>`<div class="listrow">
-      <input type="checkbox" class="pick" ${selected.has(c.id)?'checked':''} onchange="togglePick('${c.id}',this.checked)" aria-label="Select ${esc(c.name)}">
-      <div class="info" onclick="openPersonForm('${c.id}')">
-        <div class="nm">${esc(c.name)}</div>
-        <div class="rl">${esc([c.role,c.function].filter(Boolean).join(' · '))}</div>
-      </div>
-      <button class="icobtn" onclick="openPersonForm('${c.id}')" aria-label="Edit ${esc(c.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></button>
-      <button class="icobtn trash" onclick="quickDelete('${c.id}')" aria-label="Delete ${esc(c.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-    </div>`).join('');
-    return;
-  }
-  list.innerHTML=rows.map(c=>{
-    const tags=[];
-    if(c.function)tags.push(`<span class="tag"><span class="lbl">Fn</span><b>${esc(c.function)}</b></span>`);
-    if(c.location)tags.push(`<span class="tag"><span class="lbl">Loc</span><b>${esc(c.location)}</b></span>`);
-    const acts=[];
-    if(c.email)acts.push(`<a class="chip" href="mailto:${esc(c.email)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email</a>`);
-    if(c.phone)acts.push(`<a class="chip" href="tel:${esc(c.phone)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>Call</a>`);
-    acts.push(`<button class="chip ghost" onclick="openPersonForm('${c.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Edit</button>`);
-    const rep=c.reportsTo&&byId(c.reportsTo)?`<div class="reports-line"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>Reports to <b>${esc(nameOf(c.reportsTo))}</b></div>`:'';
-    return `<div class="card">
-      <div class="card-top">
-        <div class="avatar mono">${esc(initials(c.name))}</div>
-        <div class="who">
-          <div class="nm">${esc(c.name)}</div>
-          ${c.role?`<div class="rl">${esc(c.role)}</div>`:''}
-        </div>
-      </div>
-      ${tags.length?`<div class="tags">${tags.join('')}</div>`:''}
-      ${rep}
-      <div class="actions">${acts.join('')}</div>
-    </div>`;
-  }).join('');
-}
-
-function renderOrgTree(){
-  const area=document.getElementById('chart-area');
-  if(!contacts.length){
-    area.innerHTML=`<div class="empty"><h2>Nothing to chart yet</h2><p>Add people and set who they report to. The hierarchy appears here.</p></div>`;
-    return;
-  }
-  const ids=new Set(contacts.map(c=>c.id));
-  const kids={};
-  contacts.forEach(c=>{kids[c.id]=[];});
-  const roots=[];
-  contacts.forEach(c=>{
-    if(c.reportsTo && ids.has(c.reportsTo) && c.reportsTo!==c.id)kids[c.reportsTo].push(c);
-    else roots.push(c);
-  });
-  const sortFn=(a,b)=>(a.name||'').localeCompare(b.name||'');
-  roots.sort(sortFn);
-  Object.values(kids).forEach(arr=>arr.sort(sortFn));
-  const seen=new Set();
-  function countDesc(id){
-    let n=0;const stack=[...(kids[id]||[])];const visited=new Set();
-    while(stack.length){const x=stack.pop();if(visited.has(x.id))continue;visited.add(x.id);n++;stack.push(...(kids[x.id]||[]));}
-    return n;
-  }
-  function node(c){
-    if(seen.has(c.id)){
-      return `<div class="node"><div class="row"><span class="twist leaf"></span><div class="node-body"><div class="nm">${esc(c.name)}</div><div class="rl">↳ already shown above</div></div></div></div>`;
-    }
-    seen.add(c.id);
-    const ch=kids[c.id]||[];
-    const isCol=collapsed[c.id];
-    const tw=ch.length
-      ? `<button class="twist" onclick="toggleNode(event,'${c.id}')" aria-label="Toggle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>`
-      : `<span class="twist leaf"></span>`;
-    const cnt=ch.length?`<span class="node-count mono">${countDesc(c.id)}</span>`:'';
-    const childHTML=ch.length?`<div class="children">${ch.map(node).join('')}</div>`:'';
-    return `<div class="node${isCol?' collapsed':''}">
-      <div class="row" onclick="openPersonForm('${c.id}')">
-        ${tw}
-        <div class="node-body">
-          <div class="nm">${esc(c.name)}</div>
-          ${c.role?`<div class="rl">${esc(c.role)}</div>`:''}
-        </div>
-        ${cnt}
-      </div>
-      ${childHTML}
-    </div>`;
-  }
-  const label=roots.length===contacts.length?'Everyone (no reporting links set)':'Top of chain';
-  area.innerHTML=`<div class="roots-label">${label}</div><div>${roots.map(node).join('')}</div>`;
-}
-function toggleNode(ev,id){
-  ev.stopPropagation();
-  collapsed[id]=!collapsed[id];
-  renderOrgTree();
-}
-
-/* ---------- person form ---------- */
-function refreshDatalists(){
-  const fill=(elId,key)=>{
-    const vals=[...new Set(contacts.map(c=>c[key]).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-    document.getElementById(elId).innerHTML=vals.map(v=>`<option value="${esc(v)}">`).join('');
-  };
-  fill('dl-role','role');fill('dl-location','location');fill('dl-function','function');
-}
-function openPersonForm(id){
-  refreshDatalists();
-  const banned=new Set();
-  if(id){
-    banned.add(id);
-    const kids={};contacts.forEach(c=>kids[c.id]=[]);
-    contacts.forEach(c=>{if(c.reportsTo&&kids[c.reportsTo])kids[c.reportsTo].push(c.id);});
-    const stack=[id];while(stack.length){const x=stack.pop();(kids[x]||[]).forEach(k=>{if(!banned.has(k)){banned.add(k);stack.push(k);}});}
-  }
-  const sel=document.getElementById('f-reports');
-  const opts=['<option value="">— No one (top level) —</option>']
-    .concat(contacts.filter(c=>!banned.has(c.id)).sort((a,b)=>(a.name||'').localeCompare(b.name||''))
-      .map(c=>`<option value="${c.id}">${esc(c.name)}${c.role?' · '+esc(c.role):''}</option>`));
-  sel.innerHTML=opts.join('');
-
-  const c=id?byId(id):null;
-  document.getElementById('f-id').value=c?c.id:'';
-  document.getElementById('f-name').value=c?c.name||'':'';
-  document.getElementById('f-role').value=c?c.role||'':'';
-  document.getElementById('f-email').value=c?c.email||'':'';
-  document.getElementById('f-phone').value=c?c.phone||'':'';
-  document.getElementById('f-location').value=c?c.location||'':'';
-  document.getElementById('f-function').value=c?c.function||'':'';
-  document.getElementById('f-reports').value=c?(c.reportsTo||''):'';
-  document.getElementById('f-notes').value=c?c.notes||'':'';
-  document.getElementById('f-title').textContent=c?'Edit person':'Add person';
-  document.getElementById('f-del').style.visibility=c?'visible':'hidden';
-  document.getElementById('fscrim').classList.add('open');
-  personValidate();
-  if(!c)setTimeout(()=>document.getElementById('f-name').focus(),120);
-}
-function personValidate(){
-  document.getElementById('f-save').disabled=!document.getElementById('f-name').value.trim();
-}
-function savePerson(){
-  const name=document.getElementById('f-name').value.trim();
-  if(!name)return;
-  const vals={
-    name,
-    role:document.getElementById('f-role').value.trim(),
-    email:document.getElementById('f-email').value.trim(),
-    phone:document.getElementById('f-phone').value.trim(),
-    location:document.getElementById('f-location').value.trim(),
-    function:document.getElementById('f-function').value.trim(),
-    reportsTo:document.getElementById('f-reports').value,
-    notes:document.getElementById('f-notes').value.trim()
-  };
-  const id=document.getElementById('f-id').value;
-  if(id){Object.assign(byId(id),vals);toast('Updated');}
-  else{contacts.push({id:uid(),...vals});toast('Added');}
-  saveOrg();closeSheet('fscrim');render();
-}
-function removeContacts(ids){
-  const idSet=new Set(ids);
-  const parentOf=id=>{const c=byId(id);return c?c.reportsTo:'';};
-  const surviving=id=>{
-    let p=parentOf(id);const seen=new Set();
-    while(p&&idSet.has(p)&&!seen.has(p)){seen.add(p);p=parentOf(p);}
-    return (p&&byId(p)&&!idSet.has(p))?p:'';
-  };
-  contacts.forEach(c=>{
-    if(!idSet.has(c.id)&&c.reportsTo&&idSet.has(c.reportsTo))c.reportsTo=surviving(c.reportsTo);
-  });
-  contacts=contacts.filter(c=>!idSet.has(c.id));
-  ids.forEach(id=>{delete collapsed[id];selected.delete(id);});
-  saveOrg();
-}
-function deleteMsg(ids){
-  const idSet=new Set(ids);
-  const n=contacts.filter(x=>!idSet.has(x.id)&&x.reportsTo&&idSet.has(x.reportsTo)).length;
-  return n?('\n\n'+n+' '+(n===1?'person reports':'people report')+' to '+(ids.length===1?'them':'these entries')+' — they’ll re-link to the next manager up.'):'';
-}
-function deletePerson(){
-  const id=document.getElementById('f-id').value;
-  if(!id)return;
-  const c=byId(id);
-  if(!confirm('Delete '+(c?c.name:'this person')+'?'+deleteMsg([id])))return;
-  removeContacts([id]);
-  closeSheet('fscrim');render();
-  toast('Deleted');
-}
-function quickDelete(id){
-  const c=byId(id);if(!c)return;
-  if(!confirm('Delete '+c.name+'?'+deleteMsg([id])))return;
-  removeContacts([id]);
-  render();
-  toast('Deleted '+c.name);
-}
-
-/* ---------- manage / bulk / dedupe ---------- */
-function toggleManage(){
-  manage=!manage;
-  if(!manage)selected=new Set();
-  const b=document.getElementById('manage-btn');
-  b.textContent=manage?'Done':'Manage';
-  b.classList.toggle('on',manage);
-  render();
-}
-function togglePick(id,on){
-  if(on)selected.add(id);else selected.delete(id);
-  updateBulkbar();
-}
-function updateBulkbar(){
-  const bar=document.getElementById('bulkbar');
-  const show=screen==='people'&&manage&&selected.size>0;
-  bar.classList.toggle('show',show);
-  if(show)document.getElementById('bcount').textContent=selected.size+' selected';
-}
-function clearSelection(){
-  selected=new Set();
-  render();
-}
-function bulkDelete(){
-  if(!selected.size)return;
-  const ids=[...selected];
-  if(!confirm('Delete '+ids.length+' '+(ids.length===1?'contact':'contacts')+'?'+deleteMsg(ids)))return;
-  removeContacts(ids);
-  render();
-  toast('Deleted '+ids.length);
-}
-function dedupe(){
-  const groups={};
-  contacts.forEach(c=>{
-    const k=(c.name||'').trim().toLowerCase().replace(/\s+/g,' ');
-    if(!k)return;
-    (groups[k]=groups[k]||[]).push(c);
-  });
-  const dupGroups=Object.values(groups).filter(g=>g.length>1);
-  if(!dupGroups.length)return toast('No duplicate names found');
-  const managers=new Set(contacts.map(c=>c.reportsTo).filter(Boolean));
-  const FIELDS=['role','email','phone','location','function','notes'];
-  const score=c=>FIELDS.reduce((n,k)=>n+(c[k]?1:0),0)+(managers.has(c.id)?10:0);
-  const dupCount=dupGroups.reduce((n,g)=>n+g.length-1,0);
-  if(!confirm('Found '+dupCount+' duplicate '+(dupCount===1?'entry':'entries')+' across '+dupGroups.length+' '+(dupGroups.length===1?'name':'names')+'.\n\nKeep the most complete record for each, merge in any missing details, and re-link their reports?'))return;
-  const toRemove=[];const remap={};
-  dupGroups.forEach(g=>{
-    g.sort((a,b)=>score(b)-score(a));
-    const keep=g[0];
-    g.slice(1).forEach(d=>{
-      toRemove.push(d.id);remap[d.id]=keep.id;
-      FIELDS.forEach(k=>{if(!keep[k]&&d[k])keep[k]=d[k];});
-      if(!keep.reportsTo&&d.reportsTo)keep.reportsTo=d.reportsTo;
-    });
-  });
-  contacts.forEach(c=>{
-    let t=c.reportsTo;const seen=new Set();
-    while(t&&remap[t]&&!seen.has(t)){seen.add(t);t=remap[t];}
-    c.reportsTo=(t===c.id)?'':t;
-  });
-  removeContacts(toRemove);
-  render();
-  toast('Removed '+toRemove.length+' '+(toRemove.length===1?'duplicate':'duplicates'));
-}
-
-/* ---------- org export / import ---------- */
-function exportOrgJSON(){
-  if(!contacts.length)return toast('Nothing to export');
-  download('org-chart-'+stamp()+'.json',JSON.stringify(contacts,null,2),'application/json');
-  toast('Exported JSON');
-}
-function exportOrgCSV(){
-  if(!contacts.length)return toast('Nothing to export');
-  const head=['Name','Role','Email','Phone','Location','Function','Reports To','Notes'];
-  const rows=contacts.map(c=>[c.name,c.role,c.email,c.phone,c.location,c.function,nameOf(c.reportsTo),c.notes].map(csvCell).join(','));
-  download('org-chart-'+stamp()+'.csv',head.join(',')+'\n'+rows.join('\n'),'text/csv');
-  toast('Exported CSV');
-}
-function importOrgJSON(ev){
-  const file=ev.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=()=>{
-    try{
-      const arr=JSON.parse(reader.result);
-      if(!Array.isArray(arr))throw new Error('Not a list');
-      const cleaned=arr.filter(x=>x&&x.name).map(x=>({
-        id:x.id||uid(),name:String(x.name),role:x.role||'',email:x.email||'',phone:x.phone||'',
-        location:x.location||'',function:x.function||'',reportsTo:x.reportsTo||'',notes:x.notes||''
-      }));
-      if(!cleaned.length)return toast('No valid contacts in file');
-      const replace=contacts.length?confirm('Replace your current '+contacts.length+' contacts?\n\nOK = replace everything · Cancel = add to existing'):true;
-      if(replace)contacts=cleaned;
-      else{
-        const existing=new Set(contacts.map(c=>c.id));
-        cleaned.forEach(c=>{if(existing.has(c.id))c.id=uid();contacts.push(c);});
-      }
-      saveOrg();render();
-      toast('Imported '+cleaned.length+' contacts');
-    }catch(e){toast('Could not read that file');}
-    ev.target.value='';
-  };
-  reader.readAsText(file);
 }
 
 /* ---------- init ---------- */
